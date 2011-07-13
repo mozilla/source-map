@@ -36,6 +36,13 @@
  * ***** END LICENSE BLOCK ***** */
 define(function (require, exports, module) {
 
-  // TODO
+  var assert = require('assert');
+  var base64VLQ = require('source-map/base64-vlq');
+
+  exports['test normal encoding and decoding'] = function () {
+    for ( var i = -128; i < 128; i++ ) {
+      assert.equal(base64VLQ.decode(base64VLQ.encode(i)), i);
+    }
+  };
 
 });

@@ -34,30 +34,56 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
 
-  var assert = require('assert');
-  var base64 = require('source-map/base64');
+function run (tests) {
+  var failures = [];
+  var total = 0;
+  var passed = 0;
 
-  exports['test out of range encoding'] = function () {
-    assert.throws(function () {
-      base64.encode(-1);
-    });
-    assert.throws(function () {
-      base64.encode(64);
-    });
-  };
-
-  exports['test out of range decoding'] = function () {
-    assert.throws(function () {
-      base64.decode('=');
-    });
-  };
-
-  exports['test normal encoding and decoding'] = function () {
-    for ( var i = 0; i < 64; i++ ) {
-      assert.equal(base64.decode(base64.encode(i)), i);
+  for ( var i = 0; i < tests.length; i++ ) {
+    for ( var k in tests[i].testCase ) {
+      if ( /^test/.test(k) ) {
+        total++;
+        try {
+          tests[i].testCase[k]();
+          passed++;
+          process.stdout.write('.');
+        }
+        catch (e) {
+          failures.push({
+            name: tests[i].name + ': ' + k,
+            error: e
+          });
+          process.stdout.write('E');
+        }
+      }
     }
-  };
+  }
 
+  process.stdout.write('\n');
+  console.log(passed + ' / ' + total + ' tests passed.');
+
+  failures.forEach(function (f) {
+    console.log('================================================================================');
+    console.log(f.name);
+    console.log('--------------------------------------------------------------------------------');
+    console.log(f.error.stack);
+  });
+
+  process.stdout.end();
+
+  return failures.length;
+}
+
+var code;
+
+process.stdout.on('close', function () {
+  process.exit(code);
 });
+
+code = run([
+  { name: 'Base 64', testCase: require('./test-base64') },
+  { name: 'Base 64 VLQ', testCase: require('./test-base64-vlq') },
+  { name: 'ArraySet', testCase: require('./test-array-set') },
+  { name: 'Source Map Generator', testCase: require('./test-source-map-generator') }
+]);

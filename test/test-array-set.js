@@ -37,78 +37,28 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
+  var ArraySet = require('source-map/array-set').ArraySet;
 
-  exports['test some simple stuff'] = function () {
-    var map = new SourceMapGenerator({
-      file: 'foo.js',
-      sourceRoot: '.'
-    });
-    assert.ok(true);
+  function makeTestSet () {
+    var set = new ArraySet();
+    for ( var i = 0; i < 100; i++ ) {
+      set.add(String(i));
+    }
+    return set;
+  }
+
+  exports['test membership'] = function () {
+    var set = makeTestSet();
+    for ( var i = 0; i < 100; i++ ) {
+      assert.ok(set.has(String(i)));
+    }
   };
 
-  exports['test adding mappings (case 1)'] = function () {
-    var map = new SourceMapGenerator({
-      file: 'generated-foo.js',
-      sourceRoot: '.'
-    });
-
-    assert.doesNotThrow(function () {
-      map.addMapping({
-        generated: { line: 1, column: 1 }
-      });
-    });
-  };
-
-  exports['test adding mappings (case 2)'] = function () {
-    var map = new SourceMapGenerator({
-      file: 'generated-foo.js',
-      sourceRoot: '.'
-    });
-
-    assert.doesNotThrow(function () {
-      map.addMapping({
-        generated: { line: 1, column: 1 },
-        source: 'bar.js',
-        original: { line: 1, column: 1 }
-      });
-    });
-  };
-
-  exports['test adding mappings (case 3)'] = function () {
-    var map = new SourceMapGenerator({
-      file: 'generated-foo.js',
-      sourceRoot: '.'
-    });
-
-    assert.doesNotThrow(function () {
-      map.addMapping({
-        generated: { line: 1, column: 1 },
-        source: 'bar.js',
-        original: { line: 1, column: 1 },
-        name: 'someToken'
-      });
-    });
-  };
-
-  exports['test adding mappings (invalid)'] = function () {
-    var map = new SourceMapGenerator({
-      file: 'generated-foo.js',
-      sourceRoot: '.'
-    });
-
-    // Not enough info.
-    assert.throws(function () {
-      map.addMapping({});
-    });
-
-    // Original file position, but no source.
-    assert.throws(function () {
-      map.addMapping({
-        generated: { line: 1, column: 1 },
-        original: { line: 1, column: 1 }
-      });
-    });
+  exports['test indexing'] = function () {
+    var set = makeTestSet();
+    for ( var i = 0; i < 100; i++ ) {
+      assert.equal(set.indexOf(String(i)), i);
+    }
   };
 
 });
