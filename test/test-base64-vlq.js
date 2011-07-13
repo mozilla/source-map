@@ -40,8 +40,12 @@ define(function (require, exports, module) {
   var base64VLQ = require('source-map/base64-vlq');
 
   exports['test normal encoding and decoding'] = function () {
+    var result;
     for ( var i = -128; i < 128; i++ ) {
-      assert.equal(base64VLQ.decode(base64VLQ.encode(i)), i);
+      result = base64VLQ.decode(base64VLQ.encode(i));
+      assert.ok(result);
+      assert.equal(result.value, i);
+      assert.equal(result.rest, "");
     }
   };
 
