@@ -47,18 +47,44 @@ define(function (require, exports, module) {
     return set;
   }
 
-  exports['test membership'] = function () {
+  exports['test .has() membership'] = function () {
     var set = makeTestSet();
     for ( var i = 0; i < 100; i++ ) {
       assert.ok(set.has(String(i)));
     }
   };
 
-  exports['test indexing'] = function () {
+  exports['test .indexOf() elements'] = function () {
     var set = makeTestSet();
     for ( var i = 0; i < 100; i++ ) {
-      assert.equal(set.indexOf(String(i)), i);
+      assert.strictEqual(set.indexOf(String(i)), i);
     }
+  };
+
+  exports['test .at() indexing'] = function () {
+    var set = makeTestSet();
+    for ( var i = 0; i < 100; i++ ) {
+      assert.strictEqual(set.at(i), String(i));
+    }
+  };
+
+  exports['test creating from an array'] = function () {
+    var set = ArraySet.fromArray(['foo', 'bar', 'baz', 'quux']);
+
+    assert.ok(set.has('foo'));
+    assert.ok(set.has('bar'));
+    assert.ok(set.has('baz'));
+    assert.ok(set.has('quux'));
+
+    assert.strictEqual(set.indexOf('foo'), 0);
+    assert.strictEqual(set.indexOf('bar'), 1);
+    assert.strictEqual(set.indexOf('baz'), 2);
+    assert.strictEqual(set.indexOf('quux'), 3);
+
+    assert.strictEqual(set.at(0), 'foo');
+    assert.strictEqual(set.at(1), 'bar');
+    assert.strictEqual(set.at(2), 'baz');
+    assert.strictEqual(set.at(3), 'quux');
   };
 
 });
