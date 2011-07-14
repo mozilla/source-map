@@ -34,57 +34,49 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+define(function (require, exports, module) {
 
-function run (tests) {
-  var failures = [];
-  var total = 0;
-  var passed = 0;
+  var assert = require('assert');
+  var binarySearch = require('source-map/binary-search');
 
-  for ( var i = 0; i < tests.length; i++ ) {
-    for ( var k in tests[i].testCase ) {
-      if ( /^test/.test(k) ) {
-        total++;
-        try {
-          tests[i].testCase[k]();
-          passed++;
-          process.stdout.write('.');
-        }
-        catch (e) {
-          failures.push({
-            name: tests[i].name + ': ' + k,
-            error: e
-          });
-          process.stdout.write('E');
-        }
-      }
-    }
+  function numberCompare (a, b) {
+    return a - b;
   }
 
-  process.stdout.write('\n');
-  console.log(passed + ' / ' + total + ' tests passed.');
+  exports['test too high'] = function () {
+    var needle = 30;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
 
-  failures.forEach(function (f) {
-    console.log('================================================================================');
-    console.log(f.name);
-    console.log('--------------------------------------------------------------------------------');
-    console.log(f.error.stack);
-  });
+    assert.doesNotThrow(function () {
+      binarySearch.search(needle, haystack, numberCompare);
+    });
 
-  process.stdout.end();
+    assert.equal(binarySearch.search(needle, haystack, numberCompare), 20);
+  };
 
-  return failures.length;
-}
+  exports['test too low'] = function () {
+    var needle = 1;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
 
-var code;
+    assert.doesNotThrow(function () {
+      binarySearch.search(needle, haystack, numberCompare);
+    });
 
-process.stdout.on('close', function () {
-  process.exit(code);
+    assert.equal(binarySearch.search(needle, haystack, numberCompare), null);
+  };
+
+  exports['test exact search'] = function () {
+    var needle = 4;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare), 4);
+  };
+
+  exports['test fuzzy search'] = function () {
+    var needle = 19;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare), 18);
+  };
+
 });
-
-code = run([
-  { name: 'Base 64', testCase: require('./test-base64') },
-  { name: 'Base 64 VLQ', testCase: require('./test-base64-vlq') },
-  { name: 'ArraySet', testCase: require('./test-array-set') },
-  { name: 'Binary Search', testCase: require('./test-binary-search') },
-  { name: 'Source Map Generator', testCase: require('./test-source-map-generator') }
-]);
