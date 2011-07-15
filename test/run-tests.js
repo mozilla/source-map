@@ -86,5 +86,6 @@ code = run([
   { name: 'Base 64 VLQ', testCase: require('./test-base64-vlq') },
   { name: 'ArraySet', testCase: require('./test-array-set') },
   { name: 'Binary Search', testCase: require('./test-binary-search') },
-  { name: 'Source Map Generator', testCase: require('./test-source-map-generator') }
+  { name: 'Source Map Generator', testCase: require('./test-source-map-generator') },
+  { name: 'Source Map Consumer', testCase: require('./test-source-map-consumer') }
 ]);

@@ -36,32 +36,55 @@
  * ***** END LICENSE BLOCK ***** */
 define(function (require, exports, module) {
 
-  /**
-   * This is a helper function for getting values from parameter/options
-   * objects.
-   *
-   * @param args The object we are extracting values from
-   * @param name The name of the property we are getting.
-   * @param defaultValue An optional value to return if the property is missing
-   * from the object. If this is not specified and the property is missing, an
-   * error will be thrown.
-   */
-  function getArg (args, name, defaultValue) {
-    if ( name in args ) {
-      return args[name];
-    } else if ( arguments.length === 3 ) {
-      return defaultValue;
-    } else {
-      throw new Error('"' + name + '" is a required argument.');
-    }
-  }
-  exports.getArg = getArg;
+  var assert = require('assert');
 
-  function join (root, path) {
-    return path.charAt(0) === '/'
-      ? path
-      : root.replace(/\/*$/, '') + '/' + path;
+  // This is a test mapping which maps functions from two different files
+  // (one.js and two.js) to a minified generated source.
+  //
+  // Here is one.js:
+  //
+  //   ONE.foo = function (bar) {
+  //     return baz(bar);
+  //   };
+  //
+  // Here is two.js:
+  //
+  //   TWO.inc = function (n) {
+  //     return n + 1;
+  //   };
+  //
+  // And here is the generated code (min.js):
+  //
+  //   ONE.foo=function(a){return baz(a);};
+  //   TWO.inc=function(a){return a+1;};
+  exports.testMap = {
+    version: 3,
+    file: 'min.js',
+    names: ['bar', 'baz', 'n'],
+    sources: ['one.js', 'two.js'],
+    sourceRoot: '/the/root',
+    mappings: 'CACC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
+  };
+
+  function assertMapping (generatedLine, generatedColumn, originalSource,
+                          originalLine, originalColumn, name, map) {
+    var mapping = map.originalPositionFor({
+      line: generatedLine,
+      column: generatedColumn
+    });
+    assert.equal(mapping.name, name,
+                 'Incorrect name, expected ' + JSON.stringify(name)
+                 + ', got ' + JSON.stringify(mapping.name));
+    assert.equal(mapping.line, originalLine,
+                 'Incorrect line, expected ' + JSON.stringify(originalLine)
+                 + ', got ' + JSON.stringify(mapping.line));
+    assert.equal(mapping.column, originalColumn,
+                 'Incorrect column, expected ' + JSON.stringify(originalColumn)
+                 + ', got ' + JSON.stringify(mapping.column));
+    assert.equal(mapping.source, originalSource,
+                 'Incorrect source, expected ' + JSON.stringify(originalSource)
+                 + ', got ' + JSON.stringify(mapping.source));
   }
-  exports.join = join;
+  exports.assertMapping = assertMapping;
 
 });
