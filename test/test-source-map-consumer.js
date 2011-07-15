@@ -85,7 +85,12 @@ define(function (require, exports, module) {
     testUtil.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', map);
   };
 
-  // exports['test mapping tokens back fuzzy'] = function () {
-  // };
+  exports['test mapping tokens back fuzzy'] = function () {
+    var map = new SourceMapConsumer(testUtil.testMap);
+
+    testUtil.assertMapping(1, 20, '/the/root/one.js', 1, 21, 'bar', map);
+    testUtil.assertMapping(1, 30, '/the/root/one.js', 2, 10, 'baz', map);
+    testUtil.assertMapping(2, 12, '/the/root/two.js', 1, 11, null, map);
+  };
 
 });
