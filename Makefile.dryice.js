@@ -85,7 +85,7 @@ function buildFirefox () {
       'build/suffix-source-map-consumer.jsm'
     ],
     filter: copy.filter.moduleDefines,
-    dest: 'dist/source-map-consumer.jsm'
+    dest: 'dist/SourceMapConsumer.jsm'
   });
 }
 
