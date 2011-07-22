@@ -94,7 +94,7 @@ try {
   dirExists = fs.statSync('dist').isDirectory();
 } catch (err) {}
 
-if ( ! dirExists ) {
+if (!dirExists) {
   fs.mkdirSync('dist', 0777);
 }
 

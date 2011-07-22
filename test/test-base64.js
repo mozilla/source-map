@@ -55,7 +55,7 @@ define(function (require, exports, module) {
   };
 
   exports['test normal encoding and decoding'] = function () {
-    for ( var i = 0; i < 64; i++ ) {
+    for (var i = 0; i < 64; i++) {
       assert.equal(base64.decode(base64.encode(i)), i);
     }
   };

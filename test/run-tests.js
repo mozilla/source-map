@@ -40,9 +40,9 @@ function run (tests) {
   var total = 0;
   var passed = 0;
 
-  for ( var i = 0; i < tests.length; i++ ) {
-    for ( var k in tests[i].testCase ) {
-      if ( /^test/.test(k) ) {
+  for (var i = 0; i < tests.length; i++) {
+    for (var k in tests[i].testCase) {
+      if (/^test/.test(k)) {
         total++;
         try {
           tests[i].testCase[k]();

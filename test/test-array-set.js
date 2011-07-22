@@ -41,7 +41,7 @@ define(function (require, exports, module) {
 
   function makeTestSet () {
     var set = new ArraySet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       set.add(String(i));
     }
     return set;
@@ -49,21 +49,21 @@ define(function (require, exports, module) {
 
   exports['test .has() membership'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.ok(set.has(String(i)));
     }
   };
 
   exports['test .indexOf() elements'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.indexOf(String(i)), i);
     }
   };
 
   exports['test .at() indexing'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.at(i), String(i));
     }
   };

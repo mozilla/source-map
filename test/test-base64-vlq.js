@@ -41,7 +41,7 @@ define(function (require, exports, module) {
 
   exports['test normal encoding and decoding'] = function () {
     var result;
-    for ( var i = -128; i < 128; i++ ) {
+    for (var i = -128; i < 128; i++) {
       result = base64VLQ.decode(base64VLQ.encode(i));
       assert.ok(result);
       assert.equal(result.value, i);
