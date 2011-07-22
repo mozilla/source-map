@@ -43,8 +43,6 @@
 // - $GCLI_HOME/build/mini_require.js
 // They should both be kept in sync
 
-var debugDependencies = false;
-
 /**
  * Define a module along with a payload.
  * @param {string} moduleName Name for the payload
@@ -53,22 +51,15 @@ var debugDependencies = false;
  */
 function define(moduleName, deps, payload) {
   if (typeof moduleName != "string") {
-    console.error(this.depth + " Error: Module name is not a string.");
-    console.trace();
-    return;
+    throw new TypeError('Expected string, got: ' + moduleName);
   }
 
   if (arguments.length == 2) {
     payload = deps;
   }
 
-  if (debugDependencies) {
-    console.log("define: " + moduleName + " -> " + payload.toString()
-        .slice(0, 40).replace(/\n/, '\\n').replace(/\r/, '\\r') + "...");
-  }
-
   if (moduleName in define.modules) {
-    console.error(this.depth + " Error: Redefining module: " + moduleName);
+    throw new Error("Module already defined: " + moduleName);
   }
   define.modules[moduleName] = payload;
 };
@@ -89,10 +80,6 @@ define.modules = {};
  */
 function Domain() {
   this.modules = {};
-
-  if (debugDependencies) {
-    this.depth = "";
-  }
 }
 
 /**
@@ -134,41 +121,19 @@ Domain.prototype.require = function(deps, callback) {
 Domain.prototype.lookup = function(moduleName) {
   if (moduleName in this.modules) {
     var module = this.modules[moduleName];
-    if (debugDependencies) {
-      console.log(this.depth + " Using module: " + moduleName);
-    }
     return module;
   }
 
   if (!(moduleName in define.modules)) {
-    console.error(this.depth + " Missing module: " + moduleName);
-    return null;
+    throw new Error("Module not defined: " + moduleName);
   }
 
   var module = define.modules[moduleName];
 
-  if (debugDependencies) {
-    console.log(this.depth + " Compiling module: " + moduleName);
-  }
-
   if (typeof module == "function") {
-    if (debugDependencies) {
-      this.depth += ".";
-    }
-
     var exports = {};
-    try {
-      module(this.require.bind(this), exports, { id: moduleName, uri: "" });
-    }
-    catch (ex) {
-      console.error("Error using module: " + moduleName, ex);
-      throw ex;
-    }
+    module(this.require.bind(this), exports, { id: moduleName, uri: "" });
     module = exports;
-
-    if (debugDependencies) {
-      this.depth = this.depth.slice(0, -1);
-    }
   }
 
   // cache the resulting module object for next time
