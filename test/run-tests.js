@@ -35,7 +35,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function run (tests) {
+function run(tests) {
   var failures = [];
   var total = 0;
   var passed = 0;

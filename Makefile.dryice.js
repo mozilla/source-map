@@ -38,7 +38,7 @@ var path = require('path');
 var fs = require('fs');
 var copy = require('dryice').copy;
 
-function buildBrowser () {
+function buildBrowser() {
   console.log('Creating dist/source-map.js');
 
   var project = copy.createCommonJsProject({
@@ -58,7 +58,7 @@ function buildBrowser () {
   });
 }
 
-function buildBrowserMin () {
+function buildBrowserMin() {
   console.log('Creating dist/source-map.min.js');
 
   copy({
@@ -68,7 +68,7 @@ function buildBrowserMin () {
   });
 }
 
-function buildFirefox () {
+function buildFirefox() {
   console.log('Creating dist/source-map-consumer.jsm');
 
   var project = copy.createCommonJsProject({

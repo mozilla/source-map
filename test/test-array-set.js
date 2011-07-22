@@ -39,7 +39,7 @@ define(function (require, exports, module) {
   var assert = require('assert');
   var ArraySet = require('source-map/array-set').ArraySet;
 
-  function makeTestSet () {
+  function makeTestSet() {
     var set = new ArraySet();
     for (var i = 0; i < 100; i++) {
       set.add(String(i));

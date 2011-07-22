@@ -66,8 +66,8 @@ define(function (require, exports, module) {
     mappings: 'CACC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
   };
 
-  function assertMapping (generatedLine, generatedColumn, originalSource,
-                          originalLine, originalColumn, name, map) {
+  function assertMapping(generatedLine, generatedColumn, originalSource,
+                         originalLine, originalColumn, name, map) {
     var mapping = map.originalPositionFor({
       line: generatedLine,
       column: generatedColumn
