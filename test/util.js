@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -66,8 +66,8 @@ define(function (require, exports, module) {
     mappings: 'CACC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
   };
 
-  function assertMapping (generatedLine, generatedColumn, originalSource,
-                          originalLine, originalColumn, name, map) {
+  function assertMapping(generatedLine, generatedColumn, originalSource,
+                         originalLine, originalColumn, name, map) {
     var mapping = map.originalPositionFor({
       line: generatedLine,
       column: generatedColumn

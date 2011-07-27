@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -39,9 +39,9 @@ define(function (require, exports, module) {
   var assert = require('assert');
   var ArraySet = require('source-map/array-set').ArraySet;
 
-  function makeTestSet () {
+  function makeTestSet() {
     var set = new ArraySet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       set.add(String(i));
     }
     return set;
@@ -49,21 +49,21 @@ define(function (require, exports, module) {
 
   exports['test .has() membership'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.ok(set.has(String(i)));
     }
   };
 
   exports['test .indexOf() elements'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.indexOf(String(i)), i);
     }
   };
 
   exports['test .at() indexing'] = function () {
     var set = makeTestSet();
-    for ( var i = 0; i < 100; i++ ) {
+    for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.at(i), String(i));
     }
   };

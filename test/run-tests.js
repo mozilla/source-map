@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -35,14 +35,14 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-function run (tests) {
+function run(tests) {
   var failures = [];
   var total = 0;
   var passed = 0;
 
-  for ( var i = 0; i < tests.length; i++ ) {
-    for ( var k in tests[i].testCase ) {
-      if ( /^test/.test(k) ) {
+  for (var i = 0; i < tests.length; i++) {
+    for (var k in tests[i].testCase) {
+      if (/^test/.test(k)) {
         total++;
         try {
           tests[i].testCase[k]();

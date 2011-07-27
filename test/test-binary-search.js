@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -39,7 +39,7 @@ define(function (require, exports, module) {
   var assert = require('assert');
   var binarySearch = require('source-map/binary-search');
 
-  function numberCompare (a, b) {
+  function numberCompare(a, b) {
     return a - b;
   }
 

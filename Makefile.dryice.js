@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -38,7 +38,7 @@ var path = require('path');
 var fs = require('fs');
 var copy = require('dryice').copy;
 
-function buildBrowser () {
+function buildBrowser() {
   console.log('Creating dist/source-map.js');
 
   var project = copy.createCommonJsProject({
@@ -58,7 +58,7 @@ function buildBrowser () {
   });
 }
 
-function buildBrowserMin () {
+function buildBrowserMin() {
   console.log('Creating dist/source-map.min.js');
 
   copy({
@@ -68,7 +68,7 @@ function buildBrowserMin () {
   });
 }
 
-function buildFirefox () {
+function buildFirefox() {
   console.log('Creating dist/source-map-consumer.jsm');
 
   var project = copy.createCommonJsProject({
@@ -94,7 +94,7 @@ try {
   dirExists = fs.statSync('dist').isDirectory();
 } catch (err) {}
 
-if ( ! dirExists ) {
+if (!dirExists) {
   fs.mkdirSync('dist', 0777);
 }
 

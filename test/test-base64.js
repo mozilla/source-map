@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -55,7 +55,7 @@ define(function (require, exports, module) {
   };
 
   exports['test normal encoding and decoding'] = function () {
-    for ( var i = 0; i < 64; i++ ) {
+    for (var i = 0; i < 64; i++) {
       assert.equal(base64.decode(base64.encode(i)), i);
     }
   };

@@ -19,7 +19,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *      Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
+ *   Nick Fitzgerald <nfitzgerald@mozilla.com> (original author)
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -41,7 +41,7 @@ define(function (require, exports, module) {
 
   exports['test normal encoding and decoding'] = function () {
     var result;
-    for ( var i = -128; i < 128; i++ ) {
+    for (var i = -128; i < 128; i++) {
       result = base64VLQ.decode(base64VLQ.encode(i));
       assert.ok(result);
       assert.equal(result.value, i);
