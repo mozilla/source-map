@@ -42,7 +42,7 @@ function buildBrowser() {
   console.log('Creating dist/source-map.js');
 
   var project = copy.createCommonJsProject({
-    roots: [ path.join(__dirname, 'lib') ]
+    roots: [ __dirname ]
   });
 
   copy({
@@ -50,7 +50,7 @@ function buildBrowser() {
       'build/mini-require.js',
       copy.source.commonjs({
         project: project,
-        require: [ 'source-map' ]
+        require: [ 'lib/source-map' ]
       })
     ],
     filter: copy.filter.moduleDefines,
@@ -72,15 +72,16 @@ function buildFirefox() {
   console.log('Creating dist/source-map-consumer.jsm');
 
   var project = copy.createCommonJsProject({
-    roots: [ path.join(__dirname, 'lib') ]
+    roots: [ __dirname ]
   });
 
   copy({
     source: [
       'build/prefix-source-map-consumer.jsm',
+      'build/mini-require.js',
       copy.source.commonjs({
         project: project,
-        require: [ 'source-map/source-map-consumer' ]
+        require: [ 'lib/source-map/source-map-consumer' ]
       }),
       'build/suffix-source-map-consumer.jsm'
     ],

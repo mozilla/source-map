@@ -37,7 +37,7 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var binarySearch = require('source-map/binary-search');
+  var binarySearch = require('../lib/source-map/binary-search');
 
   function numberCompare(a, b) {
     return a - b;

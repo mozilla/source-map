@@ -37,7 +37,7 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
+  var SourceMapGenerator = require('../lib/source-map/source-map-generator').SourceMapGenerator;
   var testUtil = require('./util');
 
   exports['test some simple stuff'] = function () {

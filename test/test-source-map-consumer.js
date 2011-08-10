@@ -37,7 +37,7 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
+  var SourceMapConsumer = require('../lib/source-map/source-map-consumer').SourceMapConsumer;
   var testUtil = require('./util');
 
   exports['test that we can instantiate with a string or an objects'] = function () {
