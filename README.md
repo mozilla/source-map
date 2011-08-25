@@ -13,8 +13,7 @@ format. It should work in the following environments:
 
 * Inside Firefox (as a JSM file, after the build)
 
-* With NodeJS versions 0.5.0 and higher (which is when support for AMD was
-  added)
+* With NodeJS versions 0.4.X
 
 ## Installing with NPM (for use with NodeJS)
 
@@ -49,7 +48,7 @@ Get a reference to the module:
     var sourceMap = require('source-map');
 
     // Browser builds
-    var sourceMap = require('lib/source-map');
+    var sourceMap = window.sourceMap;
 
     // Inside Firefox
     let sourceMap = {};

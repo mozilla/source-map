@@ -37,7 +37,7 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var base64VLQ = require('../lib/source-map/base64-vlq');
+  var base64VLQ = require('source-map/base64-vlq');
 
   exports['test normal encoding and decoding'] = function () {
     var result;

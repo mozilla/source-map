@@ -50,8 +50,10 @@ function buildBrowser() {
       'build/mini-require.js',
       copy.source.commonjs({
         project: project,
-        require: [ 'lib/source-map' ]
-      })
+        require: [ 'lib/source-map/source-map-generator',
+                   'lib/source-map/source-map-consumer' ]
+      }),
+      'build/suffix-browser.js'
     ],
     filter: copy.filter.moduleDefines,
     dest: 'dist/source-map.js'

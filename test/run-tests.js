@@ -81,11 +81,31 @@ process.stdout.on('close', function () {
   process.exit(code);
 });
 
-code = run([
-  { name: 'Base 64', testCase: require('./test-base64') },
-  { name: 'Base 64 VLQ', testCase: require('./test-base64-vlq') },
-  { name: 'ArraySet', testCase: require('./test-array-set') },
-  { name: 'Binary Search', testCase: require('./test-binary-search') },
-  { name: 'Source Map Generator', testCase: require('./test-source-map-generator') },
-  { name: 'Source Map Consumer', testCase: require('./test-source-map-consumer') }
-]);
+var requirejs = require('requirejs');
+
+requirejs.config({
+  paths: {
+    'source-map': '../lib/source-map'
+  },
+  nodeRequire: require
+});
+
+requirejs([
+  './test-base64',
+  './test-base64-vlq',
+  './test-array-set',
+  './test-binary-search',
+  './test-source-map-generator',
+  './test-source-map-consumer'
+], function (testBase64, testBase64VLQ, testArraySet, testBinarySearch, testSourceMapGenerator, testSourceMapConsumer) {
+
+  code = run([
+    { name: 'Base 64', testCase: testBase64 },
+    { name: 'Base 64 VLQ', testCase: testBase64VLQ },
+    { name: 'ArraySet', testCase: testArraySet },
+    { name: 'Binary Search', testCase: testBinarySearch },
+    { name: 'Source Map Generator', testCase: testSourceMapGenerator },
+    { name: 'Source Map Consumer', testCase: testSourceMapConsumer }
+  ]);
+
+});

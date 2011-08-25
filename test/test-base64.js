@@ -37,7 +37,7 @@
 define(function (require, exports, module) {
 
   var assert = require('assert');
-  var base64 = require('../lib/source-map/base64');
+  var base64 = require('source-map/base64');
 
   exports['test out of range encoding'] = function () {
     assert.throws(function () {
