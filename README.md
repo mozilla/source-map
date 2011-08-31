@@ -136,7 +136,7 @@ Renders the source map being generated to a string.
 
 ## Running the Tests
 
-Install NodeJS version 0.5.0 or greater, then run `node test/run-tests.js`.
+Install NodeJS version 0.4.0 or greater, then run `node test/run-tests.js`.
 
 [format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 [feature]: https://wiki.mozilla.org/DevTools/Features/SourceMap
