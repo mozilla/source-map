@@ -17,12 +17,12 @@ format. It should work in the following environments:
 
 ## Installing with NPM (for use with NodeJS)
 
-Eventually, it should just be
+Simply
 
     $ npm install source-map
 
-but at the time of writing, it hasn't been published yet (this should change
-very soon). You can just clone the repository down and then link it, for now.
+Or, if you'd like to hack on this library and have it installed via npm so you
+can try out your changes:
 
     $ git clone https://fitzgen@github.com/mozilla/source-map.git
     $ cd source-map
