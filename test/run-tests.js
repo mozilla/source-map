@@ -90,22 +90,25 @@ requirejs.config({
   nodeRequire: require
 });
 
-requirejs([
-  './test-base64',
-  './test-base64-vlq',
-  './test-array-set',
-  './test-binary-search',
-  './test-source-map-generator',
-  './test-source-map-consumer'
-], function (testBase64, testBase64VLQ, testArraySet, testBinarySearch, testSourceMapGenerator, testSourceMapConsumer) {
+var fs = require('fs');
 
-  code = run([
-    { name: 'Base 64', testCase: testBase64 },
-    { name: 'Base 64 VLQ', testCase: testBase64VLQ },
-    { name: 'ArraySet', testCase: testArraySet },
-    { name: 'Binary Search', testCase: testBinarySearch },
-    { name: 'Source Map Generator', testCase: testSourceMapGenerator },
-    { name: 'Source Map Consumer', testCase: testSourceMapConsumer }
-  ]);
+function isTestFile(f) {
+  return /^test\-.*?\.js/.test(f);
+}
+
+function toModule(f) {
+  return './' + f.replace(/\.js$/, '');
+}
+
+var requires = fs.readdirSync(__dirname).filter(isTestFile).map(toModule);
+
+requirejs(requires, function () {
+
+  code = run([].slice.call(arguments).map(function (mod, i) {
+    return {
+      name: requires[i],
+      testCase: mod
+    };
+  }));
 
 });

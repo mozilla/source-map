@@ -134,9 +134,81 @@ should have the following properties:
 
 Renders the source map being generated to a string.
 
-## Running the Tests
+### SourceNode
+
+SourceNodes provide a way to abstract over interpolating and/or concatenating
+snippets of generated JavaScript source code, while maintaining the line and
+column information associated between those snippets and the original source
+code. This is useful as the final intermediate representation a compiler might
+use before outputting the generated JS and source map.
+
+#### new SourceNode(line, column[, chunk])
+
+* `line`: The original line number associated with this source node, or null if
+  it isn't associated with an original line.
+
+* `column`: The original column number associated with this source node, or null
+  if it isn't associated with an original column.
+
+* `chunk`: Optional. Is immediately passed to `SourceNode.prototype.add`, see
+  below.
+
+#### SourceNode.prototype.add(chunk)
+
+Add a chunk of generated JS to this source node.
+
+* `chunk`: A string snippet of generated JS code, another instance of
+   `SourceNode`, or an array where each member is one of those things.
+
+#### SourceNode.prototype.walk(fn)
+
+Walk over the tree of JS snippets in this node and its children. The walking
+function is called once for each snippet of JS and is passed that snippet and
+the its original associated source's line/column location.
+
+* `fn`: The traversal function.
+
+#### SourceNode.prototype.join(sep)
+
+Like `String.prototype.join` except for SourceNodes. Inserts the separator
+between each of this source node's children.
+
+* `sep`: The separator.
+
+#### SourceNode.prototype.replaceRight(pattern, replacement)
+
+Call `String.prototype.replace` on the very right-most source snippet. Useful
+for trimming whitespace from the end of a source node, etc.
+
+* `pattern`: The pattern to replace.
+
+* `replacement`: The thing to replace the pattern with.
+
+#### SourceNode.prototype.toString()
+
+Return the string representation of this source node. Walks over the tree and
+concatenates all the various snippets together to one string.
+
+### SourceNode.prototype.toStringWithSourceMap(startOfSourceMap)
+
+Returns the string representation of this tree of source nodes, plus a
+SourceMapGenerator which contains all the mappings between the generated and
+original sources.
+
+The arguments are the same as those to `new SourceMapGenerator`.
+
+## Tests
 
 Install NodeJS version 0.4.0 or greater, then run `node test/run-tests.js`.
+
+To add new tests, create a new file named `test/test-<your new test name>.js`
+and export your test functions with names that start with "test", for example
+
+    exports["test doing the foo bar"] = function () {
+      ...
+    };
+
+The new test will be located automatically when you run the suite.
 
 [format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 [feature]: https://wiki.mozilla.org/DevTools/Features/SourceMap

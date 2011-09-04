@@ -3,5 +3,6 @@
 
 window.sourceMap = {
   SourceMapConsumer: require('lib/source-map/source-map-consumer').SourceMapConsumer,
-  SourceMapGenerator: require('lib/source-map/source-map-generator').SourceMapGenerator
+  SourceMapGenerator: require('lib/source-map/source-map-generator').SourceMapGenerator,
+  SourceNode: require('lib/source-map/source-node').SourceNode
 };
