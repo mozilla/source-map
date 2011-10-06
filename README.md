@@ -170,7 +170,7 @@ the its original associated source's line/column location.
 
 #### SourceNode.prototype.join(sep)
 
-Like `String.prototype.join` except for SourceNodes. Inserts the separator
+Like `Array.prototype.join` except for SourceNodes. Inserts the separator
 between each of this source node's children.
 
 * `sep`: The separator.
