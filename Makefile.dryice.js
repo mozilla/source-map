@@ -21,7 +21,8 @@ function buildBrowser() {
       copy.source.commonjs({
         project: project,
         require: [ 'lib/source-map/source-map-generator',
-                   'lib/source-map/source-map-consumer' ]
+                   'lib/source-map/source-map-consumer',
+                   'lib/source-map/source-node']
       }),
       'build/suffix-browser.js'
     ],
