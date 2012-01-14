@@ -69,12 +69,13 @@ define(function (require, exports, module) {
   };
 
   exports['test creating from an array'] = function () {
-    var set = ArraySet.fromArray(['foo', 'bar', 'baz', 'quux']);
+    var set = ArraySet.fromArray(['foo', 'bar', 'baz', 'quux', 'hasOwnProperty']);
 
     assert.ok(set.has('foo'));
     assert.ok(set.has('bar'));
     assert.ok(set.has('baz'));
     assert.ok(set.has('quux'));
+    assert.ok(set.has('hasOwnProperty'));
 
     assert.strictEqual(set.indexOf('foo'), 0);
     assert.strictEqual(set.indexOf('bar'), 1);
