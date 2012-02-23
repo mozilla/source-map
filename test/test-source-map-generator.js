@@ -34,11 +34,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
-
-  var assert = require('assert');
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
-  var testUtil = require('./util');
+ /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('./assert');
+      var SourceMapGenerator = require('source-map/source-map-generator');
+      module.exports = factory(assert, SourceMapGenerator);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'source-map/source-map-generator'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var SourceMapGenerator = sourceMapModule['source-map-generator'];
+      testModule.testSourceMapGenerator = factory(assert, SourceMapGenerator);
+    }
+}(this, function (assert,  SourceMapGenerator) {
+  
+  var exports = {};
 
   exports['test some simple stuff'] = function () {
     var map = new SourceMapGenerator({
@@ -200,4 +215,5 @@ define(function (require, exports, module) {
     assert.equal(map.mappings, 'CACC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA');
   };
 
-});
+  return exports;
+}));

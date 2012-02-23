@@ -34,10 +34,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
-
-  var assert = require('assert');
-  var binarySearch = require('source-map/binary-search');
+  /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('assert');
+      var binarySearch = require('source-map/binary-search');
+      module.exports = factory(assert, binarySearch);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'source-map/binary-search'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var binarySearch = sourceMapModule['binary-search'];
+      testModule.testBinarySearch = factory(assert, binarySearch);
+    }
+}(this, function (assert, binarySearch) {
+ 
+  var exports = {};
 
   function numberCompare(a, b) {
     return a - b;
@@ -79,4 +95,6 @@ define(function (require, exports, module) {
     assert.equal(binarySearch.search(needle, haystack, numberCompare), 18);
   };
 
-});
+  return exports;
+
+}));
