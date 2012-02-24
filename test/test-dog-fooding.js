@@ -53,7 +53,7 @@
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var SourceMapConsumer = sourceMapModule['source-map-consumer'];
       var SourceMapGenerator = sourceMapModule['source-map-generator'];
-      testModule.testDogFooding = factory(assert, util, SourceMapConsumer, SourceMapGenerator);
+      testModule['test-dog-fooding'] = factory(assert, util, SourceMapConsumer, SourceMapGenerator);
     }
 }(this, function (assert, util, SourceMapConsumer, SourceMapGenerator) {
 

@@ -1,6 +1,15 @@
-/*globals console define*/
-
-define([], function() {
+/*globals require module exports console define*/
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+        module.exports = factory();
+    } else if (typeof define === 'function' && define.amd) {
+        define([], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      testModule['assert'] = factory();
+    }
+}(this,  function() {
 
   var assert = {
     ok: function(value) {
@@ -10,7 +19,7 @@ define([], function() {
       console.assert(actual === expected);
     },
     equal: function(actual, expected) {
-     console.assert(actual == expected);
+     console.assert(actual === expected);
     },
     throws: function(mustThrow) {
       try {
@@ -36,8 +45,8 @@ define([], function() {
           assert.deepEqual(actual[key], expected[key]);
         }
       });
-    },
+    }
   };
     
   return assert;
-});
+}));

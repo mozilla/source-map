@@ -49,7 +49,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var base64 = sourceMapModule['base64'];
-      testModule.testBase64 = factory(assert, base64);
+      testModule['test-base64'] = factory(assert, base64);
     }
 }(this,  function(assert, base64) {
 

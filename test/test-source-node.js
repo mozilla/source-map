@@ -50,8 +50,9 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var SourceMapGenerator = sourceMapModule['source-map-generator'];
-      var SourceMapGenerator = sourceMapModule['source-map-generator'];
-      testModule.testSourceNode = factory(assert, SourceMapGenerator, SourceMapConsumer, SourceNode);
+      var SourceMapConsumer = sourceMapModule['source-map-consumer'];
+      var SourceNode = sourceMapModule['source-node'];
+      testModule['test-source-node'] = factory(assert, SourceMapGenerator, SourceMapConsumer, SourceNode);
     }
 }(this, function (assert, SourceMapGenerator, SourceMapConsumer, SourceNode) {
 

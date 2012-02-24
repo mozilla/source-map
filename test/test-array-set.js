@@ -49,7 +49,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var ArraySet = sourceMapModule['array-set'];
-      testModule.testArraySet = factory(assert, ArraySet);
+      testModule['test-array-set'] = factory(assert, ArraySet);
     }
 }(this, function (assert, ArraySet) {
 

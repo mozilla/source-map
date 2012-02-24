@@ -49,7 +49,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var SourceMapGenerator = sourceMapModule['source-map-generator'];
-      testModule.testSourceMapGenerator = factory(assert, SourceMapGenerator);
+      testModule['test-source-map-generator'] = factory(assert, SourceMapGenerator);
     }
 }(this, function (assert,  SourceMapGenerator) {
   

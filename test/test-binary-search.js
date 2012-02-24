@@ -49,7 +49,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var binarySearch = sourceMapModule['binary-search'];
-      testModule.testBinarySearch = factory(assert, binarySearch);
+      testModule['test-binary-search'] = factory(assert, binarySearch);
     }
 }(this, function (assert, binarySearch) {
  

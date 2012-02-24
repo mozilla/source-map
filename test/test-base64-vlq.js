@@ -49,7 +49,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var base64VLQ = sourceMapModule['base64-vlq'];
-      testModule.testBase64VLQ = factory(assert, base64VLQ);
+      testModule['test-base64-vlq'] = factory(assert, base64VLQ);
     }
 }(this, function (assert, base64VLQ) {
 

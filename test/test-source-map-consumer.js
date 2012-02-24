@@ -51,7 +51,7 @@
       var assert = testModule['assert'];
       var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
       var SourceMapConsumer = sourceMapModule['source-map-consumer'];
-      testModule.testSourceMapConsumer = factory(assert, util, SourceMapConsumer);
+      testModule['test-source-map-consumer'] = factory(assert, util, SourceMapConsumer);
     }
 }(this, function (assert, testUtil, SourceMapConsumer) {
 
