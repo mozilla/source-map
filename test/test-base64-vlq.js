@@ -34,10 +34,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+  /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('assert');
+      var base64VLQ = require('source-map/base64-vlq');
+      module.exports = factory(assert, base64VLQ);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'source-map/base64-vlq'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var base64VLQ = sourceMapModule['base64-vlq'];
+      testModule['test-base64-vlq'] = factory(assert, base64VLQ);
+    }
+}(this, function (assert, base64VLQ) {
 
-  var assert = require('assert');
-  var base64VLQ = require('source-map/base64-vlq');
+  var exports = {};
 
   exports['test normal encoding and decoding'] = function () {
     var result;
@@ -49,4 +65,5 @@ define(function (require, exports, module) {
     }
   };
 
-});
+  return exports;
+}));

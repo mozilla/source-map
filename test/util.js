@@ -34,9 +34,23 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+/*globals require exports module define*/ 
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+        var assert = require('assert');
+        module.exports = factory(assert);
+    } else if (typeof define === 'function' && define.amd) {
+        define(['assert'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      testModule['util'] = factory(assert);
+    }
+}(this, function(assert) {
 
-  var assert = require('assert');
+  var exports = {};
 
   // This is a test mapping which maps functions from two different files
   // (one.js and two.js) to a minified generated source.
@@ -87,4 +101,5 @@ define(function (require, exports, module) {
   }
   exports.assertMapping = assertMapping;
 
-});
+  return exports;
+}));

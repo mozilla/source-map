@@ -34,10 +34,26 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+ /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('./assert');
+      var ArraySet = require('source-map/array-set');
+      module.exports = factory(assert, ArraySet);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'source-map/array-set'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var ArraySet = sourceMapModule['array-set'];
+      testModule['test-array-set'] = factory(assert, ArraySet);
+    }
+}(this, function (assert, ArraySet) {
 
-  var assert = require('assert');
-  var ArraySet = require('source-map/array-set').ArraySet;
+  var exports = {};
 
   function makeTestSet() {
     var set = new ArraySet();
@@ -87,5 +103,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.at(2), 'baz');
     assert.strictEqual(set.at(3), 'quux');
   };
-
-});
+  
+  return exports;
+  
+}));

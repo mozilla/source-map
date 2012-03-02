@@ -34,12 +34,30 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+ /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('./assert');
+      var util = require('./util');
+      var SourceMapConsumer = require('source-map/source-map-consumer');
+      var SourceMapGenerator = require('source-map/source-map-generator');
+      module.exports = factory(assert, util, SourceMapConsumer, SourceMapGenerator);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'util', 'source-map/source-map-consumer', 'source-map/source-map-generator'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var util = testModule['util'];
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var SourceMapConsumer = sourceMapModule['source-map-consumer'];
+      var SourceMapGenerator = sourceMapModule['source-map-generator'];
+      testModule['test-dog-fooding'] = factory(assert, util, SourceMapConsumer, SourceMapGenerator);
+    }
+}(this, function (assert, util, SourceMapConsumer, SourceMapGenerator) {
 
-  var assert = require('assert');
-  var util = require('./util');
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
+  var exports = {};
 
   exports['test eating our own dog food'] = function () {
     var smg = new SourceMapGenerator({
@@ -90,4 +108,5 @@ define(function (require, exports, module) {
     util.assertMapping(5, 9, '/wu/tang/gza.coffee', 4, 0, null, smc);
   };
 
-});
+  return exports;
+}));
