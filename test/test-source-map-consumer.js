@@ -34,11 +34,28 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+ /*globals require exports module define*/
+ 
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('./assert');
+      var util = require('./util');
+      var SourceMapConsumer = require('source-map/source-map-consumer');
+      module.exports = factory(assert, util, SourceMapConsumer);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert', 'util', 'source-map/source-map-consumer'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var util = testModule['util'];
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var SourceMapConsumer = sourceMapModule['source-map-consumer'];
+      testModule.testSourceMapConsumer = factory(assert, util, SourceMapConsumer);
+    }
+}(this, function (assert, testUtil, SourceMapConsumer) {
 
-  var assert = require('assert');
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
-  var testUtil = require('./util');
+  var exports = {};
 
   exports['test that we can instantiate with a string or an objects'] = function () {
     assert.doesNotThrow(function () {
@@ -92,5 +109,6 @@ define(function (require, exports, module) {
     testUtil.assertMapping(1, 30, '/the/root/one.js', 2, 10, 'baz', map);
     testUtil.assertMapping(2, 12, '/the/root/two.js', 1, 11, null, map);
   };
-
-});
+  
+  return exports;
+}));

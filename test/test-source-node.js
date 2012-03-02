@@ -34,12 +34,28 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-define(function (require, exports, module) {
+ /*globals require exports module define */
+(function (global, factory) { 
+    // https://github.com/umdjs/umd/blob/master/returnExportsGlobal.js
+    if (typeof exports === 'object') {  // Node. 
+      var assert = require('./assert');
+      var SourceMapGenerator = require('source-map/source-map-generator');
+      var SourceMapConsumer = require('source-map/source-map-consumer');
+      var SourceNode = require('source-map/source-node');
+      module.exports = factory(assert, SourceMapGenerator, SourceMapConsumer, SourceNode);
+    } else if (typeof define === 'function' && define.amd) {
+      define(['assert','source-map/source-map-generator','source-map/source-map-consumer','source-map/source-node'], factory);
+    } else {// Browser globals
+      var testModule = global.testModule = global.testModule || {};
+      var assert = testModule['assert'];
+      var sourceMapModule = global.sourceMapModule = global.sourceMapModule || {};
+      var SourceMapGenerator = sourceMapModule['source-map-generator'];
+      var SourceMapGenerator = sourceMapModule['source-map-generator'];
+      testModule.testSourceNode = factory(assert, SourceMapGenerator, SourceMapConsumer, SourceNode);
+    }
+}(this, function (assert, SourceMapGenerator, SourceMapConsumer, SourceNode) {
 
-  var assert = require('assert');
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
-  var SourceNode = require('source-map/source-node').SourceNode;
+  var exports = {};
 
   exports['test .add()'] = function () {
     var node = new SourceNode(null, null, null);
@@ -137,4 +153,5 @@ define(function (require, exports, module) {
     assert.equal(actual.column, 0);
   };
 
-});
+  return exports;
+}));
