@@ -71,8 +71,6 @@ function run(tests) {
     console.log(f.error.stack);
   });
 
-  process.stdout.end();
-
   return failures.length;
 }
 
