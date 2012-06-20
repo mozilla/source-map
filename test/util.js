@@ -6,8 +6,6 @@
  */
 define(function (require, exports, module) {
 
-  var assert = require('assert');
-
   // This is a test mapping which maps functions from two different files
   // (one.js and two.js) to a minified generated source.
   //
@@ -37,7 +35,7 @@ define(function (require, exports, module) {
   };
 
   function assertMapping(generatedLine, generatedColumn, originalSource,
-                         originalLine, originalColumn, name, map) {
+                         originalLine, originalColumn, name, map, assert) {
     var mapping = map.originalPositionFor({
       line: generatedLine,
       column: generatedColumn

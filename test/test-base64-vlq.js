@@ -6,10 +6,9 @@
  */
 define(function (require, exports, module) {
 
-  var assert = require('assert');
   var base64VLQ = require('source-map/base64-vlq');
 
-  exports['test normal encoding and decoding'] = function () {
+  exports['test normal encoding and decoding'] = function (assert) {
     var result;
     for (var i = -255; i < 256; i++) {
       result = base64VLQ.decode(base64VLQ.encode(i));

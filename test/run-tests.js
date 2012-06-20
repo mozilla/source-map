@@ -5,6 +5,7 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+var assert = require('assert');
 
 function run(tests) {
   var failures = [];
@@ -16,7 +17,7 @@ function run(tests) {
       if (/^test/.test(k)) {
         total++;
         try {
-          tests[i].testCase[k]();
+          tests[i].testCase[k](assert);
           passed++;
           process.stdout.write('.');
         }

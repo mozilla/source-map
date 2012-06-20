@@ -6,11 +6,10 @@
  */
 define(function (require, exports, module) {
 
-  var assert = require('assert');
   var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
   var testUtil = require('./util');
 
-  exports['test some simple stuff'] = function () {
+  exports['test some simple stuff'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'foo.js',
       sourceRoot: '.'
@@ -18,7 +17,7 @@ define(function (require, exports, module) {
     assert.ok(true);
   };
 
-  exports['test adding mappings (case 1)'] = function () {
+  exports['test adding mappings (case 1)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -31,7 +30,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (case 2)'] = function () {
+  exports['test adding mappings (case 2)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -46,7 +45,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (case 3)'] = function () {
+  exports['test adding mappings (case 3)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -62,7 +61,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (invalid)'] = function () {
+  exports['test adding mappings (invalid)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -82,7 +81,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test that the correct mappings are being generated'] = function () {
+  exports['test that the correct mappings are being generated'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'min.js',
       sourceRoot: '/the/root'

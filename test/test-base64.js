@@ -6,10 +6,9 @@
  */
 define(function (require, exports, module) {
 
-  var assert = require('assert');
   var base64 = require('source-map/base64');
 
-  exports['test out of range encoding'] = function () {
+  exports['test out of range encoding'] = function (assert) {
     assert.throws(function () {
       base64.encode(-1);
     });
@@ -18,13 +17,13 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test out of range decoding'] = function () {
+  exports['test out of range decoding'] = function (assert) {
     assert.throws(function () {
       base64.decode('=');
     });
   };
 
-  exports['test normal encoding and decoding'] = function () {
+  exports['test normal encoding and decoding'] = function (assert) {
     for (var i = 0; i < 64; i++) {
       assert.equal(base64.decode(base64.encode(i)), i);
     }
