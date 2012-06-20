@@ -10,7 +10,7 @@ define(function (require, exports, module) {
   var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
   var SourceNode = require('source-map/source-node').SourceNode;
 
-  exports['test .add()'] = function (assert) {
+  exports['test .add()'] = function (assert, util) {
     var node = new SourceNode(null, null, null);
 
     // Adding a string works.
@@ -34,7 +34,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test .toString()'] = function (assert) {
+  exports['test .toString()'] = function (assert, util) {
     assert.equal((new SourceNode(null, null, null,
                                  ['function foo() {',
                                   new SourceNode(null, null, null, 'return 10;'),
@@ -42,13 +42,13 @@ define(function (require, exports, module) {
                  'function foo() {return 10;}');
   };
 
-  exports['test .join()'] = function (assert) {
+  exports['test .join()'] = function (assert, util) {
     assert.equal((new SourceNode(null, null, null,
                                  ['a', 'b', 'c', 'd'])).join(', ').toString(),
                  'a, b, c, d');
   };
 
-  exports['test .walk()'] = function (assert) {
+  exports['test .walk()'] = function (assert, util) {
     var node = new SourceNode(null, null, null,
                               ['(function () {\n',
                                '  ', new SourceNode(1, 0, 'a.js', ['someCall()']), ';\n',
@@ -74,7 +74,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test .toStringWithSourceMap()'] = function (assert) {
+  exports['test .toStringWithSourceMap()'] = function (assert, util) {
     var node = new SourceNode(null, null, null,
                               ['(function () {\n',
                                '  ', new SourceNode(1, 0, 'a.js', ['someCall()']), ';\n',

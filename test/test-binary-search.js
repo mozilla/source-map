@@ -12,7 +12,7 @@ define(function (require, exports, module) {
     return a - b;
   }
 
-  exports['test too high'] = function (assert) {
+  exports['test too high'] = function (assert, util) {
     var needle = 30;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
@@ -23,7 +23,7 @@ define(function (require, exports, module) {
     assert.equal(binarySearch.search(needle, haystack, numberCompare), 20);
   };
 
-  exports['test too low'] = function (assert) {
+  exports['test too low'] = function (assert, util) {
     var needle = 1;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
@@ -34,14 +34,14 @@ define(function (require, exports, module) {
     assert.equal(binarySearch.search(needle, haystack, numberCompare), null);
   };
 
-  exports['test exact search'] = function (assert) {
+  exports['test exact search'] = function (assert, util) {
     var needle = 4;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
     assert.equal(binarySearch.search(needle, haystack, numberCompare), 4);
   };
 
-  exports['test fuzzy search'] = function (assert) {
+  exports['test fuzzy search'] = function (assert, util) {
     var needle = 19;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 

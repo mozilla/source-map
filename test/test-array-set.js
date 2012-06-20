@@ -16,28 +16,28 @@ define(function (require, exports, module) {
     return set;
   }
 
-  exports['test .has() membership'] = function (assert) {
+  exports['test .has() membership'] = function (assert, util) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.ok(set.has(String(i)));
     }
   };
 
-  exports['test .indexOf() elements'] = function (assert) {
+  exports['test .indexOf() elements'] = function (assert, util) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.indexOf(String(i)), i);
     }
   };
 
-  exports['test .at() indexing'] = function (assert) {
+  exports['test .at() indexing'] = function (assert, util) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.at(i), String(i));
     }
   };
 
-  exports['test creating from an array'] = function (assert) {
+  exports['test creating from an array'] = function (assert, util) {
     var set = ArraySet.fromArray(['foo', 'bar', 'baz', 'quux', 'hasOwnProperty']);
 
     assert.ok(set.has('foo'));

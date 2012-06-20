@@ -6,11 +6,10 @@
  */
 define(function (require, exports, module) {
 
-  var util = require('./util');
   var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
   var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
 
-  exports['test eating our own dog food'] = function (assert) {
+  exports['test eating our own dog food'] = function (assert, util) {
     var smg = new SourceMapGenerator({
       file: 'testing.js',
       sourceRoot: '/wu/tang'
