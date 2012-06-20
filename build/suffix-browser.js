@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 window.sourceMap = {
-  SourceMapConsumer: require('lib/source-map/source-map-consumer').SourceMapConsumer,
-  SourceMapGenerator: require('lib/source-map/source-map-generator').SourceMapGenerator,
-  SourceNode: require('lib/source-map/source-node').SourceNode
+  SourceMapConsumer: require('source-map/source-map-consumer').SourceMapConsumer,
+  SourceMapGenerator: require('source-map/source-map-generator').SourceMapGenerator,
+  SourceNode: require('source-map/source-node').SourceNode
 };

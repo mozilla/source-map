@@ -15,6 +15,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 
-var EXPORTED_SYMBOLS = [ "SourceMapConsumer" ];
+var EXPORTED_SYMBOLS = [ "SourceMapConsumer", "SourceMapGenerator", "SourceNode" ];
 
-
+Components.utils.import('resource:///modules/devtools/Require.jsm');

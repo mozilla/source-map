@@ -9,21 +9,21 @@ var fs = require('fs');
 var copy = require('dryice').copy;
 
 function buildBrowser() {
-  console.log('Creating dist/source-map.js');
+  console.log('\nCreating dist/source-map.js');
 
   var project = copy.createCommonJsProject({
-    roots: [ __dirname ]
+    roots: [ path.join(__dirname, 'lib') ]
   });
 
   copy({
     source: [
       'build/mini-require.js',
-      copy.source.commonjs({
+      {
         project: project,
-        require: [ 'lib/source-map/source-map-generator',
-                   'lib/source-map/source-map-consumer',
-                   'lib/source-map/source-node']
-      }),
+        require: [ 'source-map/source-map-generator',
+                   'source-map/source-map-consumer',
+                   'source-map/source-node']
+      },
       'build/suffix-browser.js'
     ],
     filter: copy.filter.moduleDefines,
@@ -32,7 +32,7 @@ function buildBrowser() {
 }
 
 function buildBrowserMin() {
-  console.log('Creating dist/source-map.min.js');
+  console.log('\nCreating dist/source-map.min.js');
 
   copy({
     source: 'dist/source-map.js',
@@ -42,25 +42,31 @@ function buildBrowserMin() {
 }
 
 function buildFirefox() {
-  console.log('Creating dist/source-map-consumer.jsm');
+  console.log('\nCreating dist/SourceMap.jsm');
 
   var project = copy.createCommonJsProject({
-    roots: [ __dirname ]
+    roots: [ path.join(__dirname, 'lib') ]
   });
 
+  // Create SourceMapConsumer.jsm
   copy({
     source: [
-      'build/prefix-source-map-consumer.jsm',
-      'build/mini-require.js',
-      copy.source.commonjs({
+      'build/prefix-source-map.jsm',
+      {
         project: project,
-        require: [ 'lib/source-map/source-map-consumer' ]
-      }),
-      'build/suffix-source-map-consumer.jsm'
+        require: [ 'source-map/source-map-consumer',
+                   'source-map/source-map-generator',
+                   'source-map/source-node' ]
+      },
+      'build/suffix-source-map.jsm'
     ],
     filter: copy.filter.moduleDefines,
-    dest: 'dist/SourceMapConsumer.jsm'
+    dest: 'dist/SourceMap.jsm'
   });
+
+  // TODO: Create TestUtils.jsm
+
+  // TODO: Loop through all the test files and make them built test files.
 }
 
 var dirExists = false;
