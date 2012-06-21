@@ -48,7 +48,6 @@ function buildFirefox() {
     roots: [ path.join(__dirname, 'lib') ]
   });
 
-  // Create SourceMapConsumer.jsm
   copy({
     source: [
       'build/prefix-source-map.jsm',
@@ -64,20 +63,74 @@ function buildFirefox() {
     dest: 'dist/SourceMap.jsm'
   });
 
-  // TODO: Create TestUtils.jsm
+  // Create dist/test/Utils.jsm
+  console.log('\nCreating dist/test/Utils.jsm');
+
+  project = copy.createCommonJsProject({
+    roots: [ __dirname, path.join(__dirname, 'lib') ]
+  });
+
+  copy({
+    source: [
+      'build/prefix-utils.jsm',
+      'build/assert-shim.js',
+      {
+        project: project,
+        require: [ 'test/source-map/util' ]
+      },
+      'build/suffix-utils.jsm'
+    ],
+    filter: copy.filter.moduleDefines,
+    dest: 'dist/test/Utils.jsm'
+  });
 
   // TODO: Loop through all the test files and make them built test files.
+
+  function isTestFile(f) {
+    return /^test\-.*?\.js/.test(f);
+  }
+
+  var testFiles = fs.readdirSync(path.join(__dirname, 'test', 'source-map')).filter(isTestFile);
+
+  testFiles.forEach(function (testFile) {
+    console.log('\nCreating', path.join('dist', 'test', testFile.replace(/\-/g, '_')));
+
+    copy({
+      source: [
+        'build/test-prefix.js',
+        path.join('test', 'source-map', testFile),
+        'build/test-suffix.js'
+      ],
+      filter: [
+        function (input, source) {
+          return input.replace('define(',
+                               'define("'
+                               + path.join('test', 'source-map', testFile.replace(/\.js$/, ''))
+                               + '", ["require", "exports", "module"], ');
+        },
+        function (input, source) {
+          return input.replace('{THIS_MODULE}', function () {
+            return "test/source-map/" + testFile.replace(/\.js$/, '');
+          });
+        }
+      ],
+      dest: path.join('dist', 'test', testFile.replace(/\-/g, '_'))
+    });
+  });
 }
 
-var dirExists = false;
-try {
-  dirExists = fs.statSync('dist').isDirectory();
-} catch (err) {}
+function ensureDir(name) {
+  var dirExists = false;
+  try {
+    dirExists = fs.statSync(name).isDirectory();
+  } catch (err) {}
 
-if (!dirExists) {
-  fs.mkdirSync('dist', 0777);
+  if (!dirExists) {
+    fs.mkdirSync(name, 0777);
+  }
 }
 
+ensureDir("dist/test");
 buildFirefox();
 buildBrowser();
 buildBrowserMin();

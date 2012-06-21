@@ -7,6 +7,7 @@
  */
 var assert = require('assert');
 var fs = require('fs');
+var path = require('path');
 var requirejs = require('requirejs');
 
 requirejs.config({
@@ -16,7 +17,7 @@ requirejs.config({
   nodeRequire: require
 });
 
-requirejs(['./util'], function (util) {
+requirejs(['./source-map/util'], function (util) {
 
   function run(tests) {
     var failures = [];
@@ -67,10 +68,10 @@ requirejs(['./util'], function (util) {
   }
 
   function toModule(f) {
-    return './' + f.replace(/\.js$/, '');
+    return './source-map/' + f.replace(/\.js$/, '');
   }
 
-  var requires = fs.readdirSync(__dirname).filter(isTestFile).map(toModule);
+  var requires = fs.readdirSync(path.join(__dirname, 'source-map')).filter(isTestFile).map(toModule);
 
   requirejs(requires, function () {
 
