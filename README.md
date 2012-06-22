@@ -162,6 +162,13 @@ Add a chunk of generated JS to this source node.
 * `chunk`: A string snippet of generated JS code, another instance of
    `SourceNode`, or an array where each member is one of those things.
 
+#### SourceNode.prototype.prepend(chunk)
+
+Prepend a chunk of generated JS to this source node.
+
+* `chunk`: A string snippet of generated JS code, another instance of
+   `SourceNode`, or an array where each member is one of those things.
+
 #### SourceNode.prototype.walk(fn)
 
 Walk over the tree of JS snippets in this node and its children. The walking

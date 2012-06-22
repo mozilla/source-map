@@ -34,6 +34,41 @@ define(function (require, exports, module) {
     });
   };
 
+  exports['test .prepend()'] = function (assert, util) {
+    var node = new SourceNode(null, null, null);
+
+    // Prepending a string works.
+    node.prepend('function noop() {}');
+    assert.equal(node.children[0], 'function noop() {}');
+    assert.equal(node.children.length, 1);
+
+    // Prepending another source node works.
+    node.prepend(new SourceNode(null, null, null));
+    assert.equal(node.children[0], '');
+    assert.equal(node.children[1], 'function noop() {}');
+    assert.equal(node.children.length, 2);
+
+    // Prepending an array works.
+    node.prepend(['function foo() {',
+              new SourceNode(null, null, null,
+                             'return 10;'),
+              '}']);
+    assert.equal(node.children[0], 'function foo() {');
+    assert.equal(node.children[1], 'return 10;');
+    assert.equal(node.children[2], '}');
+    assert.equal(node.children[3], '');
+    assert.equal(node.children[4], 'function noop() {}');
+    assert.equal(node.children.length, 5);
+
+    // Prepending other stuff doesn't.
+    assert.throws(function () {
+      node.prepend({});
+    });
+    assert.throws(function () {
+      node.prepend(function () {});
+    });
+  };
+
   exports['test .toString()'] = function (assert, util) {
     assert.equal((new SourceNode(null, null, null,
                                  ['function foo() {',
