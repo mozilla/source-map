@@ -162,8 +162,13 @@ define(function (require, exports, module) {
 
     assert.equal(map.version, 3);
     assert.equal(map.file, 'min.js');
-    assert.deepEqual(map.names, ['bar', 'baz', 'n']);
-    assert.deepEqual(map.sources, ['one.js', 'two.js']);
+    assert.equal(map.names.length, 3);
+    assert.equal(map.names[0], 'bar');
+    assert.equal(map.names[1], 'baz');
+    assert.equal(map.names[2], 'n');
+    assert.equal(map.sources.length, 2);
+    assert.equal(map.sources[0], 'one.js');
+    assert.equal(map.sources[1], 'two.js');
     assert.equal(map.sourceRoot, '/the/root');
     assert.equal(map.mappings, 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA');
   };

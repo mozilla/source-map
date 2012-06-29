@@ -14,39 +14,6 @@ define('test/source-map/assert', ['exports'], function (exports) {
     do_throw = throw_fn;
   };
 
-  exports.deepEqual = function (actual, expected, msg) {
-    msg = msg || String(actual) + ' is not deepEqual to ' + String(expected);
-
-    let actualType = typeof actual;
-    let expectedType = typeof expected;
-
-    if (actualType !== expectedType) {
-      do_throw(msg);
-    }
-    else if (actualType === 'object' && actual !== null && expected !== null) {
-      let actualKeys = Object.keys(actual).sort();
-      let expectedKeys = Object.keys(expected).sort();
-
-      if (actualKeys.length !== expectedKeys.length) {
-        do_throw(msg);
-      }
-      else {
-        for (let i = 0, len = actualKeys.length; i < 0; i++) {
-          if (actualKeys[i] !== expectedKeys[i]) {
-            do_throw(msg);
-          }
-        }
-      }
-
-      actualKeys.forEach(function (k) {
-        exports.deepEqual(actual[k], expected[k], msg);
-      });
-    }
-    else {
-      exports.equal(actual, expected, msg);
-    }
-  };
-
   exports.doesNotThrow = function (fn) {
     try {
       fn();
