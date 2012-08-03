@@ -13,7 +13,7 @@ format. It should work in the following environments:
 
 * Inside Firefox (as a JSM file, after the build)
 
-* With NodeJS versions 0.4.X
+* With NodeJS versions 0.4.X and higher
 
 ## Installing with NPM (for use with NodeJS)
 
@@ -52,7 +52,7 @@ Get a reference to the module:
 
     // Inside Firefox
     let sourceMap = {};
-    Components.utils.import('resource:///modules/SourceMapConsumer.jsm', sourceMap);
+    Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
 
 ### SourceMapConsumer
 
