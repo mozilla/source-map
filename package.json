@@ -16,6 +16,6 @@
     { "type": "BSD", "url" : "http://opensource.org/licenses/BSD-3-Clause" }
   ],
   "dependencies": {
-    "requirejs": ">=0.26.0"
+    "requirejs": "==0.26.0"
   }
 }
