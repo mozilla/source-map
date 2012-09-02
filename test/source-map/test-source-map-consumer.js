@@ -61,4 +61,10 @@ define(function (require, exports, module) {
     util.assertMapping(2, 12, '/the/root/two.js', 1, 11, null, map, assert);
   };
 
+  exports['test creating source map consumers with )]}\' prefix'] = function (assert, util) {
+    assert.doesNotThrow(function () {
+      var map = new SourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
+    });
+  };
+
 });
