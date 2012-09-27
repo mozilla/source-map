@@ -17,6 +17,15 @@ define(function (require, exports, module) {
     });
   };
 
+  exports['test that the `sources` field has the original sources'] = function (assert, util) {
+    var map = new SourceMapConsumer(util.testMap);
+    var sources = map.sources;
+
+    assert.equal(sources[0], '/the/root/one.js');
+    assert.equal(sources[1], '/the/root/two.js');
+    assert.equal(sources.length, 2);
+  };
+
   exports['test that the source root is reflected in a mapping\'s source field'] = function (assert, util) {
     var map = new SourceMapConsumer(util.testMap);
     var mapping;
