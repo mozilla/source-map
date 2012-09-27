@@ -102,6 +102,24 @@ and an object is returned with the following properties:
 
 * `name`: The original identifier, or null if this information is not available.
 
+#### SourceMapConsumer.prototype.generatedPositionFor(originalPosition)
+
+Returns the generated line and column information for the original source,
+line, and column positions provided. The only argument is an object with
+the following properties:
+
+* `source`: The filename of the original source.
+
+* `line`: The line number in the original source.
+
+* `column`: The column number in the original source.
+
+and an object is returned with the following properties:
+
+* `line`: The line number in the generated source, or null.
+
+* `column`: The column number in the generated source, or null.
+
 ### SourceMapGenerator
 
 An instance of the SourceMapGenerator represents a source map which is being
