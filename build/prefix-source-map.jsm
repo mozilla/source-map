@@ -17,4 +17,4 @@
 
 var EXPORTED_SYMBOLS = [ "SourceMapConsumer", "SourceMapGenerator", "SourceNode" ];
 
-Components.utils.import('resource:///modules/devtools/Require.jsm');
+Components.utils.import('resource://gre/modules/devtools/Require.jsm');
