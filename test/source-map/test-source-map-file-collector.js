@@ -111,8 +111,6 @@ define(function (require, exports, module) {
     var i = 0,
         len = propmap.length;
     for (; i < len; i++) {
-      // propmap[i].generated.column += 1;
-      // propmap[i].original.column += 1;
       generator.addMapping(propmap[i]);
     }
 
@@ -133,10 +131,8 @@ define(function (require, exports, module) {
     // Collect the second source map
     var fileSourceMap = fileCollector.toString();
 
-    // Debug source map differences
-    console.log('');
-    console.log(genSourceMap);
-    console.log(fileSourceMap);
+    // Assert that they generate the same map
+    assert.strictEqual(genSourceMap, fileSourceMap, 'The sourcemap from SourceMapGenerator does not match the source map from SourceMapFileCollector');
   };
 
 });
