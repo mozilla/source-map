@@ -152,6 +152,40 @@ should have the following properties:
 
 Renders the source map being generated to a string.
 
+### SourceMapFileCollector
+
+An instance of the SourceMapFileCollector represents a source map which is being built in files.
+
+#### new SourceMapFileCollector(startOfSourceMap)
+
+To create a new one, you must pass an object with the following properties:
+
+* `file`: The filename of the generated source that this source map is
+  associated with.
+
+* `sourceRoot`: An optional root for all relative URLs in this source map.
+
+#### SourceMapFileCollector.prototype.addIndexMapping(mapping)
+
+Add code with an index based mapping to the file collection.
+
+The mapping object
+should have the following properties:
+
+* `src`: Filepath to original src.
+
+* `input`: Unminified JavaScript.
+
+* `output`: Minified JavaScript.
+
+* `map`: Map of character index to character index (number -> number)
+
+* `lineOffset`: An optional line offset to add to mappings.
+
+#### SourceMapFileCollector.prototype.toString()
+
+Renders the source map being generated to a string.
+
 ### SourceNode
 
 SourceNodes provide a way to abstract over interpolating and/or concatenating
