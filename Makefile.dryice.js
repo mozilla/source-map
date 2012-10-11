@@ -130,6 +130,7 @@ function ensureDir(name) {
   }
 }
 
+ensureDir("dist");
 ensureDir("dist/test");
 buildFirefox();
 buildBrowser();
