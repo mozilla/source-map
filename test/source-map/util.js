@@ -4,6 +4,9 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
   // This is a test mapping which maps functions from two different files

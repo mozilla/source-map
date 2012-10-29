@@ -4,9 +4,12 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
+  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
 
   exports['test that we can instantiate with a string or an objects'] = function (assert, util) {
     assert.doesNotThrow(function () {

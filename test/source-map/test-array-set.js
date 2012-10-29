@@ -4,9 +4,12 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
-  var ArraySet = require('source-map/array-set').ArraySet;
+  var ArraySet = require('../../lib/source-map/array-set').ArraySet;
 
   function makeTestSet() {
     var set = new ArraySet();

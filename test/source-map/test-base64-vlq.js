@@ -4,9 +4,12 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
-  var base64VLQ = require('source-map/base64-vlq');
+  var base64VLQ = require('../../lib/source-map/base64-vlq');
 
   exports['test normal encoding and decoding'] = function (assert, util) {
     var result;
