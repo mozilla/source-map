@@ -26,6 +26,6 @@
     "amdefine": ">=0.0.4"
   },
   "devDependencies": {
-    "dryice": ">=0.4.8",
+    "dryice": ">=0.4.8"
   }
 }
