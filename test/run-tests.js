@@ -8,80 +8,65 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
-var requirejs = require('requirejs');
+var util = require('./source-map/util');
 
-requirejs.config({
-  paths: {
-    'source-map': '../lib/source-map'
-  },
-  nodeRequire: require
-});
+function run(tests) {
+  var failures = [];
+  var total = 0;
+  var passed = 0;
 
-requirejs(['./source-map/util'], function (util) {
-
-  function run(tests) {
-    var failures = [];
-    var total = 0;
-    var passed = 0;
-
-    for (var i = 0; i < tests.length; i++) {
-      for (var k in tests[i].testCase) {
-        if (/^test/.test(k)) {
-          total++;
-          try {
-            tests[i].testCase[k](assert, util);
-            passed++;
-            process.stdout.write('.');
-          }
-          catch (e) {
-            failures.push({
-              name: tests[i].name + ': ' + k,
-              error: e
-            });
-            process.stdout.write('E');
-          }
+  for (var i = 0; i < tests.length; i++) {
+    for (var k in tests[i].testCase) {
+      if (/^test/.test(k)) {
+        total++;
+        try {
+          tests[i].testCase[k](assert, util);
+          passed++;
+          process.stdout.write('.');
+        }
+        catch (e) {
+          failures.push({
+            name: tests[i].name + ': ' + k,
+            error: e
+          });
+          process.stdout.write('E');
         }
       }
     }
-
-    process.stdout.write('\n');
-    console.log(passed + ' / ' + total + ' tests passed.');
-
-    failures.forEach(function (f) {
-      console.log('================================================================================');
-      console.log(f.name);
-      console.log('--------------------------------------------------------------------------------');
-      console.log(f.error.stack);
-    });
-
-    return failures.length;
   }
 
-  var code;
+  process.stdout.write('\n');
+  console.log(passed + ' / ' + total + ' tests passed.');
 
-  process.stdout.on('close', function () {
-    process.exit(code);
+  failures.forEach(function (f) {
+    console.log('================================================================================');
+    console.log(f.name);
+    console.log('--------------------------------------------------------------------------------');
+    console.log(f.error.stack);
   });
 
-  function isTestFile(f) {
-    return /^test\-.*?\.js/.test(f);
-  }
+  return failures.length;
+}
 
-  function toModule(f) {
-    return './source-map/' + f.replace(/\.js$/, '');
-  }
+var code;
 
-  var requires = fs.readdirSync(path.join(__dirname, 'source-map')).filter(isTestFile).map(toModule);
-
-  requirejs(requires, function () {
-
-    code = run([].slice.call(arguments).map(function (mod, i) {
-      return {
-        name: requires[i],
-        testCase: mod
-      };
-    }));
-
-  });
-
+process.stdout.on('close', function () {
+  process.exit(code);
 });
+
+function isTestFile(f) {
+  return /^test\-.*?\.js/.test(f);
+}
+
+function toModule(f) {
+  return './source-map/' + f.replace(/\.js$/, '');
+}
+
+var requires = fs.readdirSync(path.join(__dirname, 'source-map')).filter(isTestFile).map(toModule);
+
+code = run(requires.map(require).map(function (mod, i) {
+  return {
+    name: requires[i],
+    testCase: mod
+  };
+}));

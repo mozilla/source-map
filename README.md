@@ -30,8 +30,17 @@ can try out your changes:
 
 ## Building from Source (for everywhere else)
 
-Install NodeJS and [Dryice][]. Then run `node Makefile.dryice.js`. This should
-create the following files:
+Install Node and then run
+
+    $ git clone https://fitzgen@github.com/mozilla/source-map.git
+    $ cd source-map
+    $ npm link .
+
+Next, run
+
+    $ node Makefile.dryice.js`
+
+This should create the following files:
 
 * `dist/source-map.js` - The unminified browser version.
 

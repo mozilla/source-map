@@ -4,9 +4,12 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
-  var binarySearch = require('source-map/binary-search');
+  var binarySearch = require('../../lib/source-map/binary-search');
 
   function numberCompare(a, b) {
     return a - b;

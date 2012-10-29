@@ -4,11 +4,14 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
+if (typeof define !== 'function') {
+    var define = require('amdefine')(module);
+}
 define(function (require, exports, module) {
 
-  var SourceMapGenerator = require('source-map/source-map-generator').SourceMapGenerator;
-  var SourceMapConsumer = require('source-map/source-map-consumer').SourceMapConsumer;
-  var SourceNode = require('source-map/source-node').SourceNode;
+  var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
+  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SourceNode = require('../../lib/source-map/source-node').SourceNode;
 
   exports['test .add()'] = function (assert, util) {
     var node = new SourceNode(null, null, null);

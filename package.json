@@ -14,7 +14,7 @@
   },
   "main": "./lib/source-map.js",
   "engines": {
-    "node": ">=0.4.0"
+    "node": ">=0.8.0"
   },
   "licenses": [
     {
@@ -23,9 +23,9 @@
     }
   ],
   "dependencies": {
-    "requirejs": "==0.26.0"
+    "amdefine": ">=0.0.4"
   },
   "devDependencies": {
-    "dryice": "~0.4.8"
+    "dryice": ">=0.4.8",
   }
 }
