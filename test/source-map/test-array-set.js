@@ -60,4 +60,12 @@ define(function (require, exports, module) {
     assert.strictEqual(set.at(3), 'quux');
   };
 
+  exports['test that you can add __proto__; see github issue #30'] = function (assert, util) {
+    var set = new ArraySet();
+    set.add('__proto__');
+    assert.ok(set.has('__proto__'));
+    assert.strictEqual(set.at(0), '__proto__');
+    assert.strictEqual(set.indexOf('__proto__'), 0);
+  };
+
 });
