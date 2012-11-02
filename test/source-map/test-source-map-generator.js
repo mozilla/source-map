@@ -19,6 +19,14 @@ define(function (require, exports, module) {
     assert.ok(true);
   };
 
+  exports['test JSON serialization'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'foo.js',
+      sourceRoot: '.'
+    });
+    assert.equal(map.toString(), JSON.stringify(map));
+  };
+
   exports['test adding mappings (case 1)'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
