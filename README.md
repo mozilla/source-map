@@ -129,7 +129,7 @@ and an object is returned with the following properties:
 
 * `column`: The column number in the generated source, or null.
 
-#### SourceMapConsumer.prototype.eachMapping(aCallback, aContext, aOrder)
+#### SourceMapConsumer.prototype.eachMapping(callback, context, order)
 
 Iterate over each mapping between an original source/line/column and a
 generated line/column in this source map.
