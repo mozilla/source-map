@@ -46,7 +46,7 @@ This should create the following files:
 
 * `dist/source-map.min.js` - The minified browser version.
 
-* `dist/SourceMapConsumer.jsm` - The JavaScript Module for inclusion in Firefox
+* `dist/SourceMap.jsm` - The JavaScript Module for inclusion in Firefox
   source.
 
 ## API
@@ -128,6 +128,23 @@ and an object is returned with the following properties:
 * `line`: The line number in the generated source, or null.
 
 * `column`: The column number in the generated source, or null.
+
+#### SourceMapConsumer.prototype.eachMapping(aCallback, aContext, aOrder)
+
+Iterate over each mapping between an original source/line/column and a
+generated line/column in this source map.
+
+* `callback`: The function that is called with each mapping. This function
+  should not mutate the mapping.
+
+* `context`: Optional. If specified, this object will be the value of `this`
+  every time that `callback` is called.
+
+* `order`: Either `SourceMapConsumer.GENERATED_ORDER` or
+  `SourceMapConsumer.ORIGINAL_ORDER`. Specifies whether you want to iterate over
+  the mappings sorted by the generated file's line/column order or the
+  original's source/line/column order, respectively. Defaults to
+  `SourceMapConsumer.GENERATED_ORDER`.
 
 ### SourceMapGenerator
 
