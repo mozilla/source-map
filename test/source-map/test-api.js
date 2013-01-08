@@ -9,7 +9,13 @@ if (typeof define !== 'function') {
 }
 define(function (require, exports, module) {
 
-  var sourceMap = require('../../lib/source-map');
+  var sourceMap;
+  try {
+    sourceMap = require('../../lib/source-map');
+  } catch (e) {
+    sourceMap = {};
+    Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
+  }
 
   exports['test that the api is properly exposed in the top level'] = function (assert, util) {
     assert.equal(typeof sourceMap.SourceMapGenerator, "function");
