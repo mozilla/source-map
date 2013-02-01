@@ -13,7 +13,7 @@ format. It should work in the following environments:
 
 * Inside Firefox (as a JSM file, after the build)
 
-* With NodeJS versions 0.4.X and higher
+* With NodeJS versions 0.8.X and higher
 
 ## Installing with NPM (for use with NodeJS)
 
@@ -252,7 +252,7 @@ The arguments are the same as those to `new SourceMapGenerator`.
 
 ## Tests
 
-Install NodeJS version 0.4.0 or greater, then run `node test/run-tests.js`.
+Install NodeJS version 0.8.0 or greater, then run `node test/run-tests.js`.
 
 To add new tests, create a new file named `test/test-<your new test name>.js`
 and export your test functions with names that start with "test", for example
