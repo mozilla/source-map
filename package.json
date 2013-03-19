@@ -1,10 +1,19 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
-  "contributors": [],
+  "contributors": [
+    "Stephen Crane",
+    "Ryan Seddon",
+    "Mihai Bazon <mihai.bazon@gmail.com>",
+    "Michael Ficarra <github.public.email@michael.ficarra.me>",
+    "Todd Wolfson <todd@twolfson.com>",
+    "Alexander Solovyov <alexander@solovyov.net>",
+    "Felix Gnass",
+    "Conrad Irwin <conrad.irwin@gmail.com>"
+  ],
   "repository": {
     "type": "git",
     "url": "http://github.com/mozilla/source-map.git"
