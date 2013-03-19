@@ -84,6 +84,8 @@ following attributes:
 
 * `sourceRoot`: Optional. The URL root from which all sources are relative.
 
+* `sourcesContent`: Optional. An array of contents of the original source files.
+
 * `mappings`: A string of base64 VLQs which contain the actual mappings.
 
 * `file`: The generated filename this source map is associated with.
@@ -129,6 +131,11 @@ and an object is returned with the following properties:
 
 * `column`: The column number in the generated source, or null.
 
+#### SourceMapConsumer.prototype.sourceContentFor(source)
+
+Returns the original source content for the source provided. The only
+argument is the URL of the original source file.
+
 #### SourceMapConsumer.prototype.eachMapping(callback, context, order)
 
 Iterate over each mapping between an original source/line/column and a
@@ -173,6 +180,14 @@ should have the following properties:
 * `source`: The original source file (relative to the sourceRoot).
 
 * `name`: An optional original token name for this mapping.
+
+#### SourceMapGenerator.prototype.setSourceContent(sourceFile, sourceContent)
+
+Set the source content for an original source file.
+
+* `sourceFile` the URL of the original source file.
+
+* `sourceContent` the content of the source file.
 
 #### SourceMapGenerator.prototype.toString()
 

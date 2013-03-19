@@ -184,4 +184,25 @@ define(function (require, exports, module) {
     assert.equal(map.mappings, 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA');
   };
 
+  exports['test that source content can be set'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'min.js',
+      sourceRoot: '/the/root'
+    });
+    map.addMapping({
+      generated: { line: 1, column: 1 },
+      original: { line: 1, column: 1 },
+      source: 'one.js'
+    });
+    map.addMapping({
+      generated: { line: 2, column: 1 },
+      original: { line: 1, column: 1 },
+      source: 'two.js'
+    });
+    map.setSourceContent('one.js', 'one file content');
+
+    map = JSON.parse(map.toString());
+    assert.deepEqual(map.sources, ['one.js', 'two.js']);
+    assert.deepEqual(map.sourcesContent, ['one file content', null]);
+  };
 });

@@ -139,4 +139,32 @@ define(function (require, exports, module) {
     }, context);
   };
 
+  exports['test that the `sourcesContent` field has the original sources'] = function (assert, util) {
+    var map = new SourceMapConsumer(util.testMapWithSourcesContent);
+    var sourcesContent = map.sourcesContent;
+
+    assert.equal(sourcesContent[0], ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
+    assert.equal(sourcesContent[1], ' TWO.inc = function (n) {\n   return n + 1;\n };');
+    assert.equal(sourcesContent.length, 2);
+  };
+
+  exports['test that we can get the original sources for the sources'] = function (assert, util) {
+    var map = new SourceMapConsumer(util.testMapWithSourcesContent);
+    var sources = map.sources;
+
+    assert.equal(map.sourceContentFor(sources[0]), ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
+    assert.equal(map.sourceContentFor(sources[1]), ' TWO.inc = function (n) {\n   return n + 1;\n };');
+    assert.equal(map.sourceContentFor("one.js"), ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
+    assert.equal(map.sourceContentFor("two.js"), ' TWO.inc = function (n) {\n   return n + 1;\n };');
+    assert.throws(function () {
+      map.sourceContentFor("");
+    }, Error);
+    assert.throws(function () {
+      map.sourceContentFor("/the/root/three.js");
+    }, Error);
+    assert.throws(function () {
+      map.sourceContentFor("three.js");
+    }, Error);
+  };
+
 });
