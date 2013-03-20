@@ -147,6 +147,14 @@ define(function (require, exports, module) {
     var actual;
 
     actual = map.originalPositionFor({
+      line: 1,
+      column: 4
+    });
+    assert.equal(actual.source, null);
+    assert.equal(actual.line, null);
+    assert.equal(actual.column, null);
+
+    actual = map.originalPositionFor({
       line: 2,
       column: 2
     });
@@ -162,6 +170,22 @@ define(function (require, exports, module) {
     assert.equal(actual.source, 'b.js');
     assert.equal(actual.line, 2);
     assert.equal(actual.column, 0);
+
+    actual = map.originalPositionFor({
+      line: 3,
+      column: 16
+    });
+    assert.equal(actual.source, null);
+    assert.equal(actual.line, null);
+    assert.equal(actual.column, null);
+
+    actual = map.originalPositionFor({
+      line: 4,
+      column: 2
+    });
+    assert.equal(actual.source, null);
+    assert.equal(actual.line, null);
+    assert.equal(actual.column, null);
   };
 
 });
