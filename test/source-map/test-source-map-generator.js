@@ -10,6 +10,8 @@ if (typeof define !== 'function') {
 define(function (require, exports, module) {
 
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
+  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var util = require('./util');
 
   exports['test some simple stuff'] = function (assert, util) {
     var map = new SourceMapGenerator({
@@ -204,5 +206,16 @@ define(function (require, exports, module) {
     map = JSON.parse(map.toString());
     assert.deepEqual(map.sources, ['one.js', 'two.js']);
     assert.deepEqual(map.sourcesContent, ['one file content', null]);
+  };
+
+  exports['test .fromSourceMap'] = function (assert, util) {
+    var map = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMap));
+    assert.deepEqual(map.toJSON(), util.testMap);
+  };
+
+  exports['test .fromSourceMap with sourcesContent'] = function (assert, util) {
+    var map = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMapWithSourcesContent));
+    assert.deepEqual(map.toJSON().sourcesContent, util.testMapWithSourcesContent.sourcesContent);
+    assert.deepEqual(map.toJSON(), util.testMapWithSourcesContent);
   };
 });
