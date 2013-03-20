@@ -201,7 +201,7 @@ column information associated between those snippets and the original source
 code. This is useful as the final intermediate representation a compiler might
 use before outputting the generated JS and source map.
 
-#### new SourceNode(line, column, source[, chunk])
+#### new SourceNode(line, column, source[, chunk[, name]])
 
 * `line`: The original line number associated with this source node, or null if
   it isn't associated with an original line.
@@ -213,6 +213,8 @@ use before outputting the generated JS and source map.
 
 * `chunk`: Optional. Is immediately passed to `SourceNode.prototype.add`, see
   below.
+
+* `name`: Optional. The original identifier.
 
 #### SourceNode.prototype.add(chunk)
 
