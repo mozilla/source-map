@@ -131,7 +131,10 @@ define(function (require, exports, module) {
   exports['test .toStringWithSourceMap()'] = function (assert, util) {
     var node = new SourceNode(null, null, null,
                               ['(function () {\n',
-                               '  ', new SourceNode(1, 0, 'a.js', ['someCall()']), ';\n',
+                               '  ',
+                                 new SourceNode(1, 0, 'a.js', 'someCall', 'originalCall'),
+                                 new SourceNode(1, 8, 'a.js', '()'),
+                                 ';\n',
                                '  ', new SourceNode(2, 0, 'b.js', ['if (foo) bar()']), ';\n',
                                '}());']);
     var map = node.toStringWithSourceMap({
@@ -150,6 +153,7 @@ define(function (require, exports, module) {
     assert.equal(actual.source, 'a.js');
     assert.equal(actual.line, 1);
     assert.equal(actual.column, 0);
+    assert.equal(actual.name, 'originalCall');
 
     actual = map.originalPositionFor({
       line: 3,
