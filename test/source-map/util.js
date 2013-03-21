@@ -94,4 +94,28 @@ define(function (require, exports, module) {
   }
   exports.assertMapping = assertMapping;
 
+  function assertEqualMaps(assert, actualMap, expectedMap) {
+    assert.equal(actualMap.version, expectedMap.version);
+    assert.equal(actualMap.file, expectedMap.file);
+    assert.equal(actualMap.names.length, expectedMap.names.length);
+    for (var i = 0; i < actualMap.names.length; i++) {
+      assert.equal(actualMap.names[i], expectedMap.names[i]);
+    }
+    assert.equal(actualMap.sources.length, expectedMap.sources.length);
+    for (var i = 0; i < actualMap.sources.length; i++) {
+      assert.equal(actualMap.sources[i], expectedMap.sources[i]);
+    }
+    assert.equal(actualMap.sourceRoot, expectedMap.sourceRoot);
+    assert.equal(actualMap.mappings, expectedMap.mappings);
+    if (actualMap.sourcesContent) {
+      assert.equal(actualMap.sourcesContent.length,
+                   expectedMap.sourcesContent.length);
+      for (var i = 0; i < actualMap.sourcesContent.length; i++) {
+        assert.equal(actualMap.sourcesContent[i],
+                     expectedMap.sourcesContent[i]);
+      }
+    }
+  }
+  exports.assertEqualMaps = assertEqualMaps;
+
 });

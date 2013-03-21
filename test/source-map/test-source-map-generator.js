@@ -173,17 +173,7 @@ define(function (require, exports, module) {
 
     map = JSON.parse(map.toString());
 
-    assert.equal(map.version, 3);
-    assert.equal(map.file, 'min.js');
-    assert.equal(map.names.length, 3);
-    assert.equal(map.names[0], 'bar');
-    assert.equal(map.names[1], 'baz');
-    assert.equal(map.names[2], 'n');
-    assert.equal(map.sources.length, 2);
-    assert.equal(map.sources[0], 'one.js');
-    assert.equal(map.sources[1], 'two.js');
-    assert.equal(map.sourceRoot, '/the/root');
-    assert.equal(map.mappings, 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA');
+    util.assertEqualMaps(assert, map, util.testMap);
   };
 
   exports['test that source content can be set'] = function (assert, util) {
@@ -204,20 +194,20 @@ define(function (require, exports, module) {
     map.setSourceContent('one.js', 'one file content');
 
     map = JSON.parse(map.toString());
-    assert.deepEqual(map.sources, ['one.js', 'two.js']);
-    assert.deepEqual(map.sourcesContent, ['one file content', null]);
+    assert.equal(map.sources[0], 'one.js');
+    assert.equal(map.sources[1], 'two.js');
+    assert.equal(map.sourcesContent[0], 'one file content');
+    assert.equal(map.sourcesContent[1], null);
   };
 
   exports['test .fromSourceMap'] = function (assert, util) {
     var map = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMap));
-    assert.deepEqual(map.toJSON(), util.testMap);
+    util.assertEqualMaps(assert, map.toJSON(), util.testMap);
   };
 
   exports['test .fromSourceMap with sourcesContent'] = function (assert, util) {
     var map = SourceMapGenerator.fromSourceMap(
       new SourceMapConsumer(util.testMapWithSourcesContent));
-
-    assert.deepEqual(map.toJSON().sourcesContent, util.testMapWithSourcesContent.sourcesContent);
-    assert.deepEqual(map.toJSON(), util.testMapWithSourcesContent);
+    util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
   };
 });

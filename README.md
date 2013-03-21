@@ -141,8 +141,7 @@ argument is the URL of the original source file.
 Iterate over each mapping between an original source/line/column and a
 generated line/column in this source map.
 
-* `callback`: The function that is called with each mapping. This function
-  should not mutate the mapping.
+* `callback`: The function that is called with each mapping.
 
 * `context`: Optional. If specified, this object will be the value of `this`
   every time that `callback` is called.
@@ -274,11 +273,30 @@ Install NodeJS version 0.8.0 or greater, then run `node test/run-tests.js`.
 To add new tests, create a new file named `test/test-<your new test name>.js`
 and export your test functions with names that start with "test", for example
 
-    exports["test doing the foo bar"] = function () {
+    exports["test doing the foo bar"] = function (assert, util) {
       ...
     };
 
 The new test will be located automatically when you run the suite.
+
+The `util` argument is the test utility module located at `test/source-map/util`.
+
+The `assert` argument is a cut down version of node's assert module. You have
+access to the following assertion functions:
+
+* `doesNotThrow`
+
+* `equal`
+
+* `ok`
+
+* `strictEqual`
+
+* `throws`
+
+(The reason for the restricted set of test functions is because we need the
+tests to run inside Firefox's test suite as well and so the assert module is
+shimmed in that environment. See `build/assert-shim.js`.)
 
 [format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 [feature]: https://wiki.mozilla.org/DevTools/Features/SourceMap
