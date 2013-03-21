@@ -11,6 +11,7 @@ define(function (require, exports, module) {
 
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SourceNode = require('../../lib/source-map/source-node').SourceNode;
   var util = require('./util');
 
   exports['test some simple stuff'] = function (assert, util) {
@@ -209,5 +210,55 @@ define(function (require, exports, module) {
     var map = SourceMapGenerator.fromSourceMap(
       new SourceMapConsumer(util.testMapWithSourcesContent));
     util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
+  };
+
+  exports['test applySourceMap'] = function (assert, util) {
+    var node = new SourceNode(null, null, null, [
+      new SourceNode(2, 0, 'fileX', 'lineX2\n'),
+      'genA1\n',
+      new SourceNode(2, 0, 'fileY', 'lineY2\n'),
+      'genA2\n',
+      new SourceNode(1, 0, 'fileX', 'lineX1\n'),
+      'genA3\n',
+      new SourceNode(1, 0, 'fileY', 'lineY1\n')
+    ]);
+    var mapStep1 = node.toStringWithSourceMap({
+      file: 'fileA'
+    }).map.toJSON();
+
+    node = new SourceNode(null, null, null, [
+      'gen1\n',
+      new SourceNode(1, 0, 'fileA', 'lineA1\n'),
+      new SourceNode(2, 0, 'fileA', 'lineA2\n'),
+      new SourceNode(3, 0, 'fileA', 'lineA3\n'),
+      new SourceNode(4, 0, 'fileA', 'lineA4\n'),
+      new SourceNode(1, 0, 'fileB', 'lineB1\n'),
+      new SourceNode(2, 0, 'fileB', 'lineB2\n'),
+      'gen2\n'
+    ]);
+    var mapStep2 = node.toStringWithSourceMap({
+      file: 'fileGen'
+    }).map.toJSON();
+
+    node = new SourceNode(null, null, null, [
+      'gen1\n',
+      new SourceNode(2, 0, 'fileX', 'lineA1\n'),
+      new SourceNode(2, 0, 'fileA', 'lineA2\n'),
+      new SourceNode(2, 0, 'fileY', 'lineA3\n'),
+      new SourceNode(4, 0, 'fileA', 'lineA4\n'),
+      new SourceNode(1, 0, 'fileB', 'lineB1\n'),
+      new SourceNode(2, 0, 'fileB', 'lineB2\n'),
+      'gen2\n'
+    ]);
+    var expectedMap = node.toStringWithSourceMap({
+      file: 'fileGen'
+    }).map.toJSON();
+
+    // apply source map "mapStep1" to "mapStep2"
+    var generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(mapStep2));
+    generator.applySourceMap(new SourceMapConsumer(mapStep1));
+    var actualMap = generator.toJSON();
+
+    util.assertEqualMaps(assert, actualMap, expectedMap);
   };
 });
