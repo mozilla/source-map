@@ -214,7 +214,9 @@ define(function (require, exports, module) {
   };
 
   exports['test .fromSourceMap with sourcesContent'] = function (assert, util) {
-    var map = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMapWithSourcesContent));
+    var map = SourceMapGenerator.fromSourceMap(
+      new SourceMapConsumer(util.testMapWithSourcesContent));
+
     assert.deepEqual(map.toJSON().sourcesContent, util.testMapWithSourcesContent.sourcesContent);
     assert.deepEqual(map.toJSON(), util.testMapWithSourcesContent);
   };

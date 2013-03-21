@@ -10,6 +10,7 @@ if (typeof define !== 'function') {
 define(function (require, exports, module) {
 
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
   exports['test that we can instantiate with a string or an objects'] = function (assert, util) {
     assert.doesNotThrow(function () {
@@ -92,6 +93,10 @@ define(function (require, exports, module) {
     map.eachMapping(function (mapping) {
       assert.ok(mapping.generatedLine >= previousLine);
 
+      if (mapping.source) {
+        assert.equal(mapping.source.indexOf(util.testMap.sourceRoot), 0);
+      }
+
       if (mapping.generatedLine === previousLine) {
         assert.ok(mapping.generatedColumn >= previousColumn);
         previousColumn = mapping.generatedColumn;
@@ -165,6 +170,67 @@ define(function (require, exports, module) {
     assert.throws(function () {
       map.sourceContentFor("three.js");
     }, Error);
+  };
+
+  exports['test sourceRoot + generatedPositionFor'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'foo/bar',
+      file: 'baz.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'bang.coffee'
+    });
+    map.addMapping({
+      original: { line: 5, column: 5 },
+      generated: { line: 6, column: 6 },
+      source: 'bang.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    // Should handle without sourceRoot.
+    var pos = map.generatedPositionFor({
+      line: 1,
+      column: 1,
+      source: 'bang.coffee'
+    });
+
+    assert.equal(pos.line, 2);
+    assert.equal(pos.column, 2);
+
+    // Should handle with sourceRoot.
+    var pos = map.generatedPositionFor({
+      line: 1,
+      column: 1,
+      source: 'foo/bar/bang.coffee'
+    });
+
+    assert.equal(pos.line, 2);
+    assert.equal(pos.column, 2);
+  };
+
+  exports['test sourceRoot + originalPositionFor'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'foo/bar',
+      file: 'baz.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'bang.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var pos = map.originalPositionFor({
+      line: 2,
+      column: 2,
+    });
+
+    // Should always have the prepended source root
+    assert.equal(pos.source, 'foo/bar/bang.coffee');
+    assert.equal(pos.line, 1);
+    assert.equal(pos.column, 1);
   };
 
 });

@@ -9,6 +9,8 @@ if (typeof define !== 'function') {
 }
 define(function (require, exports, module) {
 
+  var util = require('../../lib/source-map/util');
+
   // This is a test mapping which maps functions from two different files
   // (one.js and two.js) to a minified generated source.
   //
@@ -70,7 +72,8 @@ define(function (require, exports, module) {
       assert.equal(origMapping.column, originalColumn,
                    'Incorrect column, expected ' + JSON.stringify(originalColumn)
                    + ', got ' + JSON.stringify(origMapping.column));
-      assert.equal(origMapping.source, originalSource,
+      assert.equal(origMapping.source,
+                   originalSource ? util.join(map._sourceRoot, originalSource) : null,
                    'Incorrect source, expected ' + JSON.stringify(originalSource)
                    + ', got ' + JSON.stringify(origMapping.source));
     }
