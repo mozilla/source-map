@@ -166,6 +166,12 @@ To create a new one, you must pass an object with the following properties:
 
 * `sourceRoot`: An optional root for all relative URLs in this source map.
 
+#### SourceMapGenerator.fromSourceMap(sourceMapConsumer)
+
+Creates a new SourceMapGenerator based on a SourceMapConsumer
+
+* `sourceMapConsumer` The SourceMap.
+
 #### SourceMapGenerator.prototype.addMapping(mapping)
 
 Add a single mapping from original source line and column to the generated
