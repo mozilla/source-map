@@ -95,24 +95,41 @@ define(function (require, exports, module) {
   exports.assertMapping = assertMapping;
 
   function assertEqualMaps(assert, actualMap, expectedMap) {
-    assert.equal(actualMap.version, expectedMap.version);
-    assert.equal(actualMap.file, expectedMap.file);
-    assert.equal(actualMap.names.length, expectedMap.names.length);
+    assert.equal(actualMap.version, expectedMap.version, "version mismatch");
+    assert.equal(actualMap.file, expectedMap.file, "file mismatch");
+    assert.equal(actualMap.names.length,
+                 expectedMap.names.length,
+                 "names length mismatch: " +
+                   actualMap.names.join(", ") + " != " + expectedMap.names.join(", "));
     for (var i = 0; i < actualMap.names.length; i++) {
-      assert.equal(actualMap.names[i], expectedMap.names[i]);
+      assert.equal(actualMap.names[i],
+                   expectedMap.names[i],
+                   "names[" + i + "] mismatch: " +
+                     actualMap.names.join(", ") + " != " + expectedMap.names.join(", "));
     }
-    assert.equal(actualMap.sources.length, expectedMap.sources.length);
+    assert.equal(actualMap.sources.length,
+                 expectedMap.sources.length,
+                 "sources length mismatch: " +
+                   actualMap.sources.join(", ") + " != " + expectedMap.sources.join(", "));
     for (var i = 0; i < actualMap.sources.length; i++) {
-      assert.equal(actualMap.sources[i], expectedMap.sources[i]);
+      assert.equal(actualMap.sources[i],
+                   expectedMap.sources[i],
+                   "sources[" + i + "] length mismatch: " +
+                   actualMap.sources.join(", ") + " != " + expectedMap.sources.join(", "));
     }
-    assert.equal(actualMap.sourceRoot, expectedMap.sourceRoot);
-    assert.equal(actualMap.mappings, expectedMap.mappings);
+    assert.equal(actualMap.sourceRoot,
+                 expectedMap.sourceRoot,
+                 "sourceRoot mismatch: " +
+                   actualMap.sourceRoot + " != " + expectedMap.sourceRoot);
+    assert.equal(actualMap.mappings, expectedMap.mappings, "mappings mismatch");
     if (actualMap.sourcesContent) {
       assert.equal(actualMap.sourcesContent.length,
-                   expectedMap.sourcesContent.length);
+                   expectedMap.sourcesContent.length,
+                   "sourcesContent length mismatch");
       for (var i = 0; i < actualMap.sourcesContent.length; i++) {
         assert.equal(actualMap.sourcesContent[i],
-                     expectedMap.sourcesContent[i]);
+                     expectedMap.sourcesContent[i],
+                     "sourcesContent[" + i + "] mismatch");
       }
     }
   }
