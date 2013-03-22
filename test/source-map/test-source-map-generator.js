@@ -224,7 +224,9 @@ define(function (require, exports, module) {
     ]);
     var mapStep1 = node.toStringWithSourceMap({
       file: 'fileA'
-    }).map.toJSON();
+    }).map;
+    mapStep1.setSourceContent('fileX', 'lineX1\nlineX2\n');
+    mapStep1 = mapStep1.toJSON();
 
     node = new SourceNode(null, null, null, [
       'gen1\n',
@@ -238,7 +240,9 @@ define(function (require, exports, module) {
     ]);
     var mapStep2 = node.toStringWithSourceMap({
       file: 'fileGen'
-    }).map.toJSON();
+    }).map;
+    mapStep2.setSourceContent('fileB', 'lineB1\nlineB2\n');
+    mapStep2 = mapStep2.toJSON();
 
     node = new SourceNode(null, null, null, [
       'gen1\n',
@@ -252,7 +256,10 @@ define(function (require, exports, module) {
     ]);
     var expectedMap = node.toStringWithSourceMap({
       file: 'fileGen'
-    }).map.toJSON();
+    }).map;
+    expectedMap.setSourceContent('fileX', 'lineX1\nlineX2\n');
+    expectedMap.setSourceContent('fileB', 'lineB1\nlineB2\n');
+    expectedMap = expectedMap.toJSON();
 
     // apply source map "mapStep1" to "mapStep2"
     var generator = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(mapStep2));
