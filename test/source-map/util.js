@@ -30,6 +30,8 @@ define(function (require, exports, module) {
   //
   //   ONE.foo=function(a){return baz(a);};
   //   TWO.inc=function(a){return a+1;};
+  exports.testGeneratedCode = " ONE.foo=function(a){return baz(a);};\n"+
+                              " TWO.inc=function(a){return a+1;};";
   exports.testMap = {
     version: 3,
     file: 'min.js',
