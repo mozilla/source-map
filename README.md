@@ -194,6 +194,18 @@ Set the source content for an original source file.
 
 * `sourceContent` the content of the source file.
 
+#### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile])
+
+Applies a SourceMap for a source file to the SourceMap.
+Each mapping to the supplied source file is rewritten using the
+supplied SourceMap. Note: The resolution for the resulting mappings
+is the minimium of this map and the supplied map.
+
+* `sourceMapConsumer`: The SourceMap to be applied.
+
+* `sourceFile`: Optional. The filename of the source file.
+  If omitted, sourceMapConsumer.file will be used.
+
 #### SourceMapGenerator.prototype.toString()
 
 Renders the source map being generated to a string.
