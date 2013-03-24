@@ -233,12 +233,7 @@ define(function (require, exports, module) {
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
     map = map.toJSON();
     var inputMap = input.map.toJSON();
-    assert.equal(map.version, inputMap.version);
-    assert.equal(map.file, inputMap.file);
-    assert.equal(map.mappings, inputMap.mappings);
-    assert.deepEqual(map.sources, inputMap.sources);
-    assert.equal(map.sourceRoot, inputMap.sourceRoot);
-    assert.deepEqual(map.names, inputMap.names);
+    util.assertEqualMaps(assert, map, inputMap);
   };
 
 });
