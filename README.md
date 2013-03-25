@@ -294,6 +294,8 @@ The arguments are the same as those to `new SourceMapGenerator`.
 
 ## Tests
 
+[![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
+
 Install NodeJS version 0.8.0 or greater, then run `node test/run-tests.js`.
 
 To add new tests, create a new file named `test/test-<your new test name>.js`
