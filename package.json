@@ -36,5 +36,8 @@
   },
   "devDependencies": {
     "dryice": ">=0.4.8"
+  },
+  "scripts": {
+    "test": "node test/run-tests.js"
   }
 }
