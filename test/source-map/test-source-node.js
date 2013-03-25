@@ -188,4 +188,57 @@ define(function (require, exports, module) {
     assert.equal(actual.column, null);
   };
 
+  exports['test .fromStringWithSourceMap()'] = function (assert, util) {
+    var node = SourceNode.fromStringWithSourceMap(
+                              util.testGeneratedCode,
+                              new SourceMapConsumer(util.testMap));
+
+    var result = node.toStringWithSourceMap({
+      file: 'min.js'
+    });
+    var map = result.map;
+    var code = result.code;
+
+    assert.equal(code, util.testGeneratedCode);
+    assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
+    map = map.toJSON();
+    assert.equal(map.version, util.testMap.version);
+    assert.equal(map.file, util.testMap.file);
+    assert.equal(map.mappings, util.testMap.mappings);
+  };
+
+  exports['test .fromStringWithSourceMap() complex version'] = function (assert, util) {
+    var input = new SourceNode(null, null, null, [
+      "(function() {\n",
+        "  var Test = {};\n",
+        "  ", new SourceNode(1, 0, "a.js", "Test.A = { value: 1234 };\n"),
+        "  ", new SourceNode(2, 0, "a.js", "Test.A.x = 'xyz';"), "\n",
+        "}());\n",
+        "/* Generated Source */"]);
+    input = input.toStringWithSourceMap({
+      file: 'foo.js'
+    });
+
+    var node = SourceNode.fromStringWithSourceMap(
+                              input.code,
+                              new SourceMapConsumer(input.map.toString()));
+
+    var result = node.toStringWithSourceMap({
+      file: 'foo.js'
+    });
+    var map = result.map;
+    var code = result.code;
+
+    assert.equal(code, input.code);
+    assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
+    map = map.toJSON();
+    var inputMap = input.map.toJSON();
+    assert.equal(map.version, inputMap.version);
+    assert.equal(map.file, inputMap.file);
+    assert.equal(map.mappings, inputMap.mappings);
+    assert.deepEqual(map.sources, inputMap.sources);
+    assert.equal(map.sourceRoot, inputMap.sourceRoot);
+    assert.deepEqual(map.names, inputMap.names);
+  };
+
 });
