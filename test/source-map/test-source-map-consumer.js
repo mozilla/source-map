@@ -233,4 +233,21 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 1);
   };
 
+  exports['test github issue #56'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'http://',
+      file: 'www.example.com/foo.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'www.example.com/original.js'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var sources = map.sources;
+    assert.equal(map.sources.length, 1);
+    assert.equal(map.sources[0], 'http://www.example.com/original.js');
+  };
+
 });
