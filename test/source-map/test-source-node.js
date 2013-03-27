@@ -236,4 +236,47 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, inputMap);
   };
 
+  exports['test setSourceContent with toStringWithSourceMap'] = function (assert, util) {
+    var aNode = new SourceNode(1, 1, 'a.js', 'a');
+    aNode.setSourceContent('a.js', 'someContent');
+    var node = new SourceNode(null, null, null,
+                              ['(function () {\n',
+                               '  ', aNode,
+                               '  ', new SourceNode(1, 1, 'b.js', 'b'),
+                               '}());']);
+    node.setSourceContent('b.js', 'otherContent');
+    var map = node.toStringWithSourceMap({
+      file: 'foo.js'
+    }).map;
+
+    assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
+    map = new SourceMapConsumer(map.toString());
+
+    assert.equal(map.sources.length, 2);
+    assert.equal(map.sources[0], 'a.js');
+    assert.equal(map.sources[1], 'b.js');
+    assert.equal(map.sourcesContent.length, 2);
+    assert.equal(map.sourcesContent[0], 'someContent');
+    assert.equal(map.sourcesContent[1], 'otherContent');
+  };
+
+  exports['test walkSourceContents'] = function (assert, util) {
+    var aNode = new SourceNode(1, 1, 'a.js', 'a');
+    aNode.setSourceContent('a.js', 'someContent');
+    var node = new SourceNode(null, null, null,
+                              ['(function () {\n',
+                               '  ', aNode,
+                               '  ', new SourceNode(1, 1, 'b.js', 'b'),
+                               '}());']);
+    node.setSourceContent('b.js', 'otherContent');
+    var results = [];
+    node.walkSourceContents(function (sourceFile, sourceContent) {
+      results.push([sourceFile, sourceContent]);
+    });
+    assert.equal(results.length, 2);
+    assert.equal(results[0][0], 'a.js');
+    assert.equal(results[0][1], 'someContent');
+    assert.equal(results[1][0], 'b.js');
+    assert.equal(results[1][1], 'otherContent');
+  };
 });
