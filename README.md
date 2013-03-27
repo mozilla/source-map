@@ -255,11 +255,27 @@ Prepend a chunk of generated JS to this source node.
 * `chunk`: A string snippet of generated JS code, another instance of
    `SourceNode`, or an array where each member is one of those things.
 
+#### SourceNode.prototype.setSourceContent(sourceFile, sourceContent)
+
+Set the source content for a source file. This will be added to the
+`SourceMap` in the `sourcesContent` field.
+
+* `sourceFile`: The filename of the source file
+
+* `sourceContent`: The content of the source file
+
 #### SourceNode.prototype.walk(fn)
 
 Walk over the tree of JS snippets in this node and its children. The walking
 function is called once for each snippet of JS and is passed that snippet and
 the its original associated source's line/column location.
+
+* `fn`: The traversal function.
+
+#### SourceNode.prototype.walkSourceContents(fn)
+
+Walk over the tree of SourceNodes. The walking function is called for each
+source file content and is passed the filename and source content.
 
 * `fn`: The traversal function.
 
