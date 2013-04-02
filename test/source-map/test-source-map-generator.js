@@ -268,4 +268,23 @@ define(function (require, exports, module) {
 
     util.assertEqualMaps(assert, actualMap, expectedMap);
   };
+
+  exports['test ignore duplicate mappings.'] = function (assert, util) {
+    function makeMap(init, times) {
+      var map = new SourceMapGenerator(init);
+      for (var i = 0; i < 5 * 3 * times; i++) {
+        map.addMapping({
+          generated: { line: i % 5 + 1, column: i % 3 },
+          original: { line: i % 5 + 11, column: 1 % 3 },
+          source: 'one.js'
+        });
+      }
+      return map;
+    }
+    var init = { file: 'min.js', sourceRoot: '/the/root' };
+    var map1 = makeMap(init, 1);
+    var map2 = makeMap(init, 8);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+  };
 });
