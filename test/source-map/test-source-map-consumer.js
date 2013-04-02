@@ -246,8 +246,8 @@ define(function (require, exports, module) {
     map = new SourceMapConsumer(map.toString());
 
     var sources = map.sources;
-    assert.equal(map.sources.length, 1);
-    assert.equal(map.sources[0], 'http://www.example.com/original.js');
+    assert.equal(sources.length, 1);
+    assert.equal(sources[0], 'http://www.example.com/original.js');
   };
 
   exports['test github issue #43'] = function (assert, util) {
@@ -267,6 +267,25 @@ define(function (require, exports, module) {
                  'Should only be one source.');
     assert.equal(sources[0], 'http://cdn.example.com/original.js',
                  'Should not be joined with the sourceRoot.');
+  };
+
+  exports['test absolute path, but same host sources'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'http://example.com/foo/bar',
+      file: 'foo.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: '/original.js'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var sources = map.sources;
+    assert.equal(sources.length, 1,
+                 'Should only be one source.');
+    assert.equal(sources[0], 'http://example.com/original.js',
+                 'Source should be relative the host of the source root.');
   };
 
 });

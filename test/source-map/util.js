@@ -74,9 +74,21 @@ define(function (require, exports, module) {
       assert.equal(origMapping.column, originalColumn,
                    'Incorrect column, expected ' + JSON.stringify(originalColumn)
                    + ', got ' + JSON.stringify(origMapping.column));
-      assert.equal(origMapping.source,
-                   originalSource ? util.join(map._sourceRoot, originalSource) : null,
-                   'Incorrect source, expected ' + JSON.stringify(originalSource)
+
+      var expectedSource;
+
+      if (originalSource && map.sourceRoot && originalSource.indexOf(map.sourceRoot) === 0) {
+        expectedSource = originalSource;
+      } else if (originalSource) {
+        expectedSource = map.sourceRoot
+          ? util.join(map.sourceRoot, originalSource)
+          : originalSource;
+      } else {
+        expectedSource = null;
+      }
+
+      assert.equal(origMapping.source, expectedSource,
+                   'Incorrect source, expected ' + JSON.stringify(expectedSource)
                    + ', got ' + JSON.stringify(origMapping.source));
     }
 
