@@ -250,4 +250,23 @@ define(function (require, exports, module) {
     assert.equal(map.sources[0], 'http://www.example.com/original.js');
   };
 
+  exports['test github issue #43'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'http://example.com',
+      file: 'foo.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'http://cdn.example.com/original.js'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var sources = map.sources;
+    assert.equal(sources.length, 1,
+                 'Should only be one source.');
+    assert.equal(sources[0], 'http://cdn.example.com/original.js',
+                 'Should not be joined with the sourceRoot.');
+  };
+
 });
