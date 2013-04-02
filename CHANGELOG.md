@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.20
+
+* Fixed github issue #43: absolute URLs aren't joined with the source root
+  anymore.
+
 ## 0.1.19
 
 * Using Travis CI to run tests.
