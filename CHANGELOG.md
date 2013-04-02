@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.21
+
+* Fixed handling of sources that start with a slash so that they are relative to
+  the source root's host.
+
 ## 0.1.20
 
 * Fixed github issue #43: absolute URLs aren't joined with the source root
