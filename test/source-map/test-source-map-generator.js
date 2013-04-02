@@ -272,11 +272,12 @@ define(function (require, exports, module) {
   exports['test ignore duplicate mappings.'] = function (assert, util) {
     function makeMap(init, times) {
       var map = new SourceMapGenerator(init);
-      for (var i = 0; i < 5 * 3 * times; i++) {
+      for (var i = 0; i < 5 * 3 * 4 * times; i++) {
         map.addMapping({
           generated: { line: i % 5 + 1, column: i % 3 },
           original: { line: i % 5 + 11, column: 1 % 3 },
-          source: 'one.js'
+          source: ['one.js', 'two.js'][(i >> 1) % 2],
+          name: 'name' + i % 2
         });
       }
       return map;
@@ -285,6 +286,8 @@ define(function (require, exports, module) {
     var map1 = makeMap(init, 1);
     var map2 = makeMap(init, 8);
 
+    console.log(map1.toJSON());
+    console.log(map2.toJSON());
     util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
   };
 });
