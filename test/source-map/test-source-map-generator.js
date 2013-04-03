@@ -316,8 +316,6 @@ define(function (require, exports, module) {
     var map1 = makeMap(init, 1);
     var map2 = makeMap(init, 8);
 
-    console.log(map1.toJSON());
-    console.log(map2.toJSON());
     util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
   };
 });
