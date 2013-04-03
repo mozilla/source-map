@@ -269,6 +269,36 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, actualMap, expectedMap);
   };
 
+  exports['test sorting with duplicate generated mappings'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'test.js'
+    });
+    map.addMapping({
+      generated: { line: 3, column: 0 },
+      original: { line: 2, column: 0 },
+      source: 'a.js'
+    });
+    map.addMapping({
+      generated: { line: 2, column: 0 }
+    });
+    map.addMapping({
+      generated: { line: 2, column: 0 }
+    });
+    map.addMapping({
+      generated: { line: 1, column: 0 },
+      original: { line: 1, column: 0 },
+      source: 'a.js'
+    });
+
+    util.assertEqualMaps(assert, map.toJSON(), {
+      version: 3,
+      file: 'test.js',
+      sources: ['a.js'],
+      names: [],
+      mappings: 'AAAA;A;AACA'
+    });
+  };
+
   exports['test ignore duplicate mappings.'] = function (assert, util) {
     function makeMap(init, times) {
       var map = new SourceMapGenerator(init);
