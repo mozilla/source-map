@@ -300,21 +300,91 @@ define(function (require, exports, module) {
   };
 
   exports['test ignore duplicate mappings.'] = function (assert, util) {
-    function makeMap(init, times) {
-      var map = new SourceMapGenerator(init);
-      for (var i = 0; i < 5 * 3 * 4 * times; i++) {
-        map.addMapping({
-          generated: { line: i % 5 + 1, column: i % 3 },
-          original: { line: i % 5 + 11, column: 1 % 3 },
-          source: ['one.js', 'two.js'][(i >> 1) % 2],
-          name: 'name' + i % 2
-        });
-      }
-      return map;
-    }
     var init = { file: 'min.js', sourceRoot: '/the/root' };
-    var map1 = makeMap(init, 1);
-    var map2 = makeMap(init, 8);
+    var map1, map2;
+
+    // null original source location
+    var nullMapping1 = {
+      generated: { line: 1, column: 0 }
+    };
+    var nullMapping2 = {
+      generated: { line: 2, column: 2 }
+    };
+
+    map1 = new SourceMapGenerator(init);
+    map2 = new SourceMapGenerator(init);
+
+    map1.addMapping(nullMapping1);
+    map1.addMapping(nullMapping1);
+
+    map2.addMapping(nullMapping1);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+
+    map1.addMapping(nullMapping2);
+    map1.addMapping(nullMapping1);
+
+    map2.addMapping(nullMapping2);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+
+    // original source location
+    var srcMapping1 = {
+      generated: { line: 1, column: 0 },
+      original: { line: 11, column: 0 },
+      source: 'srcMapping1.js'
+    };
+    var srcMapping2 = {
+      generated: { line: 2, column: 2 },
+      original: { line: 11, column: 0 },
+      source: 'srcMapping2.js'
+    };
+
+    map1 = new SourceMapGenerator(init);
+    map2 = new SourceMapGenerator(init);
+
+    map1.addMapping(srcMapping1);
+    map1.addMapping(srcMapping1);
+
+    map2.addMapping(srcMapping1);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+
+    map1.addMapping(srcMapping2);
+    map1.addMapping(srcMapping1);
+
+    map2.addMapping(srcMapping2);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+
+    // full original source and name information
+    var fullMapping1 = {
+      generated: { line: 1, column: 0 },
+      original: { line: 11, column: 0 },
+      source: 'fullMapping1.js',
+      name: 'fullMapping1'
+    };
+    var fullMapping2 = {
+      generated: { line: 2, column: 2 },
+      original: { line: 11, column: 0 },
+      source: 'fullMapping2.js',
+      name: 'fullMapping2'
+    };
+
+    map1 = new SourceMapGenerator(init);
+    map2 = new SourceMapGenerator(init);
+
+    map1.addMapping(fullMapping1);
+    map1.addMapping(fullMapping1);
+
+    map2.addMapping(fullMapping1);
+
+    util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
+
+    map1.addMapping(fullMapping2);
+    map1.addMapping(fullMapping1);
+
+    map2.addMapping(fullMapping2);
 
     util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
   };
