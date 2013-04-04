@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.22
+
+* Ignore duplicate mappings in SourceMapGenerator. Fixes github issue 21.
+
 ## 0.1.21
 
 * Fixed handling of sources that start with a slash so that they are relative to

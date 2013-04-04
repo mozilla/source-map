@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -12,7 +12,8 @@
     "Todd Wolfson <todd@twolfson.com>",
     "Alexander Solovyov <alexander@solovyov.net>",
     "Felix Gnass",
-    "Conrad Irwin <conrad.irwin@gmail.com>"
+    "Conrad Irwin <conrad.irwin@gmail.com>",
+    "github.com/usrbincc"
   ],
   "repository": {
     "type": "git",
