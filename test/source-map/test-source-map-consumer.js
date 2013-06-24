@@ -303,4 +303,19 @@ define(function (require, exports, module) {
     assert.equal(map.sourceContentFor("/a"), "foo");
   };
 
+  exports['test bug 885597'] = function (assert, util) {
+    var map = new SourceMapConsumer({
+      "version": 3,
+      "file": "foo.js",
+      "sourceRoot": "file:///Users/AlGore/Invented/The/Internet/",
+      "sources": ["/a"],
+      "names": [],
+      "mappings": "AACA",
+      "sourcesContent": ["foo"]
+    });
+
+    var s = map.sources[0];
+    assert.equal(map.sourceContentFor(s), "foo");
+  };
+
 });
