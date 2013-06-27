@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.25
+
+* Make compatible with browserify
+
 ## 0.1.24
 
 * Fix issue with absolute paths and `file://` URIs. See
