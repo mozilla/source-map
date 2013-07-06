@@ -9,20 +9,22 @@ if (typeof define !== 'function') {
 }
 define(function (require, exports, module) {
 
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SimpleSourceMapConsumer = require('../../lib/source-map/simple-source-map-consumer').SimpleSourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
-  /*exports['test that we can instantiate with a string or an objects'] = function (assert, util) {
+  exports['test that we can instantiate with a string or an objects'] = function (assert, util) {
+    debugger;
+    
     assert.doesNotThrow(function () {
-      var map = new SourceMapConsumer(util.testMap);
+      var map = new SimpleSourceMapConsumer(util.testMap);
     });
     assert.doesNotThrow(function () {
-      var map = new SourceMapConsumer(JSON.stringify(util.testMap));
+      var map = new SimpleSourceMapConsumer(JSON.stringify(util.testMap));
     });
   };
 
-  exports['test that the `sources` field has the original sources'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+  /*exports['test that the `sources` field has the original sources'] = function (assert, util) {
+    var map = new SimpleSourceMapConsumer(util.testMap);
     var sources = map.sources;
 
     assert.equal(sources[0], '/the/root/one.js');
@@ -31,7 +33,7 @@ define(function (require, exports, module) {
   };
 
   exports['test that the source root is reflected in a mapping\'s source field'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
     var mapping;
 
     mapping = map.originalPositionFor({
@@ -48,7 +50,7 @@ define(function (require, exports, module) {
   };
 
   exports['test mapping tokens back exactly'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
 
     util.assertMapping(1, 1, '/the/root/one.js', 1, 1, null, map, assert);
     util.assertMapping(1, 5, '/the/root/one.js', 1, 5, null, map, assert);
@@ -67,7 +69,7 @@ define(function (require, exports, module) {
   };
 
   exports['test mapping tokens fuzzy'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
 
     // Finding original positions
     util.assertMapping(1, 20, '/the/root/one.js', 1, 21, 'bar', map, assert, true);
@@ -82,12 +84,12 @@ define(function (require, exports, module) {
 
   exports['test creating source map consumers with )]}\' prefix'] = function (assert, util) {
     assert.doesNotThrow(function () {
-      var map = new SourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
+      var map = new SimpleSourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
     });
   };
 
   exports['test eachMapping'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
     var previousLine = -Infinity;
     var previousColumn = -Infinity;
     map.eachMapping(function (mapping) {
@@ -109,7 +111,7 @@ define(function (require, exports, module) {
   };
 
   exports['test iterating over mappings in a different order'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
     var previousLine = -Infinity;
     var previousColumn = -Infinity;
     var previousSource = "";
@@ -133,11 +135,11 @@ define(function (require, exports, module) {
         previousLine = -Infinity;
         previousColumn = -Infinity;
       }
-    }, null, SourceMapConsumer.ORIGINAL_ORDER);
+    }, null, SimpleSourceMapConsumer.ORIGINAL_ORDER);
   };
 
   exports['test that we can set the context for `this` in eachMapping'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMap);
+    var map = new SimpleSourceMapConsumer(util.testMap);
     var context = {};
     map.eachMapping(function () {
       assert.equal(this, context);
@@ -145,7 +147,7 @@ define(function (require, exports, module) {
   };
 
   exports['test that the `sourcesContent` field has the original sources'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMapWithSourcesContent);
+    var map = new SimpleSourceMapConsumer(util.testMapWithSourcesContent);
     var sourcesContent = map.sourcesContent;
 
     assert.equal(sourcesContent[0], ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
@@ -154,7 +156,7 @@ define(function (require, exports, module) {
   };
 
   exports['test that we can get the original sources for the sources'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.testMapWithSourcesContent);
+    var map = new SimpleSourceMapConsumer(util.testMapWithSourcesContent);
     var sources = map.sources;
 
     assert.equal(map.sourceContentFor(sources[0]), ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
@@ -187,7 +189,7 @@ define(function (require, exports, module) {
       generated: { line: 6, column: 6 },
       source: 'bang.coffee'
     });
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     // Should handle without sourceRoot.
     var pos = map.generatedPositionFor({
@@ -220,7 +222,7 @@ define(function (require, exports, module) {
       generated: { line: 2, column: 2 },
       source: 'bang.coffee'
     });
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     var pos = map.originalPositionFor({
       line: 2,
@@ -243,7 +245,7 @@ define(function (require, exports, module) {
       generated: { line: 2, column: 2 },
       source: 'www.example.com/original.js'
     });
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     var sources = map.sources;
     assert.equal(sources.length, 1);
@@ -260,7 +262,7 @@ define(function (require, exports, module) {
       generated: { line: 2, column: 2 },
       source: 'http://cdn.example.com/original.js'
     });
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     var sources = map.sources;
     assert.equal(sources.length, 1,
@@ -279,7 +281,7 @@ define(function (require, exports, module) {
       generated: { line: 2, column: 2 },
       source: '/original.js'
     });
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     var sources = map.sources;
     assert.equal(sources.length, 1,
@@ -289,7 +291,7 @@ define(function (require, exports, module) {
   };
 
   exports['test github issue #64'] = function (assert, util) {
-    var map = new SourceMapConsumer({
+    var map = new SimpleSourceMapConsumer({
       "version": 3,
       "file": "foo.js",
       "sourceRoot": "http://example.com/",
@@ -304,7 +306,7 @@ define(function (require, exports, module) {
   };
 
   exports['test bug 885597'] = function (assert, util) {
-    var map = new SourceMapConsumer({
+    var map = new SimpleSourceMapConsumer({
       "version": 3,
       "file": "foo.js",
       "sourceRoot": "file:///Users/AlGore/Invented/The/Internet/",
@@ -319,9 +321,9 @@ define(function (require, exports, module) {
   };
   
   exports['test section support'] = function (assert, util) {
-    var map = new SourceMapConsumer(util.textMapWithIndexes);
+    var map = new SimpleSourceMapConsumer(util.textMapWithIndexes);
     
     console.log(map);
-  };*/
-
+  };
+*/
 });
