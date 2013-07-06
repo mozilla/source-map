@@ -9,7 +9,7 @@ if (typeof define !== 'function') {
 }
 define(function (require, exports, module) {
 
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SimpleSourceMapConsumer = require('../../lib/source-map/simple-source-map-consumer').SimpleSourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
   exports['test eating our own dog food'] = function (assert, util) {
@@ -42,7 +42,7 @@ define(function (require, exports, module) {
       generated: { line: 5, column: 2 }
     });
 
-    var smc = new SourceMapConsumer(smg.toString());
+    var smc = new SimpleSourceMapConsumer(smg.toString());
 
     // Exact
     util.assertMapping(2, 2, '/wu/tang/gza.coffee', 1, 0, null, smc, assert);

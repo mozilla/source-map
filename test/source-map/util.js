@@ -56,6 +56,13 @@ define(function (require, exports, module) {
     sourceRoot: '/the/root',
     mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
   };
+  exports.textMapWithIndexes = {
+    version: 3,
+    file: 'min.js',
+    sections: [
+      { offset: { line: 0, column: 1 }, map: exports.testMap }
+    ]
+  };
 
   function assertMapping(generatedLine, generatedColumn, originalSource,
                          originalLine, originalColumn, name, map, assert,
