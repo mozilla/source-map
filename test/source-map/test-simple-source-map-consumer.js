@@ -23,7 +23,7 @@ define(function (require, exports, module) {
     });
   };
 
-  /*exports['test that the `sources` field has the original sources'] = function (assert, util) {
+  exports['test that the `sources` field has the original sources'] = function (assert, util) {
     var map = new SimpleSourceMapConsumer(util.testMap);
     var sources = map.sources;
 
@@ -319,11 +319,4 @@ define(function (require, exports, module) {
     var s = map.sources[0];
     assert.equal(map.sourceContentFor(s), "foo");
   };
-  
-  exports['test section support'] = function (assert, util) {
-    var map = new SimpleSourceMapConsumer(util.textMapWithIndexes);
-    
-    console.log(map);
-  };
-*/
 });
