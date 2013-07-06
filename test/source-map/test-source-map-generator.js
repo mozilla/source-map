@@ -10,7 +10,7 @@ if (typeof define !== 'function') {
 define(function (require, exports, module) {
 
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SourceMapConsumer = require('../../lib/source-map/simple-source-map-consumer').SimpleSourceMapConsumer;
   var SourceNode = require('../../lib/source-map/source-node').SourceNode;
   var util = require('./util');
 

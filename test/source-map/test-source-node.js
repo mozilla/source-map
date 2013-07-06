@@ -10,7 +10,7 @@ if (typeof define !== 'function') {
 define(function (require, exports, module) {
 
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
+  var SimpleSourceMapConsumer = require('../../lib/source-map/simple-source-map-consumer').SimpleSourceMapConsumer;
   var SourceNode = require('../../lib/source-map/source-node').SourceNode;
 
   exports['test .add()'] = function (assert, util) {
@@ -142,7 +142,7 @@ define(function (require, exports, module) {
     }).map;
 
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     var actual;
 
@@ -191,7 +191,7 @@ define(function (require, exports, module) {
   exports['test .fromStringWithSourceMap()'] = function (assert, util) {
     var node = SourceNode.fromStringWithSourceMap(
                               util.testGeneratedCode,
-                              new SourceMapConsumer(util.testMap));
+                              new SimpleSourceMapConsumer(util.testMap));
 
     var result = node.toStringWithSourceMap({
       file: 'min.js'
@@ -221,7 +221,7 @@ define(function (require, exports, module) {
 
     var node = SourceNode.fromStringWithSourceMap(
                               input.code,
-                              new SourceMapConsumer(input.map.toString()));
+                              new SimpleSourceMapConsumer(input.map.toString()));
 
     var result = node.toStringWithSourceMap({
       file: 'foo.js'
@@ -250,7 +250,7 @@ define(function (require, exports, module) {
     }).map;
 
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
-    map = new SourceMapConsumer(map.toString());
+    map = new SimpleSourceMapConsumer(map.toString());
 
     assert.equal(map.sources.length, 2);
     assert.equal(map.sources[0], 'a.js');
