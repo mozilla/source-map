@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.27
+
+* Don't throw an error when the `file` property is missing in SourceMapConsumer,
+  we don't use it anyway.
+
 ## 0.1.26
 
 * Fix SourceNode.fromStringWithSourceMap for empty maps. Fixes github issue 70.
