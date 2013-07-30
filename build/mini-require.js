@@ -6,6 +6,19 @@
  */
 
 /**
+ * Environment such PhantomJS 1.8.* does not provides the bind method on Function prototype.
+ * This shim will ensure that source-map will not break when running on PhantomJS.
+ */
+if(!Function.prototype.bind) {
+  Function.prototype.bind = function(scope){
+    var self = this;
+    return function(){ 
+      return self.apply(scope, arguments); 
+    };
+  }
+}
+
+/**
  * Define a module along with a payload.
  * @param {string} moduleName Name for the payload
  * @param {ignored} deps Ignored. For compatibility with CommonJS AMD Spec
