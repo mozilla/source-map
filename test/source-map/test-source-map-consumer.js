@@ -319,36 +319,13 @@ define(function (require, exports, module) {
   };
 
   exports['test github issue #72, duplicate sources'] = function (assert, util) {
-    var map = new SourceMapGenerator({
-      sourceRoot: 'http://example.com',
-      file: 'foo.js'
-    });
-    map.addMapping({
-      original: { line: 1, column: 1 },
-      generated: { line: 2, column: 2 },
-      source: 'source1.js'
-    });
-    map.addMapping({
-      original: { line: 3, column: 3 },
-      generated: { line: 4, column: 4 },
-      source: 'source2.js'
-    });
-    map.addMapping({
-      original: { line: 5, column: 5 },
-      generated: { line: 6, column: 6 },
-      source: 'source3.js'
-    });
-
-    // Change the second source to be a duplicate of the first source
-    assert.equal(map._mappings[1].source, 'source2.js');
-    assert.equal(map._sources._array[1], 'source2.js');
-    assert.equal(map._sources._set['$source2.js'], 1);
-    map._mappings[1].source = 'source1.js';
-    map._sources._array[1] = 'source1.js';
-    delete map._sources._set['$source2.js'];
-
-    assert.doesNotThrow(function () {
-      map = new SourceMapConsumer(map.toString());
+    var map = new SourceMapConsumer({
+      "version": 3,
+      "file": "foo.js",
+      "sources": ["source1.js", "source1.js", "source3.js"],
+      "names": [],
+      "mappings": ";EAAC;;IAEE;;MEEE",
+      "sourceRoot": "http://example.com"
     });
 
     var pos = map.originalPositionFor({
@@ -377,39 +354,13 @@ define(function (require, exports, module) {
   };
 
   exports['test github issue #72, duplicate names'] = function (assert, util) {
-    var map = new SourceMapGenerator({
-      sourceRoot: 'http://example.com',
-      file: 'foo.js'
-    });
-    map.addMapping({
-      original: { line: 1, column: 1 },
-      generated: { line: 2, column: 2 },
-      source: 'source.js',
-      name: 'name1'
-    });
-    map.addMapping({
-      original: { line: 3, column: 3 },
-      generated: { line: 4, column: 4 },
-      source: 'source.js',
-      name: 'name2'
-    });
-    map.addMapping({
-      original: { line: 5, column: 5 },
-      generated: { line: 6, column: 6 },
-      source: 'source.js',
-      name: 'name3'
-    });
-
-    // Change the second name to be a duplicate of the first name
-    assert.equal(map._mappings[1].name, 'name2');
-    assert.equal(map._names._array[1], 'name2');
-    assert.equal(map._names._set['$name2'], 1);
-    map._mappings[1].name = 'name1';
-    map._names._array[1] = 'name1';
-    delete map._names._set['$name2'];
-
-    assert.doesNotThrow(function () {
-      map = new SourceMapConsumer(map.toString());
+    var map = new SourceMapConsumer({
+      "version": 3,
+      "file": "foo.js",
+      "sources": ["source.js"],
+      "names": ["name1", "name1", "name3"],
+      "mappings": ";EAACA;;IAEEA;;MAEEE",
+      "sourceRoot": "http://example.com"
     });
 
     var pos = map.originalPositionFor({
