@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.28
+
+* Skip duplicate mappings when creating source maps from SourceNode; github
+  issue 75.
+
 ## 0.1.27
 
 * Don't throw an error when the `file` property is missing in SourceMapConsumer,
