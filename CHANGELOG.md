@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.29
+
+* Allow duplicate entries in the `names` and `sources` arrays of source maps
+  (usually from TypeScript) we are parsing. Fixes github isse 72.
+
 ## 0.1.28
 
 * Skip duplicate mappings when creating source maps from SourceNode; github
