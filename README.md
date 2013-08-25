@@ -3,30 +3,19 @@
 This is a library to generate and consume the source map format
 [described here][format].
 
-[Learn more here][feature].
+This library is written in the Asynchronous Module Definition format, and works
+in the following environments:
 
-This library was written in the Asynchronous Module Definition
-format. It should work in the following environments:
-
-* Modern Browsers (either after the build, or with an AMD loader such as
-  RequireJS)
+* Modern Browsers supporting ECMAScript 5 (either after the build, or with an
+  AMD loader such as RequireJS)
 
 * Inside Firefox (as a JSM file, after the build)
 
 * With NodeJS versions 0.8.X and higher
 
-## Installing with NPM (for use with NodeJS)
-
-Simply
+## Node
 
     $ npm install source-map
-
-Or, if you'd like to hack on this library and have it installed via npm so you
-can try out your changes:
-
-    $ git clone https://fitzgen@github.com/mozilla/source-map.git
-    $ cd source-map
-    $ npm link .
 
 ## Building from Source (for everywhere else)
 
@@ -40,14 +29,110 @@ Next, run
 
     $ node Makefile.dryice.js
 
-This should create the following files:
+This should spew a bunch of stuff to stdout, and create the following files:
 
 * `dist/source-map.js` - The unminified browser version.
 
 * `dist/source-map.min.js` - The minified browser version.
 
-* `dist/SourceMap.jsm` - The JavaScript Module for inclusion in Firefox
-  source.
+* `dist/SourceMap.jsm` - The JavaScript Module for inclusion in Firefox source.
+
+## Examples
+
+### Consuming a source map
+
+    var rawSourceMap = {
+      version: 3,
+      file: 'min.js',
+      names: ['bar', 'baz', 'n'],
+      sources: ['one.js', 'two.js'],
+      sourceRoot: 'http://example.com/www/js/',
+      mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
+    };
+
+    var smc = new SourceMapConsumer(rawSourceMap);
+
+    console.log(smc.sources);
+    // [ 'http://example.com/www/js/one.js',
+    //   'http://example.com/www/js/two.js' ]
+
+    console.log(smc.originalPositionFor({
+      line: 2,
+      column: 28
+    }));
+    // { source: 'http://example.com/www/js/two.js',
+    //   line: 2,
+    //   column: 10,
+    //   name: 'n' }
+
+    console.log(smc.generatedPositionFor({
+      source: 'http://example.com/www/js/two.js',
+      line: 2,
+      column: 10
+    }));
+    // { line: 2, column: 28 }
+
+    smc.eachMapping(function (m) {
+      // ...
+    });
+
+### Generating a source map
+
+In depth guide:
+[**Compiling to JavaScript, and Debugging with Source Maps**](https://hacks.mozilla.org/2013/05/compiling-to-javascript-and-debugging-with-source-maps/)
+
+#### With SourceNode (high level API)
+
+    function compile(ast) {
+      switch (ast.type) {
+      case 'BinaryExpression':
+        return new SourceNode(
+          ast.location.line,
+          ast.location.column,
+          ast.location.source,
+          [compile(ast.left), " + ", compile(ast.right)]
+        );
+      case 'Literal':
+        return new SourceNode(
+          ast.location.line,
+          ast.location.column,
+          ast.location.source,
+          String(ast.value)
+        );
+      // ...
+      default:
+        throw new Error("Bad AST");
+      }
+    }
+
+    var ast = parse("40 + 2", "add.js");
+    console.log(compile(ast).toStringWithSourceMap({
+      file: 'add.js'
+    }));
+    // { code: '40 + 2',
+    //   map: [object SourceMapGenerator] }
+
+#### With SourceMapGenerator (low level API)
+
+    var map = new SourceMapGenerator({
+      file: "source-mapped.js"
+    });
+
+    map.addMapping({
+      generated: {
+        line: 10,
+        column: 35
+      },
+      source: "foo.js",
+      original: {
+        line: 33,
+        column: 2
+      },
+      name: "christopher"
+    });
+
+    console.log(map.toString());
+    // '{"version":3,"file":"source-mapped.js","sources":["foo.js"],"names":["christopher"],"mappings":";;;;;;;;;mCAgCEA"}'
 
 ## API
 
@@ -141,7 +226,9 @@ argument is the URL of the original source file.
 Iterate over each mapping between an original source/line/column and a
 generated line/column in this source map.
 
-* `callback`: The function that is called with each mapping.
+* `callback`: The function that is called with each mapping. Mappings have the
+  form `{ source, generatedLine, generatedColumn, originalLine, originalColumn,
+  name }`
 
 * `context`: Optional. If specified, this object will be the value of `this`
   every time that `callback` is called.
