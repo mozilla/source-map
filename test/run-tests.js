@@ -22,27 +22,20 @@ function run(tests) {
         try {
           tests[i].testCase[k](assert, util);
           passed++;
-          process.stdout.write('.');
         }
         catch (e) {
-          failures.push({
-            name: tests[i].name + ': ' + k,
-            error: e
-          });
-          process.stdout.write('E');
+          console.log('FAILED ' + tests[i].name + ': ' + k + '!');
+          console.log(e.stack);
         }
       }
     }
   }
 
-  process.stdout.write('\n');
+  console.log("");
   console.log(passed + ' / ' + total + ' tests passed.');
+  console.log("");
 
   failures.forEach(function (f) {
-    console.log('================================================================================');
-    console.log(f.name);
-    console.log('--------------------------------------------------------------------------------');
-    console.log(f.error.stack);
   });
 
   return failures.length;
@@ -55,14 +48,19 @@ process.stdout.on('close', function () {
 });
 
 function isTestFile(f) {
-  return /^test\-.*?\.js/.test(f);
+  var testToRun = process.argv[2];
+  return testToRun
+    ? path.basename(testToRun) === f
+    : /^test\-.*?\.js/.test(f);
 }
 
 function toModule(f) {
   return './source-map/' + f.replace(/\.js$/, '');
 }
 
-var requires = fs.readdirSync(path.join(__dirname, 'source-map')).filter(isTestFile).map(toModule);
+var requires = fs.readdirSync(path.join(__dirname, 'source-map'))
+  .filter(isTestFile)
+  .map(toModule);
 
 code = run(requires.map(require).map(function (mod, i) {
   return {
