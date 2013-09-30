@@ -1,5 +1,19 @@
 # Change Log
 
+## 0.1.30
+
+* Do not join source root with a source, when the source is a data URI.
+
+* Extend the test runner to allow running single specific test files at a time.
+
+* Performance improvements in `SourceNode.prototype.walk` and
+  `SourceMapConsumer.prototype.eachMapping`.
+
+* Source map browser builds will now work inside Workers.
+
+* Better error messages when attempting to add an invalid mapping to a
+  `SourceMapGenerator`.
+
 ## 0.1.29
 
 * Allow duplicate entries in the `names` and `sources` arrays of source maps
