@@ -11,7 +11,6 @@ var path = require('path');
 var util = require('./source-map/util');
 
 function run(tests) {
-  var failures = [];
   var total = 0;
   var passed = 0;
 
@@ -31,21 +30,12 @@ function run(tests) {
     }
   }
 
-  console.log("");
+  console.log('');
   console.log(passed + ' / ' + total + ' tests passed.');
-  console.log("");
+  console.log('');
 
-  failures.forEach(function (f) {
-  });
-
-  return failures.length;
+  return total - passed;
 }
-
-var code;
-
-process.stdout.on('close', function () {
-  process.exit(code);
-});
 
 function isTestFile(f) {
   var testToRun = process.argv[2];
@@ -62,10 +52,11 @@ var requires = fs.readdirSync(path.join(__dirname, 'source-map'))
   .filter(isTestFile)
   .map(toModule);
 
-code = run(requires.map(require).map(function (mod, i) {
+var code = run(requires.map(require).map(function (mod, i) {
   return {
     name: requires[i],
     testCase: mod
   };
 }));
+
 process.exit(code);
