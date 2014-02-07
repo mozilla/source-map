@@ -80,6 +80,30 @@ define(function (require, exports, module) {
     util.assertMapping(2, 9, '/the/root/two.js', 1, 16, null, map, assert, null, true);
   };
 
+  exports['test mappings and end of lines'] = function (assert, util) {
+    var smg = new SourceMapGenerator({
+      file: 'foo.js'
+    });
+    smg.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 1 },
+      source: 'bar.js'
+    });
+    smg.addMapping({
+      original: { line: 2, column: 2 },
+      generated: { line: 2, column: 2 },
+      source: 'bar.js'
+    });
+
+    var map = SourceMapConsumer.fromSourceMap(smg);
+
+    // When finding original positions, mappings end at the end of the line.
+    util.assertMapping(2, 1, null, null, null, null, map, assert, true)
+
+    // When finding generated positions, mappings do not end at the end of the line.
+    util.assertMapping(1, 1, 'bar.js', 2, 1, null, map, assert, null, true);
+  };
+
   exports['test creating source map consumers with )]}\' prefix'] = function (assert, util) {
     assert.doesNotThrow(function () {
       var map = new SourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
