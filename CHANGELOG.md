@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.1.32
+
+* Fixed a bug where SourceMapConsumer couldn't handle negative relative columns
+  (issue 92).
+
+* Fixed test runner to actually report number of failed tests as its process
+  exit code.
+
+* Fixed a typo when reporting bad mappings (issue 87).
+
 ## 0.1.31
 
 * Delay parsing the mappings in SourceMapConsumer until queried for a source
@@ -109,4 +119,3 @@
 ## 0.1.10
 
 * Added sourcesContent support to the customer and generator.
-
