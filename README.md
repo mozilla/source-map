@@ -281,7 +281,7 @@ Set the source content for an original source file.
 
 * `sourceContent` the content of the source file.
 
-#### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile])
+#### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile[, sourceMapPath]])
 
 Applies a SourceMap for a source file to the SourceMap.
 Each mapping to the supplied source file is rewritten using the
@@ -292,6 +292,17 @@ is the minimium of this map and the supplied map.
 
 * `sourceFile`: Optional. The filename of the source file.
   If omitted, sourceMapConsumer.file will be used.
+
+* `sourceMapPath`: Optional. The dirname of the path to the SourceMap
+  to be applied. If relative, it is relative to the SourceMap.
+
+  This parameter is needed when the two SourceMaps aren't in the same
+  directory, and the SourceMap to be applied contains relative source
+  paths. If so, those relative source paths need to be rewritten
+  relative to the SourceMap.
+
+  If omitted, it is assumed that both SourceMaps are in the same directory,
+  thus not needing any rewriting. (Supplying `'.'` has the same effect.)
 
 #### SourceMapGenerator.prototype.toString()
 
