@@ -173,7 +173,7 @@ following attributes:
 
 * `mappings`: A string of base64 VLQs which contain the actual mappings.
 
-* `file`: The generated filename this source map is associated with.
+* `file`: Optional. The generated filename this source map is associated with.
 
 #### SourceMapConsumer.prototype.originalPositionFor(generatedPosition)
 
@@ -244,14 +244,14 @@ generated line/column in this source map.
 An instance of the SourceMapGenerator represents a source map which is being
 built incrementally.
 
-#### new SourceMapGenerator(startOfSourceMap)
+#### new SourceMapGenerator([startOfSourceMap])
 
-To create a new one, you must pass an object with the following properties:
+You may pass an object with the following properties:
 
 * `file`: The filename of the generated source that this source map is
   associated with.
 
-* `sourceRoot`: An optional root for all relative URLs in this source map.
+* `sourceRoot`: A root for all relative URLs in this source map.
 
 #### SourceMapGenerator.fromSourceMap(sourceMapConsumer)
 
@@ -291,7 +291,8 @@ is the minimium of this map and the supplied map.
 * `sourceMapConsumer`: The SourceMap to be applied.
 
 * `sourceFile`: Optional. The filename of the source file.
-  If omitted, sourceMapConsumer.file will be used.
+  If omitted, sourceMapConsumer.file will be used, if it exists.
+  Otherwise an error will be thrown.
 
 #### SourceMapGenerator.prototype.toString()
 
@@ -387,7 +388,7 @@ for trimming whitespace from the end of a source node, etc.
 Return the string representation of this source node. Walks over the tree and
 concatenates all the various snippets together to one string.
 
-### SourceNode.prototype.toStringWithSourceMap(startOfSourceMap)
+### SourceNode.prototype.toStringWithSourceMap([startOfSourceMap])
 
 Returns the string representation of this tree of source nodes, plus a
 SourceMapGenerator which contains all the mappings between the generated and
