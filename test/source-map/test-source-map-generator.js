@@ -269,6 +269,92 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, actualMap, expectedMap);
   };
 
+  exports['test the two additional parameters of applySourceMap'] = function (assert, util) {
+    // Assume the following directory structure:
+    //
+    // /
+    //   bar.coffee
+    //   **/
+    //     coffee/
+    //       foo.coffee
+    //     temp/
+    //       bundle.js
+    //     temp_maps/
+    //       bundle.js.map
+    //     public/
+    //       bundle.min.js
+    //       bundle.min.js.map
+    // http://www.example.com/baz.coffee
+
+    var bundleMap = new SourceMapGenerator({
+      file: 'bundle.js'
+    });
+    bundleMap.addMapping({
+      generated: { line: 3, column: 3 },
+      original: { line: 2, column: 2 },
+      source: '../coffee/foo.coffee'
+    });
+    bundleMap.addMapping({
+      generated: { line: 13, column: 13 },
+      original: { line: 12, column: 12 },
+      source: '/bar.coffee'
+    });
+    bundleMap.addMapping({
+      generated: { line: 23, column: 23 },
+      original: { line: 22, column: 22 },
+      source: 'http://www.example.com/baz.coffee'
+    });
+
+    var minifiedMap = new SourceMapGenerator({
+      file: 'bundle.min.js',
+      sourceRoot: '..'
+    });
+    minifiedMap.addMapping({
+      generated: { line: 1, column: 1 },
+      original: { line: 3, column: 3 },
+      source: 'temp/bundle.js'
+    });
+    minifiedMap.addMapping({
+      generated: { line: 11, column: 11 },
+      original: { line: 13, column: 13 },
+      source: 'temp/bundle.js'
+    });
+    minifiedMap.addMapping({
+      generated: { line: 21, column: 21 },
+      original: { line: 23, column: 23 },
+      source: 'temp/bundle.js'
+    });
+
+    var expectedMap = new SourceMapGenerator({
+      file: 'bundle.min.js',
+      sourceRoot: '..'
+    });
+    expectedMap.addMapping({
+      generated: { line: 1, column: 1 },
+      original: { line: 2, column: 2 },
+      source: 'coffee/foo.coffee'
+    });
+    expectedMap.addMapping({
+      generated: { line: 11, column: 11 },
+      original: { line: 12, column: 12 },
+      source: '/bar.coffee'
+    });
+    expectedMap.addMapping({
+      generated: { line: 21, column: 21 },
+      original: { line: 22, column: 22 },
+      source: 'http://www.example.com/baz.coffee'
+    });
+
+    minifiedMap.applySourceMap(
+      new SourceMapConsumer(bundleMap.toJSON()),
+      // Note that relying on `bundleMap.file` (which is simply 'bundle.js')
+      // wouldn't work here.
+      '../temp/bundle.js',
+      '../temp_maps'
+    );
+    util.assertEqualMaps(assert, minifiedMap.toJSON(), expectedMap.toJSON());
+  };
+
   exports['test sorting with duplicate generated mappings'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'test.js'
