@@ -12,7 +12,7 @@ define(function (require, exports, module) {
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
-  exports['test that we can instantiate with a string or an objects'] = function (assert, util) {
+  exports['test that we can instantiate with a string or an object'] = function (assert, util) {
     assert.doesNotThrow(function () {
       var map = new SourceMapConsumer(util.testMap);
     });

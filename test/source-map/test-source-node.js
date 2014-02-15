@@ -140,8 +140,13 @@ define(function (require, exports, module) {
     var map = node.toStringWithSourceMap({
       file: 'foo.js'
     }).map;
+    var mapWithoutOptions = node.toStringWithSourceMap().map;
 
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
+    assert.ok(mapWithoutOptions instanceof SourceMapGenerator, 'mapWithoutOptions instanceof SourceMapGenerator');
+    mapWithoutOptions._file = 'foo.js';
+    util.assertEqualMaps(assert, map.toJSON(), mapWithoutOptions.toJSON());
+
     map = new SourceMapConsumer(map.toString());
 
     var actual;

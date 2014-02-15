@@ -20,6 +20,9 @@ define(function (require, exports, module) {
       sourceRoot: '.'
     });
     assert.ok(true);
+
+    var map = new SourceMapGenerator();
+    assert.ok(true);
   };
 
   exports['test JSON serialization'] = function (assert, util) {
@@ -267,6 +270,16 @@ define(function (require, exports, module) {
     var actualMap = generator.toJSON();
 
     util.assertEqualMaps(assert, actualMap, expectedMap);
+  };
+
+  exports['test applySourceMap throws when file is missing'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'test.js'
+    });
+    var map2 = new SourceMapGenerator();
+    assert.throws(function() {
+      map.applySourceMap(new SourceMapConsumer(map2.toJSON()));
+    })
   };
 
   exports['test sorting with duplicate generated mappings'] = function (assert, util) {
