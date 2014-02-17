@@ -255,7 +255,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, inputMap);
   };
 
-  exports['test .fromStringWithSourceMap() merging duplicate mappings'] = function (assert, util) {
+  exports['test .toStringWithSourceMap() merging duplicate mappings'] = function (assert, util) {
     var input = new SourceNode(null, null, null, [
       new SourceNode(1, 0, "a.js", "(function"),
       new SourceNode(1, 0, "a.js", "() {\n"),
@@ -264,7 +264,9 @@ define(function (require, exports, module) {
       new SourceNode(1, 0, "b.js", "{};\n"),
       new SourceNode(2, 0, "b.js", "Test"),
       new SourceNode(2, 0, "b.js", ".A", "A"),
-      new SourceNode(2, 20, "b.js", " = { value: 1234 };\n", "A"),
+      new SourceNode(2, 20, "b.js", " = { value: ", "A"),
+      "1234",
+      new SourceNode(2, 40, "b.js", " };\n", "A"),
       "}());\n",
       "/* Generated Source */"
     ]);
@@ -280,9 +282,8 @@ define(function (require, exports, module) {
       source: 'a.js',
       original: { line: 1, column: 0 }
     });
-    correctMap.addMapping({
-      generated: { line: 2, column: 0 }
-    });
+    // Here is no need for a empty mapping,
+    // because mappings ends at eol
     correctMap.addMapping({
       generated: { line: 2, column: 2 },
       source: 'a.js',
@@ -310,13 +311,81 @@ define(function (require, exports, module) {
       name: 'A',
       original: { line: 2, column: 20 }
     });
+    // This empty mapping is required,
+    // because there is a hole in the middle of the line
     correctMap.addMapping({
-      generated: { line: 4, column: 0 }
+      generated: { line: 3, column: 18 }
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 22 },
+      source: 'b.js',
+      name: 'A',
+      original: { line: 2, column: 40 }
+    });
+    // Here is no need for a empty mapping,
+    // because mappings ends at eol
+
+    var inputMap = input.map.toJSON();
+    correctMap = correctMap.toJSON();
+    util.assertEqualMaps(assert, inputMap, correctMap);
+  };
+
+  exports['test .toStringWithSourceMap() multi-line SourceNodes'] = function (assert, util) {
+    var input = new SourceNode(null, null, null, [
+      new SourceNode(1, 0, "a.js", "(function() {\nvar nextLine = 1;\nanotherLine();\n"),
+      new SourceNode(2, 2, "b.js", "Test.call(this, 123);\n"),
+      new SourceNode(2, 2, "b.js", "this['stuff'] = 'v';\n"),
+      new SourceNode(2, 2, "b.js", "anotherLine();\n"),
+      "/*\nGenerated\nSource\n*/\n",
+      new SourceNode(3, 4, "c.js", "anotherLine();\n"),
+      "/*\nGenerated\nSource\n*/"
+    ]);
+    input = input.toStringWithSourceMap({
+      file: 'foo.js'
+    });
+
+    var correctMap = new SourceMapGenerator({
+      file: 'foo.js'
+    });
+    correctMap.addMapping({
+      generated: { line: 1, column: 0 },
+      source: 'a.js',
+      original: { line: 1, column: 0 }
+    });
+    correctMap.addMapping({
+      generated: { line: 2, column: 0 },
+      source: 'a.js',
+      original: { line: 1, column: 0 }
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 0 },
+      source: 'a.js',
+      original: { line: 1, column: 0 }
+    });
+    correctMap.addMapping({
+      generated: { line: 4, column: 0 },
+      source: 'b.js',
+      original: { line: 2, column: 2 }
+    });
+    correctMap.addMapping({
+      generated: { line: 5, column: 0 },
+      source: 'b.js',
+      original: { line: 2, column: 2 }
+    });
+    correctMap.addMapping({
+      generated: { line: 6, column: 0 },
+      source: 'b.js',
+      original: { line: 2, column: 2 }
+    });
+    correctMap.addMapping({
+      generated: { line: 11, column: 0 },
+      source: 'c.js',
+      original: { line: 3, column: 4 }
     });
 
     var inputMap = input.map.toJSON();
     correctMap = correctMap.toJSON();
-    util.assertEqualMaps(assert, correctMap, inputMap);
+    util.assertEqualMaps(assert, inputMap, correctMap);
   };
 
   exports['test setSourceContent with toStringWithSourceMap'] = function (assert, util) {
