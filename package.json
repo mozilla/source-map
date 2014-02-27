@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.1.32",
+  "version": "0.1.33",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -22,7 +22,9 @@
     "Evan Wallace <evan.exe@gmail.com>",
     "Heather Arthur <fayearthur@gmail.com>",
     "Hugh Kennedy <hughskennedy@gmail.com>",
-    "David Glasser <glasser@davidglasser.net>"
+    "David Glasser <glasser@davidglasser.net>",
+    "Simon Lydell <simon.lydell@gmail.com>",
+    "Jmeas Smith <jellyes2@gmail.com>"
   ],
   "repository": {
     "type": "git",

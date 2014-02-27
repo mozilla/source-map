@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.1.33
+
+* Fix some edge cases surrounding path joining and URL resolution.
+
+* Add a third parameter for relative path to
+  `SourceMapGenerator.prototype.applySourceMap`.
+
+* Fix issues with mappings and EOLs.
+
 ## 0.1.32
 
 * Fixed a bug where SourceMapConsumer couldn't handle negative relative columns
