@@ -21,8 +21,9 @@ define(function (require, exports, module) {
     });
     assert.ok(true);
 
-    var map = new SourceMapGenerator();
-    assert.ok(true);
+    var map = new SourceMapGenerator().toJSON();
+    assert.ok(!('file' in map));
+    assert.ok(!('sourceRoot' in map));
   };
 
   exports['test JSON serialization'] = function (assert, util) {

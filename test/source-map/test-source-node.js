@@ -144,6 +144,7 @@ define(function (require, exports, module) {
 
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
     assert.ok(mapWithoutOptions instanceof SourceMapGenerator, 'mapWithoutOptions instanceof SourceMapGenerator');
+    assert.ok(!('file' in mapWithoutOptions));
     mapWithoutOptions._file = 'foo.js';
     util.assertEqualMaps(assert, map.toJSON(), mapWithoutOptions.toJSON());
 
