@@ -209,8 +209,9 @@ define(function (require, exports, module) {
   });
 
   exports['test .fromStringWithSourceMap()'] = forEachNewline(function (assert, util, nl) {
+    var testCode = util.testGeneratedCode.replace(/\n/g, nl);
     var node = SourceNode.fromStringWithSourceMap(
-                              util.testGeneratedCode.replace(/\n/g, nl),
+                              testCode,
                               new SourceMapConsumer(util.testMap));
 
     var result = node.toStringWithSourceMap({
@@ -219,7 +220,7 @@ define(function (require, exports, module) {
     var map = result.map;
     var code = result.code;
 
-    assert.equal(code, util.testGeneratedCode.replace(/\n/g, nl));
+    assert.equal(code, testCode);
     assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
     map = map.toJSON();
     assert.equal(map.version, util.testMap.version);
