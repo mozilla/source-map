@@ -15,7 +15,7 @@ define(function (require, exports, module) {
 
   function forEachNewline(fn) {
     return function (assert, util) {
-      ['\n', '\r', '\r\n'].forEach(fn.bind(null, assert, util));
+      ['\n', '\r\n'].forEach(fn.bind(null, assert, util));
     }
   }
 
