@@ -332,11 +332,11 @@ use before outputting the generated JS and source map.
 
 * `name`: Optional. The original identifier.
 
-#### SourceNode.fromStringWithSourceMap(code, sourceMapConsumer)
+#### SourceNode.fromStringWithSourceMap(generatedCode, sourceMapConsumer)
 
 Creates a SourceNode from generated code and a SourceMapConsumer.
 
-* `code`: The generated code
+* `generatedCode`: The generated code
 
 * `sourceMapConsumer` The SourceMap for the generated code
 
