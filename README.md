@@ -399,7 +399,7 @@ for trimming whitespace from the end of a source node, etc.
 Return the string representation of this source node. Walks over the tree and
 concatenates all the various snippets together to one string.
 
-### SourceNode.prototype.toStringWithSourceMap([startOfSourceMap])
+#### SourceNode.prototype.toStringWithSourceMap([startOfSourceMap])
 
 Returns the string representation of this tree of source nodes, plus a
 SourceMapGenerator which contains all the mappings between the generated and
