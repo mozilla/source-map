@@ -441,6 +441,42 @@ define(function (require, exports, module) {
     assert.equal(result.code, '');
   };
 
+  exports['test .toStringWithSourceMap() with consecutive newlines'] = forEachNewline(function (assert, util, nl) {
+    var input = new SourceNode(null, null, null, [
+      "/***/" + nl + nl,
+      new SourceNode(1, 0, "a.js", "'use strict';" + nl),
+      new SourceNode(2, 0, "a.js", "a();"),
+    ]);
+    input = input.toStringWithSourceMap({
+      file: 'foo.js'
+    });
+
+    assert.equal(input.code, [
+      "/***/",
+      "",
+      "'use strict';",
+      "a();",
+    ].join(nl));
+
+    var correctMap = new SourceMapGenerator({
+      file: 'foo.js'
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 0 },
+      source: 'a.js',
+      original: { line: 1, column: 0 }
+    });
+    correctMap.addMapping({
+      generated: { line: 4, column: 0 },
+      source: 'a.js',
+      original: { line: 2, column: 0 }
+    });
+
+    var inputMap = input.map.toJSON();
+    correctMap = correctMap.toJSON();
+    util.assertEqualMaps(assert, inputMap, correctMap);
+  });
+
   exports['test setSourceContent with toStringWithSourceMap'] = function (assert, util) {
     var aNode = new SourceNode(1, 1, 'a.js', 'a');
     aNode.setSourceContent('a.js', 'someContent');
