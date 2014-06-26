@@ -277,6 +277,61 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, inputMap);
   });
 
+  exports['test .fromStringWithSourceMap() third argument'] = function (assert, util) {
+    // Assume the following directory structure:
+    //
+    // http://foo.org/
+    //   bar.coffee
+    //   app/
+    //     coffee/
+    //       foo.coffee
+    //       coffeeBundle.js # Made from {foo,bar,baz}.coffee
+    //       maps/
+    //         coffeeBundle.js.map
+    //     js/
+    //       foo.js
+    //     public/
+    //       app.js # Made from {foo,coffeeBundle}.js
+    //       app.js.map
+    //
+    // http://www.example.com/
+    //   baz.coffee
+
+    var coffeeBundle = new SourceNode(1, 0, 'foo.coffee', 'foo(coffee);\n');
+    coffeeBundle.setSourceContent('foo.coffee', 'foo coffee');
+    coffeeBundle.add(new SourceNode(2, 0, '/bar.coffee', 'bar(coffee);\n'));
+    coffeeBundle.add(new SourceNode(3, 0, 'http://www.example.com/baz.coffee', 'baz(coffee);'));
+    coffeeBundle = coffeeBundle.toStringWithSourceMap({
+      file: 'foo.js',
+      sourceRoot: '..'
+    });
+
+    var foo = new SourceNode(1, 0, 'foo.js', 'foo(js);');
+
+    var app = new SourceNode();
+    app.add(SourceNode.fromStringWithSourceMap(
+                              coffeeBundle.code,
+                              new SourceMapConsumer(coffeeBundle.map.toString()),
+                              '../coffee/maps'));
+    app.add(foo);
+
+    var expectedSources = [
+      '../coffee/foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee',
+      'foo.js'
+    ];
+    var i = 0;
+    app.walk(function (chunk, loc) {
+      assert.equal(loc.source, expectedSources[i]);
+      i++;
+    });
+    app.walkSourceContents(function (sourceFile, sourceContent) {
+      assert.equal(sourceFile, '../coffee/foo.coffee');
+      assert.equal(sourceContent, 'foo coffee');
+    })
+  };
+
   exports['test .toStringWithSourceMap() merging duplicate mappings'] = forEachNewline(function (assert, util, nl) {
     var input = new SourceNode(null, null, null, [
       new SourceNode(1, 0, "a.js", "(function"),

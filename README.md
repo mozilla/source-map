@@ -332,13 +332,16 @@ use before outputting the generated JS and source map.
 
 * `name`: Optional. The original identifier.
 
-#### SourceNode.fromStringWithSourceMap(code, sourceMapConsumer)
+#### SourceNode.fromStringWithSourceMap(code, sourceMapConsumer[, relativePath])
 
 Creates a SourceNode from generated code and a SourceMapConsumer.
 
 * `code`: The generated code
 
 * `sourceMapConsumer` The SourceMap for the generated code
+
+* `relativePath` The optional path that relative sources in `sourceMapConsumer`
+  should be relative to.
 
 #### SourceNode.prototype.add(chunk)
 
