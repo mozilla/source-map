@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.1.35
+
+* A third optional parameter was added to `SourceNode.fromStringWithSourceMap`
+  to specify a path that relative sources in the second parameter should be
+  relative to. Issue #105.
+
+* If no file property is given to a `SourceMapGenerator`, then the resulting
+  source map will no longer have a `null` file property. The property will
+  simply not exist. Issue #104.
+
+* Fixed a bug where consecutive newlines were ignored in `SourceNode`s. Issue
+  #116.
+
 ## 0.1.34
 
 * Make `SourceNode` work with windows style ("\r\n") newlines. Issue #103.
