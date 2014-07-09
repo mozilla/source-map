@@ -181,6 +181,24 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, util.testMap);
   };
 
+  exports['test that adding a mapping with an empty string name does not break generation'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated-foo.js',
+      sourceRoot: '.'
+    });
+
+    map.addMapping({
+      generated: { line: 1, column: 1 },
+      source: 'bar.js',
+      original: { line: 1, column: 1 },
+      name: ''
+    });
+
+    assert.doesNotThrow(function () {
+      JSON.parse(map.toString());
+    });
+  };
+
   exports['test that source content can be set'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'min.js',
