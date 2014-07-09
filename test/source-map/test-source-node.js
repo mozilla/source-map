@@ -308,28 +308,61 @@ define(function (require, exports, module) {
 
     var foo = new SourceNode(1, 0, 'foo.js', 'foo(js);');
 
-    var app = new SourceNode();
-    app.add(SourceNode.fromStringWithSourceMap(
-                              coffeeBundle.code,
-                              new SourceMapConsumer(coffeeBundle.map.toString()),
-                              '../coffee/maps'));
-    app.add(foo);
+    var test = function(relativePath, expectedSources) {
+      var app = new SourceNode();
+      app.add(SourceNode.fromStringWithSourceMap(
+                                coffeeBundle.code,
+                                new SourceMapConsumer(coffeeBundle.map.toString()),
+                                relativePath));
+      app.add(foo);
+      var i = 0;
+      app.walk(function (chunk, loc) {
+        assert.equal(loc.source, expectedSources[i]);
+        i++;
+      });
+      app.walkSourceContents(function (sourceFile, sourceContent) {
+        assert.equal(sourceFile, expectedSources[0]);
+        assert.equal(sourceContent, 'foo coffee');
+      })
+    };
 
-    var expectedSources = [
+    test('../coffee/maps', [
       '../coffee/foo.coffee',
       '/bar.coffee',
       'http://www.example.com/baz.coffee',
       'foo.js'
-    ];
-    var i = 0;
-    app.walk(function (chunk, loc) {
-      assert.equal(loc.source, expectedSources[i]);
-      i++;
-    });
-    app.walkSourceContents(function (sourceFile, sourceContent) {
-      assert.equal(sourceFile, '../coffee/foo.coffee');
-      assert.equal(sourceContent, 'foo coffee');
-    })
+    ]);
+
+    // If the third parameter is omitted or set to the current working
+    // directory we get incorrect source paths:
+
+    test(undefined, [
+      '../foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee',
+      'foo.js'
+    ]);
+
+    test('', [
+      '../foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee',
+      'foo.js'
+    ]);
+
+    test('.', [
+      '../foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee',
+      'foo.js'
+    ]);
+
+    test('./', [
+      '../foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee',
+      'foo.js'
+    ]);
   };
 
   exports['test .toStringWithSourceMap() merging duplicate mappings'] = forEachNewline(function (assert, util, nl) {
