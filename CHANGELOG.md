@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.36
+
+* Allow the `names` mapping property to be an empty string. Issue #121.
+
 ## 0.1.35
 
 * A third optional parameter was added to `SourceNode.fromStringWithSourceMap`
