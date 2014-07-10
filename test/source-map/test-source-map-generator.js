@@ -311,8 +311,8 @@ define(function (require, exports, module) {
     //       foo.coffee
     //     temp/
     //       bundle.js
-    //     temp_maps/
-    //       bundle.js.map
+    //       temp_maps/
+    //         bundle.js.map
     //     public/
     //       bundle.min.js
     //       bundle.min.js.map
@@ -326,9 +326,9 @@ define(function (require, exports, module) {
     bundleMap.addMapping({
       generated: { line: 3, column: 3 },
       original: { line: 2, column: 2 },
-      source: '../coffee/foo.coffee'
+      source: '../../coffee/foo.coffee'
     });
-    bundleMap.setSourceContent('../coffee/foo.coffee', 'foo coffee');
+    bundleMap.setSourceContent('../../coffee/foo.coffee', 'foo coffee');
     bundleMap.addMapping({
       generated: { line: 13, column: 13 },
       original: { line: 12, column: 12 },
@@ -401,21 +401,48 @@ define(function (require, exports, module) {
       return map.toJSON();
     }
 
-    util.assertEqualMaps(assert, actualMap('../temp_maps'), expectedMap([
+    util.assertEqualMaps(assert, actualMap('../temp/temp_maps'), expectedMap([
       'coffee/foo.coffee',
       '/bar.coffee',
       'http://www.example.com/baz.coffee'
     ]));
 
-    util.assertEqualMaps(assert, actualMap('/app/temp_maps'), expectedMap([
+    util.assertEqualMaps(assert, actualMap('/app/temp/temp_maps'), expectedMap([
       '/app/coffee/foo.coffee',
       '/bar.coffee',
       'http://www.example.com/baz.coffee'
     ]));
 
-    util.assertEqualMaps(assert, actualMap('http://foo.org/app/temp_maps'), expectedMap([
+    util.assertEqualMaps(assert, actualMap('http://foo.org/app/temp/temp_maps'), expectedMap([
       'http://foo.org/app/coffee/foo.coffee',
       'http://foo.org/bar.coffee',
+      'http://www.example.com/baz.coffee'
+    ]));
+
+    // If the third parameter is omitted or set to the current working
+    // directory we get incorrect source paths:
+
+    util.assertEqualMaps(assert, actualMap(), expectedMap([
+      '../coffee/foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee'
+    ]));
+
+    util.assertEqualMaps(assert, actualMap(''), expectedMap([
+      '../coffee/foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee'
+    ]));
+
+    util.assertEqualMaps(assert, actualMap('.'), expectedMap([
+      '../coffee/foo.coffee',
+      '/bar.coffee',
+      'http://www.example.com/baz.coffee'
+    ]));
+
+    util.assertEqualMaps(assert, actualMap('./'), expectedMap([
+      '../coffee/foo.coffee',
+      '/bar.coffee',
       'http://www.example.com/baz.coffee'
     ]));
   };

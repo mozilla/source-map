@@ -28,7 +28,14 @@ define(function (require, exports, module) {
     assertUrl('//www.example.com');
     assertUrl('file:///www.example.com');
 
+    assert.equal(libUtil.urlParse(''), null);
+    assert.equal(libUtil.urlParse('.'), null);
+    assert.equal(libUtil.urlParse('..'), null);
+    assert.equal(libUtil.urlParse('a'), null);
+    assert.equal(libUtil.urlParse('a/b'), null);
     assert.equal(libUtil.urlParse('a//b'), null);
+    assert.equal(libUtil.urlParse('/a'), null);
+    assert.equal(libUtil.urlParse('data:foo,bar'), null);
   };
 
   exports['test normalize()'] = function (assert, util) {
@@ -50,6 +57,7 @@ define(function (require, exports, module) {
     assert.equal(libUtil.normalize('/././././a/b/c'), '/a/b/c');
     assert.equal(libUtil.normalize('/a/b/c/./././d/././e'), '/a/b/c/d/e');
 
+    assert.equal(libUtil.normalize(''), '.');
     assert.equal(libUtil.normalize('.'), '.');
     assert.equal(libUtil.normalize('./'), '.');
     assert.equal(libUtil.normalize('././a'), 'a');
@@ -88,6 +96,73 @@ define(function (require, exports, module) {
     assert.equal(libUtil.join('a', 'data:foo,bar'), 'data:foo,bar');
 
 
+    assert.equal(libUtil.join('', 'b'), 'b');
+    assert.equal(libUtil.join('.', 'b'), 'b');
+    assert.equal(libUtil.join('', 'b/'), 'b/');
+    assert.equal(libUtil.join('.', 'b/'), 'b/');
+    assert.equal(libUtil.join('', 'b//'), 'b/');
+    assert.equal(libUtil.join('.', 'b//'), 'b/');
+
+    assert.equal(libUtil.join('', '..'), '..');
+    assert.equal(libUtil.join('.', '..'), '..');
+    assert.equal(libUtil.join('', '../b'), '../b');
+    assert.equal(libUtil.join('.', '../b'), '../b');
+
+    assert.equal(libUtil.join('', '.'), '.');
+    assert.equal(libUtil.join('.', '.'), '.');
+    assert.equal(libUtil.join('', './b'), 'b');
+    assert.equal(libUtil.join('.', './b'), 'b');
+
+    assert.equal(libUtil.join('', 'http://www.example.com'), 'http://www.example.com');
+    assert.equal(libUtil.join('.', 'http://www.example.com'), 'http://www.example.com');
+    assert.equal(libUtil.join('', 'data:foo,bar'), 'data:foo,bar');
+    assert.equal(libUtil.join('.', 'data:foo,bar'), 'data:foo,bar');
+
+
+    assert.equal(libUtil.join('..', 'b'), '../b');
+    assert.equal(libUtil.join('..', 'b/'), '../b/');
+    assert.equal(libUtil.join('..', 'b//'), '../b/');
+
+    assert.equal(libUtil.join('..', '..'), '../..');
+    assert.equal(libUtil.join('..', '../b'), '../../b');
+
+    assert.equal(libUtil.join('..', '.'), '..');
+    assert.equal(libUtil.join('..', './b'), '../b');
+
+    assert.equal(libUtil.join('..', 'http://www.example.com'), 'http://www.example.com');
+    assert.equal(libUtil.join('..', 'data:foo,bar'), 'data:foo,bar');
+
+
+    assert.equal(libUtil.join('a', ''), 'a');
+    assert.equal(libUtil.join('a', '.'), 'a');
+    assert.equal(libUtil.join('a/', ''), 'a');
+    assert.equal(libUtil.join('a/', '.'), 'a');
+    assert.equal(libUtil.join('a//', ''), 'a');
+    assert.equal(libUtil.join('a//', '.'), 'a');
+    assert.equal(libUtil.join('/a', ''), '/a');
+    assert.equal(libUtil.join('/a', '.'), '/a');
+    assert.equal(libUtil.join('', ''), '.');
+    assert.equal(libUtil.join('.', ''), '.');
+    assert.equal(libUtil.join('.', ''), '.');
+    assert.equal(libUtil.join('.', '.'), '.');
+    assert.equal(libUtil.join('..', ''), '..');
+    assert.equal(libUtil.join('..', '.'), '..');
+    assert.equal(libUtil.join('http://foo.org/a', ''), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org/a', '.'), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org/a/', ''), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org/a/', '.'), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org/a//', ''), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org/a//', '.'), 'http://foo.org/a');
+    assert.equal(libUtil.join('http://foo.org', ''), 'http://foo.org/');
+    assert.equal(libUtil.join('http://foo.org', '.'), 'http://foo.org/');
+    assert.equal(libUtil.join('http://foo.org/', ''), 'http://foo.org/');
+    assert.equal(libUtil.join('http://foo.org/', '.'), 'http://foo.org/');
+    assert.equal(libUtil.join('http://foo.org//', ''), 'http://foo.org/');
+    assert.equal(libUtil.join('http://foo.org//', '.'), 'http://foo.org/');
+    assert.equal(libUtil.join('//www.example.com', ''), '//www.example.com/');
+    assert.equal(libUtil.join('//www.example.com', '.'), '//www.example.com/');
+
+
     assert.equal(libUtil.join('http://foo.org/a', 'b'), 'http://foo.org/a/b');
     assert.equal(libUtil.join('http://foo.org/a/', 'b'), 'http://foo.org/a/b');
     assert.equal(libUtil.join('http://foo.org/a//', 'b'), 'http://foo.org/a/b');
@@ -122,6 +197,12 @@ define(function (require, exports, module) {
 
     assert.equal(libUtil.join('http://www.example.com', '//foo.org/bar'), 'http://foo.org/bar');
     assert.equal(libUtil.join('//www.example.com', '//foo.org/bar'), '//foo.org/bar');
+  };
+
+  // TODO Issue #128: Define and test this function properly.
+  exports['test relative()'] = function (assert, util) {
+    assert.equal(libUtil.relative('/the/root', '/the/root/one.js'), 'one.js');
+    assert.equal(libUtil.relative('/the/root', '/the/rootone.js'), '/the/rootone.js');
   };
 
 });
