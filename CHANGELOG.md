@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.37
+
+* Fix a bug where if the source root was an empty string, relative source paths
+  would turn into absolute source paths. Issue #124.
+
 ## 0.1.36
 
 * Allow the `names` mapping property to be an empty string. Issue #121.
