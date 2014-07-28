@@ -203,6 +203,14 @@ define(function (require, exports, module) {
   exports['test relative()'] = function (assert, util) {
     assert.equal(libUtil.relative('/the/root', '/the/root/one.js'), 'one.js');
     assert.equal(libUtil.relative('/the/root', '/the/rootone.js'), '/the/rootone.js');
+
+    assert.equal(libUtil.relative('', '/the/root/one.js'), '/the/root/one.js');
+    assert.equal(libUtil.relative('.', '/the/root/one.js'), '/the/root/one.js');
+    assert.equal(libUtil.relative('', 'the/root/one.js'), 'the/root/one.js');
+    assert.equal(libUtil.relative('.', 'the/root/one.js'), 'the/root/one.js');
+
+    assert.equal(libUtil.relative('/', '/the/root/one.js'), 'the/root/one.js');
+    assert.equal(libUtil.relative('/', 'the/root/one.js'), 'the/root/one.js');
   };
 
 });
