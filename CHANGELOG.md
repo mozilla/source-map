@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.38
+
+* Fix a bug where finding relative paths from an empty path were creating
+  absolute paths. See issue #129.
+
 ## 0.1.37
 
 * Fix a bug where if the source root was an empty string, relative source paths
