@@ -447,6 +447,62 @@ define(function (require, exports, module) {
     ]));
   };
 
+  exports['test applySourceMap name handling'] = function (assert, util) {
+    // Imagine some CoffeeScript code being compiled into JavaScript and then
+    // minified.
+
+    var assertName = function(coffeeName, jsName, expectedName) {
+      var minifiedMap = new SourceMapGenerator({
+        file: 'test.js.min'
+      });
+      minifiedMap.addMapping({
+        generated: { line: 1, column: 4 },
+        original: { line: 1, column: 4 },
+        source: 'test.js',
+        name: jsName
+      });
+
+      var coffeeMap = new SourceMapGenerator({
+        file: 'test.js'
+      });
+      coffeeMap.addMapping({
+        generated: { line: 1, column: 4 },
+        original: { line: 1, column: 0 },
+        source: 'test.coffee',
+        name: coffeeName
+      });
+
+      minifiedMap.applySourceMap(new SourceMapConsumer(coffeeMap.toJSON()));
+
+      new SourceMapConsumer(minifiedMap.toJSON()).eachMapping(function(mapping) {
+        assert.equal(mapping.name, expectedName);
+      });
+    };
+
+    // `foo = 1` -> `var foo = 1;` -> `var a=1`
+    // CoffeeScript doesn’t rename variables, so there’s no need for it to
+    // provide names in its source maps. Minifiers do rename variables and
+    // therefore do provide names in their source maps. So that name should be
+    // retained if the original map lacks names.
+    assertName(null, 'foo', 'foo');
+
+    // `foo = 1` -> `var coffee$foo = 1;` -> `var a=1`
+    // Imagine that CoffeeScript prefixed all variables with `coffee$`. Even
+    // though the minifier then also provides a name, the original name is
+    // what corresponds to the source.
+    assertName('foo', 'coffee$foo', 'foo');
+
+    // `foo = 1` -> `var coffee$foo = 1;` -> `var coffee$foo=1`
+    // Minifiers can turn off variable mangling. Then there’s no need to
+    // provide names in the source map, but the names from the original map are
+    // still needed.
+    assertName('foo', null, 'foo');
+
+    // `foo = 1` -> `var foo = 1;` -> `var foo=1`
+    // No renaming at all.
+    assertName(null, null, null);
+  };
+
   exports['test sorting with duplicate generated mappings'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'test.js'
