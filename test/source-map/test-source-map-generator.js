@@ -592,4 +592,11 @@ define(function (require, exports, module) {
     });
   };
 
+  exports['test setting sourcesContent to null when already null'] = function (assert, util) {
+    var smg = new SourceMapGenerator({ file: "foo.js" });
+    assert.doesNotThrow(function() {
+      smg.setSourceContent("bar.js", null);
+    });
+  };
+
 });
