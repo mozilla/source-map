@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.1.38",
+  "version": "0.1.39",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -28,7 +28,8 @@
     "Michael Z Goddard <mzgoddard@gmail.com>",
     "azu <azu@users.noreply.github.com>",
     "John Gozde <john@gozde.ca>",
-    "Adam Kirkton <akirkton@truefitinnovation.com>"
+    "Adam Kirkton <akirkton@truefitinnovation.com>",
+    "Chris Montgomery <christopher.montgomery@dowjones.com>"
   ],
   "repository": {
     "type": "git",

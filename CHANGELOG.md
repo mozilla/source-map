@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.39
+
+* Fix a bug where setting a source's contents to null before any source content
+  had been set before threw a TypeError. See issue #131.
+
 ## 0.1.38
 
 * Fix a bug where finding relative paths from an empty path were creating
