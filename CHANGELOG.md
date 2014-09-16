@@ -29,8 +29,8 @@
   source map will no longer have a `null` file property. The property will
   simply not exist. Issue #104.
 
-* Fixed a bug where consecutive newlines were ignored in `SourceNode`s. Issue
-  #116.
+* Fixed a bug where consecutive newlines were ignored in `SourceNode`s.
+  Issue #116.
 
 ## 0.1.34
 
