@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.40
+
+* Performance improvements for parsing source maps in SourceMapConsumer.
+
 ## 0.1.39
 
 * Fix a bug where setting a source's contents to null before any source content
