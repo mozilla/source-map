@@ -290,6 +290,92 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 2);
   };
 
+  exports['test allGeneratedPositionsFor'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'bar.coffee'
+    });
+    map.addMapping({
+      original: { line: 2, column: 1 },
+      generated: { line: 3, column: 2 },
+      source: 'bar.coffee'
+    });
+    map.addMapping({
+      original: { line: 2, column: 2 },
+      generated: { line: 3, column: 3 },
+      source: 'bar.coffee'
+    });
+    map.addMapping({
+      original: { line: 3, column: 1 },
+      generated: { line: 4, column: 2 },
+      source: 'bar.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 2,
+      source: 'bar.coffee'
+    });
+
+    assert(mappings.length, 2);
+    assert(mappings[0].line, 3);
+    assert(mappings[0].column, 2);
+    assert(mappings[1].line, 3);
+    assert(mappings[1].column, 3);
+  };
+
+  exports['test allGeneratedPositionsFor for line with no mappings'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: 'bar.coffee'
+    });
+    map.addMapping({
+      original: { line: 3, column: 1 },
+      generated: { line: 4, column: 2 },
+      source: 'bar.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 2,
+      source: 'bar.coffee'
+    });
+
+    assert.equal(mappings.length, 0);
+  };
+
+  exports['test allGeneratedPositionsFor source map with no mappings'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 2,
+      source: 'bar.coffee'
+    });
+
+    assert.equal(mappings.length, 0);
+  };
+
   exports['test sourceRoot + originalPositionFor'] = function (assert, util) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
