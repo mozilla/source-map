@@ -175,6 +175,11 @@ following attributes:
 
 * `file`: Optional. The generated filename this source map is associated with.
 
+#### SourceMapConsumer.prototype.computeColumnSpans()
+
+Compute the last column for each generated mapping. The last column is
+inclusive.
+
 #### SourceMapConsumer.prototype.originalPositionFor(generatedPosition)
 
 Returns the original source, line, and column information for the generated
