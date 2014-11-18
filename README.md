@@ -216,6 +216,22 @@ and an object is returned with the following properties:
 
 * `column`: The column number in the generated source, or null.
 
+#### SourceMapConsumer.prototype.allGeneratedPositionsFor(originalPosition)
+
+Returns all generated line and column information for the original source
+and line provided. The only argument is an object with the following
+properties:
+
+* `source`: The filename of the original source.
+
+* `line`: The line number in the original source.
+
+and an array of objects is returned, each with the following properties:
+
+* `line`: The line number in the generated source, or null.
+
+* `column`: The column number in the generated source, or null.
+
 #### SourceMapConsumer.prototype.sourceContentFor(source)
 
 Returns the original source content for the source provided. The only
