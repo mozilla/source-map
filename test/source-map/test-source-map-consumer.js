@@ -376,6 +376,72 @@ define(function (require, exports, module) {
     assert.equal(mappings.length, 0);
   };
 
+  exports['test computeColumnSpans'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 1 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 2, column: 1 },
+      generated: { line: 2, column: 1 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 2, column: 2 },
+      generated: { line: 2, column: 10 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 2, column: 3 },
+      generated: { line: 2, column: 20 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 3, column: 1 },
+      generated: { line: 3, column: 1 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 3, column: 2 },
+      generated: { line: 3, column: 2 },
+      source: 'foo.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    map.computeColumnSpans();
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 1,
+      source: 'foo.coffee'
+    });
+
+    assert.equal(mappings.length, 1);
+    assert.equal(mappings[0].lastColumn, Infinity);
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 2,
+      source: 'foo.coffee'
+    });
+
+    assert.equal(mappings.length, 3);
+    assert.equal(mappings[0].lastColumn, 9);
+    assert.equal(mappings[1].lastColumn, 19);
+    assert.equal(mappings[2].lastColumn, Infinity);
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 3,
+      source: 'foo.coffee'
+    });
+
+    assert.equal(mappings.length, 2);
+    assert.equal(mappings[0].lastColumn, 1);
+    assert.equal(mappings[1].lastColumn, Infinity);
+  };
+
   exports['test sourceRoot + originalPositionFor'] = function (assert, util) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
