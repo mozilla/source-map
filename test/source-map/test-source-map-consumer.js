@@ -252,6 +252,25 @@ define(function (require, exports, module) {
     }, Error);
   };
 
+  exports['test that we can get the original source content with relative source paths'] = function (assert, util) {
+    var map = new SourceMapConsumer(util.testMapRelativeSources);
+    var sources = map.sources;
+
+    assert.equal(map.sourceContentFor(sources[0]), ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
+    assert.equal(map.sourceContentFor(sources[1]), ' TWO.inc = function (n) {\n   return n + 1;\n };');
+    assert.equal(map.sourceContentFor("one.js"), ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
+    assert.equal(map.sourceContentFor("two.js"), ' TWO.inc = function (n) {\n   return n + 1;\n };');
+    assert.throws(function () {
+      map.sourceContentFor("");
+    }, Error);
+    assert.throws(function () {
+      map.sourceContentFor("/the/root/three.js");
+    }, Error);
+    assert.throws(function () {
+      map.sourceContentFor("three.js");
+    }, Error);
+  };
+
   exports['test sourceRoot + generatedPositionFor'] = function (assert, util) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
