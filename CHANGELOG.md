@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.1.41
+
+* Fix a bug with getting the source content of relative sources with a "./"
+  prefix. See issue #145 and [Bug 1090768](bugzil.la/1090768).
+
+* Add the `SourceMapConsumer.prototype.computeColumnSpans` method to compute the
+  column span of each mapping.
+
+* Add the `SourceMapConsumer.prototype.allGeneratedPositionsFor` method to find
+  all generated positions associated with a given original source and line.
+
 ## 0.1.40
 
 * Performance improvements for parsing source maps in SourceMapConsumer.
