@@ -345,11 +345,11 @@ define(function (require, exports, module) {
       source: 'bar.coffee'
     });
 
-    assert(mappings.length, 2);
-    assert(mappings[0].line, 3);
-    assert(mappings[0].column, 2);
-    assert(mappings[1].line, 3);
-    assert(mappings[1].column, 3);
+    assert.equal(mappings.length, 2);
+    assert.equal(mappings[0].line, 3);
+    assert.equal(mappings[0].column, 2);
+    assert.equal(mappings[1].line, 3);
+    assert.equal(mappings[1].column, 3);
   };
 
   exports['test allGeneratedPositionsFor for line with no mappings'] = function (assert, util) {
