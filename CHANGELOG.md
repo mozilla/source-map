@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.42
+
+* Fix an issue where `SourceNode`s from different versions of the source-map
+  library couldn't be used in conjunction with each other. See issue #142.
+
 ## 0.1.41
 
 * Fix a bug with getting the source content of relative sources with a "./"
