@@ -274,9 +274,10 @@ You may pass an object with the following properties:
 
 * `sourceRoot`: A root for all relative URLs in this source map.
 
-* `skipValidation`: Optional flag to disable validation of mappings as they
-  are added. This can improve performance but should be used with discretion.
-  Even then one should avoid using when running tests, if possible.
+* `skipValidation`: Optional. When `true`, disables validation of mappings as
+  they are added. This can improve performance but should be used with
+  discretion, as a last resort. Even then, one should avoid using this flag when
+  running tests, if possible.
 
 #### SourceMapGenerator.fromSourceMap(sourceMapConsumer)
 
