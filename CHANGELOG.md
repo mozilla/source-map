@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.1.43
+
+* Performance improvements for `SourceMapGenerator` and `SourceNode`. See issue
+  #148 for some discussion and issues #150, #151, and #152 for implementations.
+
 ## 0.1.42
 
 * Fix an issue where `SourceNode`s from different versions of the source-map
