@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.1.43",
+  "version": "0.2.0",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -33,7 +33,8 @@
     "J. Ryan Stinnett <jryans@gmail.com>",
     "Jack Herrington <jherrington@walmartlabs.com>",
     "Chris Truter <jeffpalentine@gmail.com>",
-    "Daniel Espeset <daniel@danielespeset.com>"
+    "Daniel Espeset <daniel@danielespeset.com>",
+    "Jamie Wong <jamie.lf.wong@gmail.com>"
   ],
   "repository": {
     "type": "git",
