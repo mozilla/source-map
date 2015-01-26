@@ -45,6 +45,18 @@ define(function (require, exports, module) {
     assert.equal(sources[1], '/the/root/two.js');
     assert.equal(sources.length, 2);
 
+    map = new SourceMapConsumer(util.indexedTestMap);
+    sources = map.sources;
+    assert.equal(sources[0], '/the/root/one.js');
+    assert.equal(sources[1], '/the/root/two.js');
+    assert.equal(sources.length, 2);
+
+    map = new SourceMapConsumer(util.indexedTestMapDifferentSourceRoots);
+    sources = map.sources;
+    assert.equal(sources[0], '/the/root/one.js');
+    assert.equal(sources[1], '/different/root/two.js');
+    assert.equal(sources.length, 2);
+
     map = new SourceMapConsumer(util.testMapNoSourceRoot);
     sources = map.sources;
     assert.equal(sources[0], 'one.js');
@@ -397,7 +409,7 @@ define(function (require, exports, module) {
     }, Error);
   };
 
-  exports['test that we can get the original sources for the sources on an indexed source map'] = function (assert, util) {
+  exports['test that we can get the original source content for the sources on an indexed source map'] = function (assert, util) {
     var map = new SourceMapConsumer(util.indexedTestMap);
     var sources = map.sources;
 
