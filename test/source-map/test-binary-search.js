@@ -15,19 +15,8 @@ define(function (require, exports, module) {
     return a - b;
   }
 
-  exports['test too high'] = function (assert, util) {
+  exports['test too high with lub bias'] = function (assert, util) {
     var needle = 30;
-    var haystack = [2,4,6,8,10,12,14,16,18,20];
-
-    assert.doesNotThrow(function () {
-      binarySearch.search(needle, haystack, numberCompare);
-    });
-
-    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare)], 20);
-  };
-
-  exports['test too low'] = function (assert, util) {
-    var needle = 1;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
     assert.doesNotThrow(function () {
@@ -37,18 +26,69 @@ define(function (require, exports, module) {
     assert.equal(binarySearch.search(needle, haystack, numberCompare), -1);
   };
 
-  exports['test exact search'] = function (assert, util) {
+  exports['test too low with lub bias'] = function (assert, util) {
+    var needle = 1;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.doesNotThrow(function () {
+      binarySearch.search(needle, haystack, numberCompare, true);
+    });
+
+    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare)], 2);
+  };
+
+  exports['test exact search with lub bias'] = function (assert, util) {
     var needle = 4;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
     assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare)], 4);
   };
 
-  exports['test fuzzy search'] = function (assert, util) {
+  exports['test fuzzy search with lub bias'] = function (assert, util) {
     var needle = 19;
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
-    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare)], 18);
+    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare)], 20);
   };
 
+  exports['test too high with glb bias'] = function (assert, util) {
+    var needle = 30;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.doesNotThrow(function () {
+      binarySearch.search(needle, haystack, numberCompare);
+    });
+
+    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare,
+                                              binarySearch.GREATEST_LOWER_BOUND)], 20);
+  };
+
+  exports['test too low with glb bias'] = function (assert, util) {
+    var needle = 1;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.doesNotThrow(function () {
+      binarySearch.search(needle, haystack, numberCompare,
+                          binarySearch.GREATEST_LOWER_BOUND);
+    });
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare,
+                                     binarySearch.GREATEST_LOWER_BOUND), -1);
+  };
+
+  exports['test exact search with glb bias'] = function (assert, util) {
+    var needle = 4;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare,
+                          binarySearch.GREATEST_LOWER_BOUND)], 4);
+  };
+
+  exports['test fuzzy search with glb bias'] = function (assert, util) {
+    var needle = 19;
+    var haystack = [2,4,6,8,10,12,14,16,18,20];
+
+    assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare,
+                          binarySearch.GREATEST_LOWER_BOUND)], 18);
+  };
 });
