@@ -41,40 +41,42 @@ This should spew a bunch of stuff to stdout, and create the following files:
 
 ### Consuming a source map
 
-    var rawSourceMap = {
-      version: 3,
-      file: 'min.js',
-      names: ['bar', 'baz', 'n'],
-      sources: ['one.js', 'two.js'],
-      sourceRoot: 'http://example.com/www/js/',
-      mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
-    };
+```js
+var rawSourceMap = {
+  version: 3,
+  file: 'min.js',
+  names: ['bar', 'baz', 'n'],
+  sources: ['one.js', 'two.js'],
+  sourceRoot: 'http://example.com/www/js/',
+  mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
+};
 
-    var smc = new SourceMapConsumer(rawSourceMap);
+var smc = new SourceMapConsumer(rawSourceMap);
 
-    console.log(smc.sources);
-    // [ 'http://example.com/www/js/one.js',
-    //   'http://example.com/www/js/two.js' ]
+console.log(smc.sources);
+// [ 'http://example.com/www/js/one.js',
+//   'http://example.com/www/js/two.js' ]
 
-    console.log(smc.originalPositionFor({
-      line: 2,
-      column: 28
-    }));
-    // { source: 'http://example.com/www/js/two.js',
-    //   line: 2,
-    //   column: 10,
-    //   name: 'n' }
+console.log(smc.originalPositionFor({
+  line: 2,
+  column: 28
+}));
+// { source: 'http://example.com/www/js/two.js',
+//   line: 2,
+//   column: 10,
+//   name: 'n' }
 
-    console.log(smc.generatedPositionFor({
-      source: 'http://example.com/www/js/two.js',
-      line: 2,
-      column: 10
-    }));
-    // { line: 2, column: 28 }
+console.log(smc.generatedPositionFor({
+  source: 'http://example.com/www/js/two.js',
+  line: 2,
+  column: 10
+}));
+// { line: 2, column: 28 }
 
-    smc.eachMapping(function (m) {
-      // ...
-    });
+smc.eachMapping(function (m) {
+  // ...
+});
+```
 
 ### Generating a source map
 
@@ -83,70 +85,76 @@ In depth guide:
 
 #### With SourceNode (high level API)
 
-    function compile(ast) {
-      switch (ast.type) {
-      case 'BinaryExpression':
-        return new SourceNode(
-          ast.location.line,
-          ast.location.column,
-          ast.location.source,
-          [compile(ast.left), " + ", compile(ast.right)]
-        );
-      case 'Literal':
-        return new SourceNode(
-          ast.location.line,
-          ast.location.column,
-          ast.location.source,
-          String(ast.value)
-        );
-      // ...
-      default:
-        throw new Error("Bad AST");
-      }
-    }
+```js
+function compile(ast) {
+  switch (ast.type) {
+  case 'BinaryExpression':
+    return new SourceNode(
+      ast.location.line,
+      ast.location.column,
+      ast.location.source,
+      [compile(ast.left), " + ", compile(ast.right)]
+    );
+  case 'Literal':
+    return new SourceNode(
+      ast.location.line,
+      ast.location.column,
+      ast.location.source,
+      String(ast.value)
+    );
+  // ...
+  default:
+    throw new Error("Bad AST");
+  }
+}
 
-    var ast = parse("40 + 2", "add.js");
-    console.log(compile(ast).toStringWithSourceMap({
-      file: 'add.js'
-    }));
-    // { code: '40 + 2',
-    //   map: [object SourceMapGenerator] }
+var ast = parse("40 + 2", "add.js");
+console.log(compile(ast).toStringWithSourceMap({
+  file: 'add.js'
+}));
+// { code: '40 + 2',
+//   map: [object SourceMapGenerator] }
+```
 
 #### With SourceMapGenerator (low level API)
 
-    var map = new SourceMapGenerator({
-      file: "source-mapped.js"
-    });
+```js
+var map = new SourceMapGenerator({
+  file: "source-mapped.js"
+});
 
-    map.addMapping({
-      generated: {
-        line: 10,
-        column: 35
-      },
-      source: "foo.js",
-      original: {
-        line: 33,
-        column: 2
-      },
-      name: "christopher"
-    });
+map.addMapping({
+  generated: {
+    line: 10,
+    column: 35
+  },
+  source: "foo.js",
+  original: {
+    line: 33,
+    column: 2
+  },
+  name: "christopher"
+});
 
-    console.log(map.toString());
-    // '{"version":3,"file":"source-mapped.js","sources":["foo.js"],"names":["christopher"],"mappings":";;;;;;;;;mCAgCEA"}'
+console.log(map.toString());
+// '{"version":3,"file":"source-mapped.js","sources":["foo.js"],"names":["christopher"],"mappings":";;;;;;;;;mCAgCEA"}'
+```
 
 ## API
 
 Get a reference to the module:
 
-    // NodeJS
-    var sourceMap = require('source-map');
+```js
+// NodeJS
+var sourceMap = require('source-map');
 
-    // Browser builds
-    var sourceMap = window.sourceMap;
+// Browser builds
+var sourceMap = window.sourceMap;
 
-    // Inside Firefox
-    let sourceMap = {};
-    Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
+// Inside Firefox
+let sourceMap = {};
+Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
+```
 
 ### SourceMapConsumer
 
@@ -449,9 +457,11 @@ Install NodeJS version 0.8.0 or greater, then run `node test/run-tests.js`.
 To add new tests, create a new file named `test/test-<your new test name>.js`
 and export your test functions with names that start with "test", for example
 
-    exports["test doing the foo bar"] = function (assert, util) {
-      ...
-    };
+```js
+exports["test doing the foo bar"] = function (assert, util) {
+  ...
+};
+```
 
 The new test will be located automatically when you run the suite.
 
