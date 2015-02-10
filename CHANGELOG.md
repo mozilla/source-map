@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.3.0
+
+* Change the default direction that searching for positions fuzzes when there is
+  not an exact match. See #154.
+
+* Support for environments using json2.js for JSON serialization. See #156.
+
 ## 0.2.0
 
 * Support for consuming "indexed" source maps which do not have any remote
