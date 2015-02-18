@@ -4,21 +4,23 @@ window.__benchmarkResults = [];
 window.benchmarkBlackbox = [].push.bind(window.__benchmarkResults);
 
 // Benchmark running an action n times.
-function benchmark(name, n, action) {
+function benchmark(name, action) {
   window.__benchmarkResults = [];
 
   // Warm up the JIT.
-  for (var i = 0; i < n; i++) {
+  var start = Date.now();
+  while ((Date.now() - start) < 10000 /* 10 seconds */) {
     action();
   }
 
   var stats = new Stats("ms");
 
   console.profile(name);
-  for (var i = 0; i < n; i++) {
-    var start = window.performance.now();
+  var start = Date.now();
+  while ((Date.now() - start) < 20000 /* 20 seconds */) {
+    var thisIterationStart = window.performance.now();
     action();
-    stats.take(window.performance.now() - start);
+    stats.take(window.performance.now() - thisIterationStart);
   }
   console.profileEnd(name);
 
@@ -27,10 +29,10 @@ function benchmark(name, n, action) {
 
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
-function benchOnClick(button, results, name, n, action) {
+function benchOnClick(button, results, name, action) {
   button.addEventListener("click", function (e) {
     e.preventDefault();
-    var stats = benchmark(name, n, action);
+    var stats = benchmark(name, action);
     results.innerHTML = `
       <table>
         <thead>
@@ -43,7 +45,7 @@ function benchOnClick(button, results, name, n, action) {
         </thead>
         <tbody>
           <tr>
-            <td>${n}</td>
+            <td>${stats.samples()}</td>
             <td>${stats.total().toFixed(3)}</td>
             <td>${stats.mean().toFixed(3)}</td>
             <td>${stats.stddev().toFixed(2)}</td>
@@ -57,16 +59,16 @@ function benchOnClick(button, results, name, n, action) {
 var consumerButton = document.getElementById("bench-consumer");
 var consumerResults = document.getElementById("consumer-results");
 
-benchOnClick(consumerButton, consumerResults, "parse source map", 100, function () {
-  var smc = new sourceMap.SourceMapConsumer(window.jQuerySourceMap);
+benchOnClick(consumerButton, consumerResults, "parse source map", function () {
+  var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
   benchmarkBlackbox(smc._generatedMappings);
 });
 
 var generatorButton = document.getElementById("bench-generator");
 var generatorResults = document.getElementById("generator-results");
 
-benchOnClick(generatorButton, generatorResults, "serialize source map", 100, (function () {
-  var smc = new sourceMap.SourceMapConsumer(window.jQuerySourceMap);
+benchOnClick(generatorButton, generatorResults, "serialize source map", (function () {
+  var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
   var smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
   return function () {
     benchmarkBlackbox(smg.toString());
