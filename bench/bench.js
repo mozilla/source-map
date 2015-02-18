@@ -4,8 +4,9 @@ window.__benchmarkResults = [];
 window.benchmarkBlackbox = [].push.bind(window.__benchmarkResults);
 
 // Benchmark running an action n times.
-function benchmark(name, action) {
+function benchmark(name, setup, action) {
   window.__benchmarkResults = [];
+  setup();
 
   // Warm up the JIT.
   var start = Date.now();
@@ -29,10 +30,10 @@ function benchmark(name, action) {
 
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
-function benchOnClick(button, results, name, action) {
+function benchOnClick(button, results, name, setup, action) {
   button.addEventListener("click", function (e) {
     e.preventDefault();
-    var stats = benchmark(name, action);
+    var stats = benchmark(name, setup, action);
     results.innerHTML = `
       <table>
         <thead>
@@ -56,21 +57,24 @@ function benchOnClick(button, results, name, action) {
   }, false);
 }
 
-var consumerButton = document.getElementById("bench-consumer");
-var consumerResults = document.getElementById("consumer-results");
+benchOnClick(document.getElementById("bench-consumer"),
+             document.getElementById("consumer-results"),
+             "parse source map",
+             function () {},
+             function () {
+               var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
+               benchmarkBlackbox(smc._generatedMappings);
+             });
 
-benchOnClick(consumerButton, consumerResults, "parse source map", function () {
-  var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
-  benchmarkBlackbox(smc._generatedMappings);
-});
-
-var generatorButton = document.getElementById("bench-generator");
-var generatorResults = document.getElementById("generator-results");
-
-benchOnClick(generatorButton, generatorResults, "serialize source map", (function () {
-  var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
-  var smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
-  return function () {
-    benchmarkBlackbox(smg.toString());
-  };
-}()));
+benchOnClick(document.getElementById("bench-generator"),
+             document.getElementById("generator-results"),
+             "serialize source map",
+             function () {
+               if (!window.smg) {
+                 var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
+                 window.smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
+               }
+             },
+             function () {
+               benchmarkBlackbox(window.smg.toString());
+             });
