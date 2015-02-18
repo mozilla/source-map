@@ -10,8 +10,8 @@ if (typeof define !== 'function') {
 define(function (require, exports, module) {
 
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
-  var IndexedSourceMapConsumer = require('../../lib/source-map/indexed-source-map-consumer').IndexedSourceMapConsumer;
-  var BasicSourceMapConsumer = require('../../lib/source-map/basic-source-map-consumer').BasicSourceMapConsumer;
+  var IndexedSourceMapConsumer = require('../../lib/source-map/source-map-consumer').IndexedSourceMapConsumer;
+  var BasicSourceMapConsumer = require('../../lib/source-map/source-map-consumer').BasicSourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
   exports['test that we can instantiate with a string or an object'] = function (assert, util) {
