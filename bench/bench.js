@@ -57,13 +57,19 @@ function benchOnClick(button, results, name, setup, action) {
   }, false);
 }
 
+var EXPECTED_NUMBER_OF_MAPPINGS = 2350714;
+
 benchOnClick(document.getElementById("bench-consumer"),
              document.getElementById("consumer-results"),
              "parse source map",
              function () {},
              function () {
                var smc = new sourceMap.SourceMapConsumer(window.testSourceMap);
-               benchmarkBlackbox(smc._generatedMappings);
+               if (smc._generatedMappings.length !== EXPECTED_NUMBER_OF_MAPPINGS) {
+                 throw new Error("Expected " + EXPECTED_NUMBER_OF_MAPPINGS + " mappings, found "
+                                 + smc._generatedMappings.length);
+               }
+               benchmarkBlackbox(smc._generatedMappings.length);
              });
 
 benchOnClick(document.getElementById("bench-generator"),
