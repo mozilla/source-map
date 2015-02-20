@@ -60,17 +60,17 @@ define(function (require, exports, module) {
     // Fuzzy
 
     // Generated to original
-    util.assertMapping(2, 0, '/wu/tang/gza.coffee', 1, 0, null, smc, assert, true);
-    util.assertMapping(2, 9, null, null, null, null, smc, assert, true);
-    util.assertMapping(3, 0, '/wu/tang/gza.coffee', 2, 0, null, smc, assert, true);
-    util.assertMapping(3, 9, null, null, null, null, smc, assert, true);
-    util.assertMapping(4, 0, '/wu/tang/gza.coffee', 3, 0, null, smc, assert, true);
-    util.assertMapping(4, 9, null, null, null, null, smc, assert, true);
-    util.assertMapping(5, 0, '/wu/tang/gza.coffee', 4, 0, null, smc, assert, true);
-    util.assertMapping(5, 9, null, null, null, null, smc, assert, true);
-    util.assertMapping(6, 0, '/wu/tang/gza.coffee', 5, 10, null, smc, assert, true);
-    util.assertMapping(6, 9, '/wu/tang/gza.coffee', 5, 10, null, smc, assert, true);
-    util.assertMapping(6, 13, null, null, null, null, smc, assert, true);
+    util.assertMapping(2, 0, null, null, null, null, smc, assert, true);
+    util.assertMapping(2, 9, '/wu/tang/gza.coffee', 1, 0, null, smc, assert, true);
+    util.assertMapping(3, 0, null, null, null, null, smc, assert, true);
+    util.assertMapping(3, 9, '/wu/tang/gza.coffee', 2, 0, null, smc, assert, true);
+    util.assertMapping(4, 0, null, null, null, null, smc, assert, true);
+    util.assertMapping(4, 9, '/wu/tang/gza.coffee', 3, 0, null, smc, assert, true);
+    util.assertMapping(5, 0, null, null, null, null, smc, assert, true);
+    util.assertMapping(5, 9, '/wu/tang/gza.coffee', 4, 0, null, smc, assert, true);
+    util.assertMapping(6, 0, null, null, null, null, smc, assert, true);
+    util.assertMapping(6, 9, null, null, null, null, smc, assert, true);
+    util.assertMapping(6, 13, '/wu/tang/gza.coffee', 5, 10, null, smc, assert, true);
 
     // Original to generated
     util.assertMapping(3, 2, '/wu/tang/gza.coffee', 1, 1, null, smc, assert, null, true);

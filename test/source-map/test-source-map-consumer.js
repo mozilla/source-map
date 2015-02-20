@@ -181,9 +181,9 @@ define(function (require, exports, module) {
     var map = new SourceMapConsumer(util.testMap);
 
     // Finding original positions
-    util.assertMapping(1, 16, '/the/root/one.js', 1, 21, 'bar', map, assert, true);
-    util.assertMapping(1, 26, '/the/root/one.js', 2, 10, 'baz', map, assert, true);
-    util.assertMapping(2, 6, '/the/root/two.js', 1, 11, null, map, assert, true);
+    util.assertMapping(1, 18, '/the/root/one.js', 1, 21, 'bar', map, assert, true);
+    util.assertMapping(1, 28, '/the/root/one.js', 2, 10, 'baz', map, assert, true);
+    util.assertMapping(2, 12, '/the/root/two.js', 1, 11, null, map, assert, true);
 
     // Finding generated positions
     util.assertMapping(1, 18, '/the/root/one.js', 1, 20, 'bar', map, assert, null, true);
@@ -195,9 +195,9 @@ define(function (require, exports, module) {
     var map = new SourceMapConsumer(util.indexedTestMap);
 
     // Finding original positions
-    util.assertMapping(1, 16, '/the/root/one.js', 1, 21, 'bar', map, assert, true);
+    util.assertMapping(1, 18, '/the/root/one.js', 1, 21, 'bar', map, assert, true);
     util.assertMapping(1, 28, '/the/root/one.js', 2, 10, 'baz', map, assert, true);
-    util.assertMapping(2, 6, '/the/root/two.js', 1, 11, null, map, assert, true);
+    util.assertMapping(2, 12, '/the/root/two.js', 1, 11, null, map, assert, true);
 
     // Finding generated positions
     util.assertMapping(1, 18, '/the/root/one.js', 1, 20, 'bar', map, assert, null, true);
@@ -223,7 +223,7 @@ define(function (require, exports, module) {
     var map = SourceMapConsumer.fromSourceMap(smg);
 
     // When finding original positions, mappings end at the end of the line.
-    util.assertMapping(2, 3, null, null, null, null, map, assert, true)
+    util.assertMapping(2, 1, null, null, null, null, map, assert, true)
 
     // When finding generated positions, mappings do not end at the end of the line.
     util.assertMapping(2, 2, 'bar.js', 1, 2, null, map, assert, null, true);
