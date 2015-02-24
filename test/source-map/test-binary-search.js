@@ -81,7 +81,7 @@ define(function (require, exports, module) {
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
     assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare,
-                          binarySearch.GREATEST_LOWER_BOUND)], 4);
+                                              binarySearch.GREATEST_LOWER_BOUND)], 4);
   };
 
   exports['test fuzzy search with glb bias'] = function (assert, util) {
@@ -89,6 +89,14 @@ define(function (require, exports, module) {
     var haystack = [2,4,6,8,10,12,14,16,18,20];
 
     assert.equal(haystack[binarySearch.search(needle, haystack, numberCompare,
-                          binarySearch.GREATEST_LOWER_BOUND)], 18);
+                                              binarySearch.GREATEST_LOWER_BOUND)], 18);
+  };
+
+  exports['test multiple matches'] = function (assert, util) {
+    var needle = 5;
+    var haystack = [1, 1, 2, 5, 5, 5, 13, 21];
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare,
+                                     binarySearch.LEAST_UPPER_BOUND), 3);
   };
 });
