@@ -83,4 +83,20 @@ define(function (require, exports, module) {
                                               binarySearch.LEAST_UPPER_BOUND)], 20);
   };
 
+  exports['test multiple matches'] = function (assert, util) {
+    var needle = 5;
+    var haystack = [1, 1, 2, 5, 5, 5, 13, 21];
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare,
+                                     binarySearch.LEAST_UPPER_BOUND), 3);
+  };
+
+  exports['test multiple matches at the beginning'] = function (assert, util) {
+    var needle = 1;
+    var haystack = [1, 1, 2, 5, 5, 5, 13, 21];
+
+    assert.equal(binarySearch.search(needle, haystack, numberCompare,
+                                     binarySearch.LEAST_UPPER_BOUND), 0);
+  };
+
 });
