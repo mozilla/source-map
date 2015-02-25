@@ -198,6 +198,12 @@ the following properties:
 
 * `column`: The column number in the generated source.
 
+* `bias`: Either `SourceMapConsumer.GREATEST_LOWER_BOUND` or
+  `SourceMapConsumer.LEAST_UPPER_BOUND`. Specifies whether to return the closest
+  element that is smaller than or greater than the one we are searching for,
+  respectively, if the exact element cannot be found.  Defaults to
+  `SourceMapConsumer.GREATEST_LOWER_BOUND`.
+
 and an object is returned with the following properties:
 
 * `source`: The original source file, or null if this information is not
