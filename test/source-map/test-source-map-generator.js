@@ -676,4 +676,46 @@ define(function (require, exports, module) {
     });
   };
 
+  exports['test applySourceMap with unexact match'] = function (assert, util) {
+      var map1 = new SourceMapGenerator({
+        file: 'bundled-source'
+      });
+      map1.addMapping({
+        generated: { line: 1, column: 4 },
+        original: { line: 1, column: 4 },
+        source: 'transformed-source'
+      });
+      map1.addMapping({
+        generated: { line: 2, column: 4 },
+        original: { line: 2, column: 4 },
+        source: 'transformed-source'
+      });
+
+      var map2 = new SourceMapGenerator({
+        file: 'transformed-source'
+      });
+      map2.addMapping({
+        generated: { line: 2, column: 0 },
+        original: { line: 1, column: 0 },
+        source: 'original-source'
+      });
+
+      var expectedMap = new SourceMapGenerator({
+        file: 'bundled-source'
+      });
+      expectedMap.addMapping({
+        generated: { line: 1, column: 4 },
+        original: { line: 1, column: 4 },
+        source: 'transformed-source'
+      });
+      expectedMap.addMapping({
+        generated: { line: 2, column: 4 },
+        original: { line: 1, column: 0 },
+        source: 'original-source'
+      });
+
+      map1.applySourceMap(new SourceMapConsumer(map2.toJSON()));
+
+      util.assertEqualMaps(assert, map1.toJSON(), expectedMap.toJSON());
+    };
 });
