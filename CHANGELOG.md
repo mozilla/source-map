@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.4.0
+
+* The default direction for fuzzy searching was changed back to its original
+  direction. See #164.
+
+* There is now a `bias` option you can supply to `SourceMapConsumer` to control
+  the fuzzy searching direction. See #167.
+
+* About an 8% speed up in parsing source maps. See #159.
+
+* Added a benchmark for parsing and generating source maps.
+
 ## 0.3.0
 
 * Change the default direction that searching for positions fuzzes when there is
