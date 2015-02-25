@@ -204,12 +204,13 @@ define(function (require, exports, module) {
 
 
   function assertMapping(generatedLine, generatedColumn, originalSource,
-                         originalLine, originalColumn, name, map, assert,
+                         originalLine, originalColumn, name, bias, map, assert,
                          dontTestGenerated, dontTestOriginal) {
     if (!dontTestOriginal) {
       var origMapping = map.originalPositionFor({
         line: generatedLine,
-        column: generatedColumn
+        column: generatedColumn,
+        bias: bias
       });
       assert.equal(origMapping.name, name,
                    'Incorrect name, expected ' + JSON.stringify(name)
@@ -242,7 +243,8 @@ define(function (require, exports, module) {
       var genMapping = map.generatedPositionFor({
         source: originalSource,
         line: originalLine,
-        column: originalColumn
+        column: originalColumn,
+        bias: bias
       });
       assert.equal(genMapping.line, generatedLine,
                    'Incorrect line, expected ' + JSON.stringify(generatedLine)
