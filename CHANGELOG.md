@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.4.1
+
+* Fix accidentally defining a global variable. #170.
+
 ## 0.4.0
 
 * The default direction for fuzzy searching was changed back to its original
