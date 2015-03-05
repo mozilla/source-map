@@ -239,6 +239,11 @@ define(function (require, exports, module) {
       generated: { line: 2, column: 2 },
       source: 'bar.js'
     });
+    smg.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 1 },
+      source: 'baz.js'
+    });
 
     var map = SourceMapConsumer.fromSourceMap(smg);
 
@@ -247,6 +252,9 @@ define(function (require, exports, module) {
 
     // When finding generated positions, mappings do not end at the end of the line.
     util.assertMapping(1, 1, 'bar.js', 2, 1, null, null, map, assert, null, true);
+
+    // When finding generated positions with, mappings end at the end of the source.
+    util.assertMapping(null, null, 'bar.js', 3, 1, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   };
 
   exports['test creating source map consumers with )]}\' prefix'] = function (assert, util) {
