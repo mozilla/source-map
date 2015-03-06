@@ -564,7 +564,9 @@ define(function (require, exports, module) {
       source: 'bar.coffee'
     });
 
-    assert.equal(mappings.length, 0);
+    assert.equal(mappings.length, 1);
+    assert.equal(mappings[0].line, 4);
+    assert.equal(mappings[0].column, 2);
   };
 
   exports['test allGeneratedPositionsFor source map with no mappings'] = function (assert, util) {
