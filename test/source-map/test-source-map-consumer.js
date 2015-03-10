@@ -495,7 +495,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 2);
   };
 
-  exports['test allGeneratedPositionsFor'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for line'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -538,7 +538,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[1].column, 3);
   };
 
-  exports['test allGeneratedPositionsFor for line with no mappings'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for line fuzzy'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -569,7 +569,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[0].column, 2);
   };
 
-  exports['test allGeneratedPositionsFor source map with no mappings'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for empty source map'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -581,6 +581,64 @@ define(function (require, exports, module) {
     });
 
     assert.equal(mappings.length, 0);
+  };
+
+  exports['test allGeneratedPositionsFor for column'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 2 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 3 },
+      source: 'foo.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 1,
+      column: 1,
+      source: 'foo.coffee'
+    });
+
+    assert.equal(mappings.length, 2);
+    assert.equal(mappings[0].line, 1);
+    assert.equal(mappings[0].column, 2);
+    assert.equal(mappings[1].line, 1);
+    assert.equal(mappings[1].column, 3);
+  };
+
+  exports['test allGeneratedPositionsFor for column fuzzy'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 2 },
+      source: 'foo.coffee'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 1, column: 3 },
+      source: 'foo.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    var mappings = map.allGeneratedPositionsFor({
+      line: 1,
+      column: 0,
+      source: 'foo.coffee'
+    });
+
+    assert.equal(mappings.length, 2);
+    assert.equal(mappings[0].line, 1);
+    assert.equal(mappings[0].column, 2);
+    assert.equal(mappings[1].line, 1);
+    assert.equal(mappings[1].column, 3);
   };
 
   exports['test computeColumnSpans'] = function (assert, util) {

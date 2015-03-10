@@ -237,13 +237,18 @@ and an object is returned with the following properties:
 
 #### SourceMapConsumer.prototype.allGeneratedPositionsFor(originalPosition)
 
-Returns all generated line and column information for the original source
-and line provided. The only argument is an object with the following
-properties:
+Returns all generated line and column information for the original source,
+line, and column provided. If no column is provided, returns all mappings
+corresponding to a single line. Otherwise, returns all mappings corresponding to
+a single line and column.
+
+The only argument is an object with the following properties:
 
 * `source`: The filename of the original source.
 
 * `line`: The line number in the original source.
+
+* `column`: Optional. The column number in the original source.
 
 and an array of objects is returned, each with the following properties:
 
