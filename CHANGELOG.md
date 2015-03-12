@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.4.2
+
+* Add an `.npmignore` file so that the benchmarks aren't pulled down by
+  dependent projects. Issue #169.
+
+* Add an optional `column` argument to
+  `SourceMapConsumer.prototype.allGeneratedPositionsFor` and better handle lines
+  with no mappings. Issues #172 and #173.
+
 ## 0.4.1
 
 * Fix accidentally defining a global variable. #170.
