@@ -248,6 +248,43 @@ define(function (require, exports, module) {
     assert.equal(map.mappings, util.emptyMap.mappings);
   });
 
+  exports['test .fromStringWithSourceMap() map with lots of lines'] = forEachNewline(function (assert, util, nl) {
+    var inMap = new SourceMapGenerator({
+      file: 'min.js'
+    });
+    inMap.addMapping({
+      generated: { line: 10, column: 0 },
+      source: 'a.js',
+      original: { line: 10, column: 0 }
+    });
+    inMap.addMapping({
+      generated: { line: 10, column: 1 },
+      source: 'a.js',
+      original: { line: 10, column: 1 }
+    });
+    inMap.addMapping({
+      generated: { line: 1, column: 0 },
+      source: 'a.js',
+      original: { line: 1, column: 0 }
+    });
+    var myMap = inMap.toJSON();
+    var node = SourceNode.fromStringWithSourceMap(
+                              util.testGeneratedCode.replace(/\n/g, nl),
+                              new SourceMapConsumer(myMap));
+    var result = node.toStringWithSourceMap({
+      file: 'min.js'
+    });
+    var map = result.map;
+    var code = result.code;
+
+    assert.equal(code, util.testGeneratedCode.replace(/\n/g, nl));
+    assert.ok(map instanceof SourceMapGenerator, 'map instanceof SourceMapGenerator');
+    map = map.toJSON();
+    assert.equal(map.version, myMap.version);
+    assert.equal(map.file, myMap.file);
+    assert.equal(map.mappings.length, 4, "There are 4 mappings, latter ones ignored");
+  });
+
   exports['test .fromStringWithSourceMap() complex version'] = forEachNewline(function (assert, util, nl) {
     var input = new SourceNode(null, null, null, [
       "(function() {" + nl,
@@ -259,7 +296,6 @@ define(function (require, exports, module) {
     input = input.toStringWithSourceMap({
       file: 'foo.js'
     });
-
     var node = SourceNode.fromStringWithSourceMap(
                               input.code,
                               new SourceMapConsumer(input.map.toString()));
