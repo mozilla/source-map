@@ -495,6 +495,29 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 2);
   };
 
+  exports['test sourceRoot + generatedPositionFor for path above the root'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      sourceRoot: 'foo/bar',
+      file: 'baz.js'
+    });
+    map.addMapping({
+      original: { line: 1, column: 1 },
+      generated: { line: 2, column: 2 },
+      source: '../bang.coffee'
+    });
+    map = new SourceMapConsumer(map.toString());
+
+    // Should handle with sourceRoot.
+    var pos = map.generatedPositionFor({
+      line: 1,
+      column: 1,
+      source: 'foo/bang.coffee'
+    });
+
+    assert.equal(pos.line, 2);
+    assert.equal(pos.column, 2);
+  };
+
   exports['test allGeneratedPositionsFor for line'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
