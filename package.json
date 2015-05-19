@@ -49,12 +49,7 @@
   "engines": {
     "node": ">=0.8.0"
   },
-  "licenses": [
-    {
-      "type": "BSD",
-      "url": "http://opensource.org/licenses/BSD-3-Clause"
-    }
-  ],
+  "license": "BSD-3-Clause",
   "dependencies": {
     "amdefine": ">=0.0.4"
   },
