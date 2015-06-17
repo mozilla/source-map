@@ -21,14 +21,12 @@ define(function (require, exports, module) {
   };
 
   exports['test out of range decoding'] = function (assert, util) {
-    assert.throws(function () {
-      base64.decode('=');
-    });
+    assert.equal(base64.decode('='.charCodeAt(0)), -1);
   };
 
   exports['test normal encoding and decoding'] = function (assert, util) {
     for (var i = 0; i < 64; i++) {
-      assert.equal(base64.decode(base64.encode(i)), i);
+      assert.equal(base64.decode(base64.encode(i).charCodeAt(0)), i);
     }
   };
 
