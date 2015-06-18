@@ -10,7 +10,7 @@ function benchmark(name, setup, action) {
 
   // Warm up the JIT.
   var start = Date.now();
-  while ((Date.now() - start) < 10000 /* 10 seconds */) {
+  while ((Date.now() - start) < 5000 /* 5 seconds */) {
     action();
   }
 
@@ -18,7 +18,7 @@ function benchmark(name, setup, action) {
 
   console.profile(name);
   var start = Date.now();
-  while ((Date.now() - start) < 20000 /* 20 seconds */) {
+  while ((Date.now() - start) < 30000 /* 30 seconds */) {
     var thisIterationStart = window.performance.now();
     action();
     stats.take(window.performance.now() - thisIterationStart);
