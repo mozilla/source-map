@@ -19,9 +19,11 @@ function benchmark(name, setup, action) {
   console.profile(name);
   var start = Date.now();
   while ((Date.now() - start) < 30000 /* 30 seconds */) {
+    console.time("iteration");
     var thisIterationStart = window.performance.now();
     action();
     stats.take(window.performance.now() - thisIterationStart);
+    console.timeEnd("iteration");
   }
   console.profileEnd(name);
 
