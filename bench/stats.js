@@ -29,7 +29,8 @@ Stats.prototype.stddev = function () {
 
 Stats.prototype.toString = function () {
   return "[Stats " +
-    "total: "  + this.total() + this.unit + ", " +
-    "mean: "   + this.mean()  + this.unit + ", " +
-    "stddev: " + Math.ceil(this.stddev() * 100 / this.mean()) + "%]";
+    "samples: " + this.samples() +             ", " +
+    "total: "   + this.total()   + " " + this.unit + ", " +
+    "mean: "    + this.mean()    + " " + this.unit + ", " +
+    "stddev: "  + this.stddev()  + " " + this.unit + "]";
 };
