@@ -43,14 +43,14 @@ function benchOnClick(button, results, name, setup, action) {
             <td>Samples</td>
             <td>Total (${stats.unit})</th>
             <td>Mean (${stats.unit})</th>
-            <td>Standard Deviation (%)</th>
+            <td>Standard Deviation (${stats.unit})</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>${stats.samples()}</td>
-            <td>${stats.total().toFixed(3)}</td>
-            <td>${stats.mean().toFixed(3)}</td>
+            <td>${stats.total().toFixed(2)}</td>
+            <td>${stats.mean().toFixed(2)}</td>
             <td>${stats.stddev().toFixed(2)}</td>
           </tr>
         </tbody>
