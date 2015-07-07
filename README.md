@@ -258,6 +258,14 @@ and an array of objects is returned, each with the following properties:
 
 * `column`: The column number in the generated source, or null.
 
+#### SourceMapConsumer.prototype.hasContentsOfAllSources()
+
+Return true if we have the embedded source content for every source listed in
+the source map, false otherwise.
+
+In other words, if this method returns `true`, then `smc.sourceContentFor(s)`
+will succeed for every source `s` in `smc.sources`.
+
 #### SourceMapConsumer.prototype.sourceContentFor(source[, returnNullOnMissing])
 
 Returns the original source content for the source provided. The only
