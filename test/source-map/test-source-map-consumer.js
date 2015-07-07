@@ -456,6 +456,55 @@ define(function (require, exports, module) {
     }, Error);
   };
 
+  exports['test hasContentsOfAllSources, single source with contents'] = function (assert, util) {
+    // Has one source: foo.js (with contents).
+    var mapWithContents = new SourceMapGenerator();
+    mapWithContents.addMapping({ source: 'foo.js',
+                                 original: { line: 1, column: 10 },
+                                 generated: { line: 1, column: 10 } });
+    mapWithContents.setSourceContent('foo.js', 'content of foo.js');
+    var consumer = new SourceMapConsumer(mapWithContents.toJSON());
+    assert.ok(consumer.hasContentsOfAllSources());
+  };
+
+  exports['test hasContentsOfAllSources, single source without contents'] = function (assert, util) {
+    // Has one source: foo.js (without contents).
+    var mapWithoutContents = new SourceMapGenerator();
+    mapWithoutContents.addMapping({ source: 'foo.js',
+                                    original: { line: 1, column: 10 },
+                                    generated: { line: 1, column: 10 } });
+    var consumer = new SourceMapConsumer(mapWithoutContents.toJSON());
+    assert.ok(!consumer.hasContentsOfAllSources());
+  };
+
+  exports['test hasContentsOfAllSources, two sources with contents'] = function (assert, util) {
+    // Has two sources: foo.js (with contents) and bar.js (with contents).
+    var mapWithBothContents = new SourceMapGenerator();
+    mapWithBothContents.addMapping({ source: 'foo.js',
+                                     original: { line: 1, column: 10 },
+                                     generated: { line: 1, column: 10 } });
+    mapWithBothContents.addMapping({ source: 'bar.js',
+                                     original: { line: 1, column: 10 },
+                                     generated: { line: 1, column: 10 } });
+    mapWithBothContents.setSourceContent('foo.js', 'content of foo.js');
+    mapWithBothContents.setSourceContent('bar.js', 'content of bar.js');
+    var consumer = new SourceMapConsumer(mapWithBothContents.toJSON());
+    assert.ok(consumer.hasContentsOfAllSources());
+  };
+
+  exports['test hasContentsOfAllSources, two sources one with and one without contents'] = function (assert, util) {
+    // Has two sources: foo.js (with contents) and bar.js (without contents).
+    var mapWithoutSomeContents = new SourceMapGenerator();
+    mapWithoutSomeContents.addMapping({ source: 'foo.js',
+                                        original: { line: 1, column: 10 },
+                                        generated: { line: 1, column: 10 } });
+    mapWithoutSomeContents.addMapping({ source: 'bar.js',
+                                        original: { line: 1, column: 10 },
+                                        generated: { line: 1, column: 10 } });
+    mapWithoutSomeContents.setSourceContent('foo.js', 'content of foo.js');
+    var consumer = new SourceMapConsumer(mapWithoutSomeContents.toJSON());
+    assert.ok(!consumer.hasContentsOfAllSources());
+};
 
   exports['test sourceRoot + generatedPositionFor'] = function (assert, util) {
     var map = new SourceMapGenerator({
@@ -1007,4 +1056,5 @@ define(function (require, exports, module) {
     assert.equal(pos.line, 4);
     assert.equal(pos.column, 4);
   };
+
 });
