@@ -47,6 +47,10 @@
     "lib": "./lib"
   },
   "main": "./lib/source-map.js",
+  "files": [
+    "lib/",
+    "build/"
+  ],
   "engines": {
     "node": ">=0.8.0"
   },
