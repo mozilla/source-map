@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.4.4
+
+* Fix an issue where using a `SourceMapGenerator` after having created a
+  `SourceMapConsumer` from it via `SourceMapConsumer.fromSourceMap` failed. See
+  issue #191.
+
+* Fix an issue with where `SourceMapGenerator` would mistakenly consider
+  different mappings as duplicates of each other and avoid generating them. See
+  issue #192.
+
 ## 0.4.3
 
 * A very large number of performance improvements, particularly when parsing
