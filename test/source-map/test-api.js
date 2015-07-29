@@ -13,8 +13,8 @@ define(function (require, exports, module) {
   try {
     sourceMap = require('../../lib/source-map');
   } catch (e) {
-    sourceMap = {};
-    Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
+    var loader = Components.utils.import("resource://gre/modules/devtools/Loader.jsm", {});
+    sourceMap = loader.devtools.require("devtools/toolkit/sourcemap/source-map");
   }
 
   exports['test that the api is properly exposed in the top level'] = function (assert, util) {

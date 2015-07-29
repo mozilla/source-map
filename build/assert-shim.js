@@ -4,7 +4,7 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-define('test/source-map/assert', ['exports'], function (exports) {
+define('test/source-map/assert', ['require', 'exports'], function (require, exports) {
 
   let do_throw = function (msg) {
     throw new Error(msg);
