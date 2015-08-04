@@ -6,3 +6,6 @@ this.sourceMap = {
   SourceMapGenerator: require('source-map/source-map-generator').SourceMapGenerator,
   SourceNode: require('source-map/source-node').SourceNode
 };
+if (typeof module === "object" && module && module.exports) {
+  module.exports = this.sourceMap;
+}
