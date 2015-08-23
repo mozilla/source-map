@@ -55,9 +55,6 @@
     "node": ">=0.8.0"
   },
   "license": "BSD-3-Clause",
-  "dependencies": {
-    "amdefine": ">=0.0.4"
-  },
   "devDependencies": {
     "dryice": ">=0.4.8"
   },

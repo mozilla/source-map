@@ -8,23 +8,26 @@ var path = require('path');
 var fs = require('fs');
 var copy = require('dryice').copy;
 
-function removeAmdefine(src) {
-  src = String(src).replace(
-    /if\s*\(typeof\s*define\s*!==\s*'function'\)\s*{\s*var\s*define\s*=\s*require\('amdefine'\)\(module,\s*require\);\s*}\s*/g,
-    '');
-  src = src.replace(
-    /\b(define\(.*)('amdefine',?)/gm,
-    '$1');
-  return src;
-}
-removeAmdefine.onRead = true;
-
 function makeNonRelative(src) {
-  return src
+  return String(src)
     .replace(/require\('.\//g, 'require(\'source-map/')
     .replace(/\.\.\/\.\.\/lib\//g, '');
 }
 makeNonRelative.onRead = true;
+
+function wrapDefine(src, location) {
+  src = String(src);
+  if (/^build\//.test(location.path)) {
+    return src;
+  } else {
+    return (
+      '\ndefine(function (require, exports, module) {\n' +
+        src.replace(/^(?=[^\n])/gm, '  ') +
+      '\n});\n\n'
+    );
+  }
+}
+wrapDefine.onRead = true;
 
 function buildBrowser() {
   console.log('\nCreating dist/source-map.js');
@@ -45,8 +48,8 @@ function buildBrowser() {
       'build/suffix-browser.js'
     ],
     filter: [
-      copy.filter.moduleDefines,
-      removeAmdefine
+      wrapDefine,
+      copy.filter.moduleDefines
     ],
     dest: 'dist/source-map.js'
   });
@@ -81,8 +84,8 @@ function buildFirefox() {
       'build/suffix-source-map.jsm'
     ],
     filter: [
+      wrapDefine,
       copy.filter.moduleDefines,
-      removeAmdefine,
       makeNonRelative
     ],
     dest: 'dist/SourceMap.jsm'
@@ -106,8 +109,8 @@ function buildFirefox() {
       'build/suffix-utils.jsm'
     ],
     filter: [
+      wrapDefine,
       copy.filter.moduleDefines,
-      removeAmdefine,
       makeNonRelative
     ],
     dest: 'dist/test/Utils.jsm'
@@ -129,7 +132,7 @@ function buildFirefox() {
         'build/test-suffix.js'
       ],
       filter: [
-        removeAmdefine,
+        wrapDefine,
         makeNonRelative,
         function (input, source) {
           return input.replace('define(',
