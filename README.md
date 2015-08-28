@@ -1,42 +1,19 @@
 # Source Map
 
+[![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
+
 This is a library to generate and consume the source map format
 [described here][format].
 
-This library is compatible with the following environments:
+[format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 
-* Node.js versions 0.8.X and higher
-
-* On the web, with browsers supporting ECMAScript 5 (after the build)
-
-* Inside Firefox (after the build)
-
-## Node
+## Use with Node
 
     $ npm install source-map
 
-## Building from Source (for everywhere else)
+## Use on the Web
 
-Install Node and then run
-
-    $ git clone https://fitzgen@github.com/mozilla/source-map.git
-    $ cd source-map
-
-Next, run
-
-    $ npm run build
-
-This will create the following files:
-
-* `dist/source-map.js` - The plain browser build.
-
-* `dist/source-map.min.js` - The minified browser build.
-
-* `dist/source-map.min.js.map` - The source map for the minified browser build.
-
-* `dist/source-map.debug.js` - The debug browser build.
-
-* `dist/source-map.debug.js.map` - The source map for the debug browser build.
+    <script src="https://raw.githubusercontent.com/mozilla/source-map/master/dist/source-map.min.js" defer></script>
 
 ## Examples
 
@@ -468,42 +445,3 @@ SourceMapGenerator which contains all the mappings between the generated and
 original sources.
 
 The arguments are the same as those to `new SourceMapGenerator`.
-
-## Tests
-
-[![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
-
-Install NodeJS version 0.8.0 or greater, then run `npm test`.
-
-To add new tests, create a new file named
-`test/source-map/test-your-new-test-name.js` and export your test functions with
-names that start with "test", for example
-
-```js
-exports["test doing the foo bar"] = function (assert) {
-  ...
-};
-```
-
-The new tests will be located automatically when you run the suite.
-
-The `assert` argument is a cut down version of node's assert module. You have
-access to the following assertion functions:
-
-* `doesNotThrow`
-
-* `equal`
-
-* `ok`
-
-* `strictEqual`
-
-* `throws`
-
-(The reason for the restricted set of test functions is because we need the
-tests to run inside Firefox's test suite as well and Firefox has a shimmed
-assert module.)
-
-[format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
-[feature]: https://wiki.mozilla.org/DevTools/Features/SourceMap
-[Dryice]: https://github.com/mozilla/dryice
