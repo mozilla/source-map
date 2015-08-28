@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var base64VLQ = require('../../lib/source-map/base64-vlq');
+  var base64VLQ = require('../lib/base64-vlq');
 
   exports['test normal encoding and decoding'] = function (assert) {
     var result = {};

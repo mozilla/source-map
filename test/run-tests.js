@@ -43,13 +43,13 @@ function isTestFile(f) {
     : /^test\-.*?\.js/.test(f);
 }
 
-function toModule(f) {
-  return './source-map/' + f.replace(/\.js$/, '');
+function toRelativeModule(f) {
+  return './' + f.replace(/\.js$/, '');
 }
 
-var requires = fs.readdirSync(path.join(__dirname, 'source-map'))
+var requires = fs.readdirSync(__dirname)
   .filter(isTestFile)
-  .map(toModule);
+  .map(toRelativeModule);
 
 var code = run(requires.map(require).map(function (mod, i) {
   return {

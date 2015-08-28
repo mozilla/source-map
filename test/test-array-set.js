@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var ArraySet = require('../../lib/source-map/array-set').ArraySet;
+  var ArraySet = require('../lib/array-set').ArraySet;
 
   function makeTestSet() {
     var set = new ArraySet();

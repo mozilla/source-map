@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var sourceMap = require('../../lib/source-map');
+  var sourceMap = require('../source-map');
 
   exports['test that the api is properly exposed in the top level'] = function (assert) {
     assert.equal(typeof sourceMap.SourceMapGenerator, "function");

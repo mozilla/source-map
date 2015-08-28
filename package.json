@@ -43,13 +43,10 @@
     "type": "git",
     "url": "http://github.com/mozilla/source-map.git"
   },
-  "directories": {
-    "lib": "./lib"
-  },
-  "main": "./lib/source-map.js",
+  "main": "./source-map.js",
   "files": [
-    "lib/",
-    "build/"
+    "source-map.js",
+    "lib/"
   ],
   "engines": {
     "node": ">=0.10.0"

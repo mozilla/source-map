@@ -9,7 +9,7 @@ var distDir = path.join(__dirname, "dist");
 module.exports = [
   // Plain build.
   {
-    entry: "./lib/source-map.js",
+    entry: "./source-map.js",
     output: {
       path: distDir,
       filename: "source-map.js",
@@ -20,7 +20,7 @@ module.exports = [
 
   // Debug build.
   {
-    entry: "./lib/source-map.js",
+    entry: "./source-map.js",
     output: {
       path: distDir,
       filename: "source-map.debug.js",
@@ -32,7 +32,7 @@ module.exports = [
 
   // Minified build.
   {
-    entry: "./lib/source-map.js",
+    entry: "./source-map.js",
     output: {
       path: distDir,
       filename: "source-map.min.js",
@@ -56,7 +56,7 @@ function isTestFile(file) {
   return testFileRegex.test(file);
 }
 
-var testsDir = path.join(__dirname, "test", "source-map");
+var testsDir = path.join(__dirname, "test");
 var testFiles = fs.readdirSync(testsDir).filter(isTestFile);
 
 // The xpcshell test harness expects a run_test function. Define this function

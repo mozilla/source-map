@@ -6,9 +6,9 @@
  */
 {
   var util = require("./util");
-  var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
-  var SourceNode = require('../../lib/source-map/source-node').SourceNode;
+  var SourceMapGenerator = require('../lib/source-map-generator').SourceMapGenerator;
+  var SourceMapConsumer = require('../lib/source-map-consumer').SourceMapConsumer;
+  var SourceNode = require('../lib/source-node').SourceNode;
 
   function forEachNewline(fn) {
     return function (assert) {

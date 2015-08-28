@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var base64 = require('../../lib/source-map/base64');
+  var base64 = require('../lib/base64');
 
   exports['test out of range encoding'] = function (assert) {
     assert.throws(function () {

@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var util = require('../../lib/source-map/util');
+  var util = require('../lib/util');
 
   // This is a test mapping which maps functions from two different files
   // (one.js and two.js) to a minified generated source.

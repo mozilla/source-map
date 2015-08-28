@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var quickSort = require('../../lib/source-map/quick-sort').quickSort;
+  var quickSort = require('../lib/quick-sort').quickSort;
 
   function numberCompare(a, b) {
     return a - b;

@@ -6,8 +6,8 @@
  */
 {
   var util = require("./util");
-  var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
-  var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
+  var SourceMapConsumer = require('../lib/source-map-consumer').SourceMapConsumer;
+  var SourceMapGenerator = require('../lib/source-map-generator').SourceMapGenerator;
 
   exports['test eating our own dog food'] = function (assert) {
     var smg = new SourceMapGenerator({
