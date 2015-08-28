@@ -4,11 +4,7 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
   var util = require('../../lib/source-map/util');
 
   // This is a test mapping which maps functions from two different files
@@ -297,5 +293,4 @@ define(function (require, exports, module) {
     }
   }
   exports.assertEqualMaps = assertEqualMaps;
-
-});
+}

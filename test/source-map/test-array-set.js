@@ -4,11 +4,7 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
   var ArraySet = require('../../lib/source-map/array-set').ArraySet;
 
   function makeTestSet() {
@@ -19,28 +15,28 @@ define(function (require, exports, module) {
     return set;
   }
 
-  exports['test .has() membership'] = function (assert, util) {
+  exports['test .has() membership'] = function (assert) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.ok(set.has(String(i)));
     }
   };
 
-  exports['test .indexOf() elements'] = function (assert, util) {
+  exports['test .indexOf() elements'] = function (assert) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.indexOf(String(i)), i);
     }
   };
 
-  exports['test .at() indexing'] = function (assert, util) {
+  exports['test .at() indexing'] = function (assert) {
     var set = makeTestSet();
     for (var i = 0; i < 100; i++) {
       assert.strictEqual(set.at(i), String(i));
     }
   };
 
-  exports['test creating from an array'] = function (assert, util) {
+  exports['test creating from an array'] = function (assert) {
     var set = ArraySet.fromArray(['foo', 'bar', 'baz', 'quux', 'hasOwnProperty']);
 
     assert.ok(set.has('foo'));
@@ -60,7 +56,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.at(3), 'quux');
   };
 
-  exports['test that you can add __proto__; see github issue #30'] = function (assert, util) {
+  exports['test that you can add __proto__; see github issue #30'] = function (assert) {
     var set = new ArraySet();
     set.add('__proto__');
     assert.ok(set.has('__proto__'));
@@ -68,7 +64,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.indexOf('__proto__'), 0);
   };
 
-  exports['test .fromArray() with duplicates'] = function (assert, util) {
+  exports['test .fromArray() with duplicates'] = function (assert) {
     var set = ArraySet.fromArray(['foo', 'foo']);
     assert.ok(set.has('foo'));
     assert.strictEqual(set.at(0), 'foo');
@@ -83,7 +79,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.toArray().length, 2);
   };
 
-  exports['test .add() with duplicates'] = function (assert, util) {
+  exports['test .add() with duplicates'] = function (assert) {
     var set = new ArraySet();
     set.add('foo');
 
@@ -101,7 +97,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.toArray().length, 2);
   };
 
-  exports['test .size()'] = function (assert, util) {
+  exports['test .size()'] = function (assert) {
     var set = new ArraySet();
     set.add('foo');
     set.add('bar');
@@ -109,7 +105,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.size(), 3);
   };
 
-  exports['test .size() with disallowed duplicates'] = function (assert, util) {
+  exports['test .size() with disallowed duplicates'] = function (assert) {
     var set = new ArraySet();
 
     set.add('foo');
@@ -124,7 +120,7 @@ define(function (require, exports, module) {
     assert.strictEqual(set.size(), 3);
   };
 
-  exports['test .size() with allowed duplicates'] = function (assert, util) {
+  exports['test .size() with allowed duplicates'] = function (assert) {
     var set = new ArraySet();
 
     set.add('foo');
@@ -138,5 +134,4 @@ define(function (require, exports, module) {
 
     assert.strictEqual(set.size(), 3);
   };
-
-});
+}

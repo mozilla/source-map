@@ -4,15 +4,12 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
+  var util = require("./util");
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
-  exports['test eating our own dog food'] = function (assert, util) {
+  exports['test eating our own dog food'] = function (assert) {
     var smg = new SourceMapGenerator({
       file: 'testing.js',
       sourceRoot: '/wu/tang'
@@ -101,5 +98,4 @@ define(function (require, exports, module) {
     util.assertMapping(6, 12, '/wu/tang/gza.coffee', 5, 9, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
     util.assertMapping(null, null, '/wu/tang/gza.coffee', 6, 19, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
   };
-
-});
+}

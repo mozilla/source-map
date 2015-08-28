@@ -4,22 +4,19 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
+  var util = require("./util");
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
   var SourceNode = require('../../lib/source-map/source-node').SourceNode;
 
   function forEachNewline(fn) {
-    return function (assert, util) {
-      ['\n', '\r\n'].forEach(fn.bind(null, assert, util));
+    return function (assert) {
+      ['\n', '\r\n'].forEach(fn.bind(null, assert));
     }
   }
 
-  exports['test .add()'] = function (assert, util) {
+  exports['test .add()'] = function (assert) {
     var node = new SourceNode(null, null, null);
 
     // Adding a string works.
@@ -43,7 +40,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test .prepend()'] = function (assert, util) {
+  exports['test .prepend()'] = function (assert) {
     var node = new SourceNode(null, null, null);
 
     // Prepending a string works.
@@ -78,7 +75,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test .toString()'] = function (assert, util) {
+  exports['test .toString()'] = function (assert) {
     assert.equal((new SourceNode(null, null, null,
                                  ['function foo() {',
                                   new SourceNode(null, null, null, 'return 10;'),
@@ -86,13 +83,13 @@ define(function (require, exports, module) {
                  'function foo() {return 10;}');
   };
 
-  exports['test .join()'] = function (assert, util) {
+  exports['test .join()'] = function (assert) {
     assert.equal((new SourceNode(null, null, null,
                                  ['a', 'b', 'c', 'd'])).join(', ').toString(),
                  'a, b, c, d');
   };
 
-  exports['test .walk()'] = function (assert, util) {
+  exports['test .walk()'] = function (assert) {
     var node = new SourceNode(null, null, null,
                               ['(function () {\n',
                                '  ', new SourceNode(1, 0, 'a.js', ['someCall()']), ';\n',
@@ -118,7 +115,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test .replaceRight'] = function (assert, util) {
+  exports['test .replaceRight'] = function (assert) {
     var node;
 
     // Not nested
@@ -134,7 +131,7 @@ define(function (require, exports, module) {
     assert.equal(node.toString(), 'hey sexy mama, want to watch Futurama?');
   };
 
-  exports['test .toStringWithSourceMap()'] = forEachNewline(function (assert, util, nl) {
+  exports['test .toStringWithSourceMap()'] = forEachNewline(function (assert, nl) {
     var node = new SourceNode(null, null, null,
                               ['(function () {' + nl,
                                '  ',
@@ -209,7 +206,7 @@ define(function (require, exports, module) {
     assert.equal(actual.column, null);
   });
 
-  exports['test .fromStringWithSourceMap()'] = forEachNewline(function (assert, util, nl) {
+  exports['test .fromStringWithSourceMap()'] = forEachNewline(function (assert, nl) {
     var testCode = util.testGeneratedCode.replace(/\n/g, nl);
     var node = SourceNode.fromStringWithSourceMap(
                               testCode,
@@ -229,7 +226,7 @@ define(function (require, exports, module) {
     assert.equal(map.mappings, util.testMap.mappings);
   });
 
-  exports['test .fromStringWithSourceMap() empty map'] = forEachNewline(function (assert, util, nl) {
+  exports['test .fromStringWithSourceMap() empty map'] = forEachNewline(function (assert, nl) {
     var node = SourceNode.fromStringWithSourceMap(
                               util.testGeneratedCode.replace(/\n/g, nl),
                               new SourceMapConsumer(util.emptyMap));
@@ -248,7 +245,7 @@ define(function (require, exports, module) {
     assert.equal(map.mappings, util.emptyMap.mappings);
   });
 
-  exports['test .fromStringWithSourceMap() complex version'] = forEachNewline(function (assert, util, nl) {
+  exports['test .fromStringWithSourceMap() complex version'] = forEachNewline(function (assert, nl) {
     var input = new SourceNode(null, null, null, [
       "(function() {" + nl,
         "  var Test = {};" + nl,
@@ -277,7 +274,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, inputMap);
   });
 
-  exports['test .fromStringWithSourceMap() third argument'] = function (assert, util) {
+  exports['test .fromStringWithSourceMap() third argument'] = function (assert) {
     // Assume the following directory structure:
     //
     // http://foo.org/
@@ -365,7 +362,7 @@ define(function (require, exports, module) {
     ]);
   };
 
-  exports['test .toStringWithSourceMap() merging duplicate mappings'] = forEachNewline(function (assert, util, nl) {
+  exports['test .toStringWithSourceMap() merging duplicate mappings'] = forEachNewline(function (assert, nl) {
     var input = new SourceNode(null, null, null, [
       new SourceNode(1, 0, "a.js", "(function"),
       new SourceNode(1, 0, "a.js", "() {" + nl),
@@ -448,7 +445,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  exports['test .toStringWithSourceMap() multi-line SourceNodes'] = forEachNewline(function (assert, util, nl) {
+  exports['test .toStringWithSourceMap() multi-line SourceNodes'] = forEachNewline(function (assert, nl) {
     var input = new SourceNode(null, null, null, [
       new SourceNode(1, 0, "a.js", "(function() {" + nl + "var nextLine = 1;" + nl + "anotherLine();" + nl),
       new SourceNode(2, 2, "b.js", "Test.call(this, 123);" + nl),
@@ -524,13 +521,13 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  exports['test .toStringWithSourceMap() with empty string'] = function (assert, util) {
+  exports['test .toStringWithSourceMap() with empty string'] = function (assert) {
     var node = new SourceNode(1, 0, 'empty.js', '');
     var result = node.toStringWithSourceMap();
     assert.equal(result.code, '');
   };
 
-  exports['test .toStringWithSourceMap() with consecutive newlines'] = forEachNewline(function (assert, util, nl) {
+  exports['test .toStringWithSourceMap() with consecutive newlines'] = forEachNewline(function (assert, nl) {
     var input = new SourceNode(null, null, null, [
       "/***/" + nl + nl,
       new SourceNode(1, 0, "a.js", "'use strict';" + nl),
@@ -566,7 +563,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  exports['test setSourceContent with toStringWithSourceMap'] = function (assert, util) {
+  exports['test setSourceContent with toStringWithSourceMap'] = function (assert) {
     var aNode = new SourceNode(1, 1, 'a.js', 'a');
     aNode.setSourceContent('a.js', 'someContent');
     var node = new SourceNode(null, null, null,
@@ -590,7 +587,7 @@ define(function (require, exports, module) {
     assert.equal(map.sourcesContent[1], 'otherContent');
   };
 
-  exports['test walkSourceContents'] = function (assert, util) {
+  exports['test walkSourceContents'] = function (assert) {
     var aNode = new SourceNode(1, 1, 'a.js', 'a');
     aNode.setSourceContent('a.js', 'someContent');
     var node = new SourceNode(null, null, null,
@@ -609,4 +606,4 @@ define(function (require, exports, module) {
     assert.equal(results[1][0], 'b.js');
     assert.equal(results[1][1], 'otherContent');
   };
-});
+}

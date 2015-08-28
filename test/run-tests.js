@@ -8,7 +8,6 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
-var util = require('./source-map/util');
 
 function run(tests) {
   var total = 0;
@@ -19,7 +18,7 @@ function run(tests) {
       if (/^test/.test(k)) {
         total++;
         try {
-          tests[i].testCase[k](assert, util);
+          tests[i].testCase[k](assert);
           passed++;
         }
         catch (e) {
