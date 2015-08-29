@@ -14,8 +14,9 @@
     var map = new SourceMapGenerator({
       file: 'foo.js',
       sourceRoot: '.'
-    });
-    assert.ok(true);
+    }).toJSON();
+    assert.ok('file' in map);
+    assert.ok('sourceRoot' in map);
 
     var map = new SourceMapGenerator().toJSON();
     assert.ok(!('file' in map));
