@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
 
+[![NPM](https://nodei.co/npm/source-map.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/source-map)
+
 This is a library to generate and consume the source map format
 [described here][format].
 
@@ -14,6 +16,51 @@ This is a library to generate and consume the source map format
 ## Use on the Web
 
     <script src="https://raw.githubusercontent.com/mozilla/source-map/master/dist/source-map.min.js" defer></script>
+
+--------------------------------------------------------------------------------
+
+<!-- `npm run toc` to regenerate the Table of Contents -->
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table of Contents
+
+- [Examples](#examples)
+  - [Consuming a source map](#consuming-a-source-map)
+  - [Generating a source map](#generating-a-source-map)
+    - [With SourceNode (high level API)](#with-sourcenode-high-level-api)
+    - [With SourceMapGenerator (low level API)](#with-sourcemapgenerator-low-level-api)
+- [API](#api)
+  - [SourceMapConsumer](#sourcemapconsumer)
+    - [new SourceMapConsumer(rawSourceMap)](#new-sourcemapconsumerrawsourcemap)
+    - [SourceMapConsumer.prototype.computeColumnSpans()](#sourcemapconsumerprototypecomputecolumnspans)
+    - [SourceMapConsumer.prototype.originalPositionFor(generatedPosition)](#sourcemapconsumerprototypeoriginalpositionforgeneratedposition)
+    - [SourceMapConsumer.prototype.generatedPositionFor(originalPosition)](#sourcemapconsumerprototypegeneratedpositionfororiginalposition)
+    - [SourceMapConsumer.prototype.allGeneratedPositionsFor(originalPosition)](#sourcemapconsumerprototypeallgeneratedpositionsfororiginalposition)
+    - [SourceMapConsumer.prototype.hasContentsOfAllSources()](#sourcemapconsumerprototypehascontentsofallsources)
+    - [SourceMapConsumer.prototype.sourceContentFor(source[, returnNullOnMissing])](#sourcemapconsumerprototypesourcecontentforsource-returnnullonmissing)
+    - [SourceMapConsumer.prototype.eachMapping(callback, context, order)](#sourcemapconsumerprototypeeachmappingcallback-context-order)
+  - [SourceMapGenerator](#sourcemapgenerator)
+    - [new SourceMapGenerator([startOfSourceMap])](#new-sourcemapgeneratorstartofsourcemap)
+    - [SourceMapGenerator.fromSourceMap(sourceMapConsumer)](#sourcemapgeneratorfromsourcemapsourcemapconsumer)
+    - [SourceMapGenerator.prototype.addMapping(mapping)](#sourcemapgeneratorprototypeaddmappingmapping)
+    - [SourceMapGenerator.prototype.setSourceContent(sourceFile, sourceContent)](#sourcemapgeneratorprototypesetsourcecontentsourcefile-sourcecontent)
+    - [SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile[, sourceMapPath]])](#sourcemapgeneratorprototypeapplysourcemapsourcemapconsumer-sourcefile-sourcemappath)
+    - [SourceMapGenerator.prototype.toString()](#sourcemapgeneratorprototypetostring)
+  - [SourceNode](#sourcenode)
+    - [new SourceNode([line, column, source[, chunk[, name]]])](#new-sourcenodeline-column-source-chunk-name)
+    - [SourceNode.fromStringWithSourceMap(code, sourceMapConsumer[, relativePath])](#sourcenodefromstringwithsourcemapcode-sourcemapconsumer-relativepath)
+    - [SourceNode.prototype.add(chunk)](#sourcenodeprototypeaddchunk)
+    - [SourceNode.prototype.prepend(chunk)](#sourcenodeprototypeprependchunk)
+    - [SourceNode.prototype.setSourceContent(sourceFile, sourceContent)](#sourcenodeprototypesetsourcecontentsourcefile-sourcecontent)
+    - [SourceNode.prototype.walk(fn)](#sourcenodeprototypewalkfn)
+    - [SourceNode.prototype.walkSourceContents(fn)](#sourcenodeprototypewalksourcecontentsfn)
+    - [SourceNode.prototype.join(sep)](#sourcenodeprototypejoinsep)
+    - [SourceNode.prototype.replaceRight(pattern, replacement)](#sourcenodeprototypereplacerightpattern-replacement)
+    - [SourceNode.prototype.toString()](#sourcenodeprototypetostring)
+    - [SourceNode.prototype.toStringWithSourceMap([startOfSourceMap])](#sourcenodeprototypetostringwithsourcemapstartofsourcemap)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Examples
 
@@ -123,7 +170,7 @@ console.log(map.toString());
 Get a reference to the module:
 
 ```js
-// NodeJS
+// Node.js
 var sourceMap = require('source-map');
 
 // Browser builds
@@ -160,10 +207,40 @@ following attributes:
 
 * `file`: Optional. The generated filename this source map is associated with.
 
+```js
+var consumer = new sourceMap.SourceMapConsumer(rawSourceMapJsonData);
+```
+
 #### SourceMapConsumer.prototype.computeColumnSpans()
 
 Compute the last column for each generated mapping. The last column is
 inclusive.
+
+```js
+// Before:
+consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+// [ { line: 2,
+//     column: 1 },
+//   { line: 2,
+//     column: 10 },
+//   { line: 2,
+//     column: 20 } ]
+
+consumer.computeColumnSpans();
+
+// After:
+consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+// [ { line: 2,
+//     column: 1,
+//     lastColumn: 9 },
+//   { line: 2,
+//     column: 10,
+//     lastColumn: 19 },
+//   { line: 2,
+//     column: 20,
+//     lastColumn: Infinity } ]
+
+```
 
 #### SourceMapConsumer.prototype.originalPositionFor(generatedPosition)
 
@@ -194,6 +271,20 @@ and an object is returned with the following properties:
 
 * `name`: The original identifier, or null if this information is not available.
 
+```js
+consumer.originalPositionFor({ line: 2, column: 10 })
+// { source: 'foo.coffee',
+//   line: 2,
+//   column: 2,
+//   name: null }
+
+consumer.originalPositionFor({ line: 99999999999999999, column: 999999999999999 })
+// { source: null,
+//   line: null,
+//   column: null,
+//   name: null }
+```
+
 #### SourceMapConsumer.prototype.generatedPositionFor(originalPosition)
 
 Returns the generated line and column information for the original source,
@@ -211,6 +302,12 @@ and an object is returned with the following properties:
 * `line`: The line number in the generated source, or null.
 
 * `column`: The column number in the generated source, or null.
+
+```js
+consumer.generatedPositionFor({ source: "example.js", line: 2, column: 10 })
+// { line: 1,
+//   column: 56 }
+```
 
 #### SourceMapConsumer.prototype.allGeneratedPositionsFor(originalPosition)
 
@@ -235,13 +332,34 @@ and an array of objects is returned, each with the following properties:
 
 * `column`: The column number in the generated source, or null.
 
+```js
+consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+// [ { line: 2,
+//     column: 1 },
+//   { line: 2,
+//     column: 10 },
+//   { line: 2,
+//     column: 20 } ]
+```
+
 #### SourceMapConsumer.prototype.hasContentsOfAllSources()
 
 Return true if we have the embedded source content for every source listed in
 the source map, false otherwise.
 
-In other words, if this method returns `true`, then `smc.sourceContentFor(s)`
-will succeed for every source `s` in `smc.sources`.
+In other words, if this method returns `true`, then
+`consumer.sourceContentFor(s)` will succeed for every source `s` in
+`consumer.sources`.
+
+```js
+// ...
+if (consumer.hasContentsOfAllSources()) {
+  consumerReadyCallback(consumer);
+} else {
+  fetchSources(consumer, consumerReadyCallback);
+}
+// ...
+```
 
 #### SourceMapConsumer.prototype.sourceContentFor(source[, returnNullOnMissing])
 
@@ -251,6 +369,20 @@ argument is the URL of the original source file.
 If the source content for the given source is not found, then an error is
 thrown. Optionally, pass `true` as the second param to have `null` returned
 instead.
+
+```js
+consumer.sources
+// [ "my-cool-lib.clj" ]
+
+consumer.sourceContentFor("my-cool-lib.clj")
+// "..."
+
+consumer.sourceContentFor("this is not in the source map");
+// Error: "this is not in the source map" is not in the source map
+
+consumer.sourceContentFor("this is not in the source map", true);
+// null
+```
 
 #### SourceMapConsumer.prototype.eachMapping(callback, context, order)
 
@@ -270,6 +402,23 @@ generated line/column in this source map.
   original's source/line/column order, respectively. Defaults to
   `SourceMapConsumer.GENERATED_ORDER`.
 
+```js
+consumer.eachMapping(function (m) { console.log(m); })
+// ...
+// { source: 'illmatic.js',
+//   generatedLine: 1,
+//   generatedColumn: 0,
+//   originalLine: 1,
+//   originalColumn: 0,
+//   name: null }
+// { source: 'illmatic.js',
+//   generatedLine: 2,
+//   generatedColumn: 0,
+//   originalLine: 2,
+//   originalColumn: 0,
+//   name: null }
+// ...
+```
 ### SourceMapGenerator
 
 An instance of the SourceMapGenerator represents a source map which is being
@@ -289,11 +438,22 @@ You may pass an object with the following properties:
   discretion, as a last resort. Even then, one should avoid using this flag when
   running tests, if possible.
 
+```js
+var generator = new sourceMap.SourceMapGenerator({
+  file: "my-generated-javascript-file.js",
+  sourceRoot: "http://example.com/app/js/"
+});
+```
+
 #### SourceMapGenerator.fromSourceMap(sourceMapConsumer)
 
-Creates a new SourceMapGenerator based on a SourceMapConsumer
+Creates a new `SourceMapGenerator` from an existing `SourceMapConsumer` instance.
 
 * `sourceMapConsumer` The SourceMap.
+
+```js
+var generator = sourceMap.SourceMapGenerator.fromSourceMap(consumer);
+```
 
 #### SourceMapGenerator.prototype.addMapping(mapping)
 
@@ -309,6 +469,14 @@ should have the following properties:
 
 * `name`: An optional original token name for this mapping.
 
+```js
+generator.addMapping({
+  source: "module-one.scm",
+  original: { line: 128, column: 0 },
+  generated: { line: 3, column: 456 }
+})
+```
+
 #### SourceMapGenerator.prototype.setSourceContent(sourceFile, sourceContent)
 
 Set the source content for an original source file.
@@ -316,6 +484,11 @@ Set the source content for an original source file.
 * `sourceFile` the URL of the original source file.
 
 * `sourceContent` the content of the source file.
+
+```js
+generator.setSourceContent("module-one.scm",
+                           fs.readFileSync("path/to/module-one.scm"))
+```
 
 #### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile[, sourceMapPath]])
 
@@ -345,6 +518,11 @@ is the minimium of this map and the supplied map.
 
 Renders the source map being generated to a string.
 
+```js
+generator.toString()
+// '{"version":3,"sources":["module-one.scm"],"names":[],"mappings":"...snip...","file":"my-generated-javascript-file.js","sourceRoot":"http://example.com/app/js/"}'
+```
+
 ### SourceNode
 
 SourceNodes provide a way to abstract over interpolating and/or concatenating
@@ -368,6 +546,14 @@ use before outputting the generated JS and source map.
 
 * `name`: Optional. The original identifier.
 
+```js
+var node = new SourceNode(1, 2, "a.cpp", [
+  new SourceNode(3, 4, "b.cpp", "extern int status;\n"),
+  new SourceNode(5, 6, "c.cpp", "std::string* make_string(size_t n);\n"),
+  new SourceNode(7, 8, "d.cpp", "int main(int argc, char** argv) {}\n"),
+]);
+```
+
 #### SourceNode.fromStringWithSourceMap(code, sourceMapConsumer[, relativePath])
 
 Creates a SourceNode from generated code and a SourceMapConsumer.
@@ -379,6 +565,12 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
 * `relativePath` The optional path that relative sources in `sourceMapConsumer`
   should be relative to.
 
+```js
+var consumer = new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map"));
+var node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"),
+                                              consumer);
+```
+
 #### SourceNode.prototype.add(chunk)
 
 Add a chunk of generated JS to this source node.
@@ -386,12 +578,22 @@ Add a chunk of generated JS to this source node.
 * `chunk`: A string snippet of generated JS code, another instance of
    `SourceNode`, or an array where each member is one of those things.
 
+```js
+node.add(" + ");
+node.add(otherNode);
+node.add([leftHandOperandNode, " + ", rightHandOperandNode]);
+```
+
 #### SourceNode.prototype.prepend(chunk)
 
 Prepend a chunk of generated JS to this source node.
 
 * `chunk`: A string snippet of generated JS code, another instance of
    `SourceNode`, or an array where each member is one of those things.
+
+```js
+node.prepend("/** Build Id: f783haef86324gf **/\n\n");
+```
 
 #### SourceNode.prototype.setSourceContent(sourceFile, sourceContent)
 
@@ -402,6 +604,11 @@ Set the source content for a source file. This will be added to the
 
 * `sourceContent`: The content of the source file
 
+```js
+node.setSourceContent("module-one.scm",
+                      fs.readFileSync("path/to/module-one.scm"))
+```
+
 #### SourceNode.prototype.walk(fn)
 
 Walk over the tree of JS snippets in this node and its children. The walking
@@ -410,12 +617,44 @@ the its original associated source's line/column location.
 
 * `fn`: The traversal function.
 
+```js
+var node = new SourceNode(1, 2, "a.js", [
+  new SourceNode(3, 4, "b.js", "uno"),
+  "dos",
+  [
+    "tres",
+    new SourceNode(5, 6, "c.js", "quatro")
+  ]
+]);
+
+node.walk(function (code, loc) { console.log("WALK:", code, loc); })
+// WALK: uno { source: 'b.js', line: 3, column: 4, name: null }
+// WALK: dos { source: 'a.js', line: 1, column: 2, name: null }
+// WALK: tres { source: 'a.js', line: 1, column: 2, name: null }
+// WALK: quatro { source: 'c.js', line: 5, column: 6, name: null }
+```
+
 #### SourceNode.prototype.walkSourceContents(fn)
 
 Walk over the tree of SourceNodes. The walking function is called for each
 source file content and is passed the filename and source content.
 
 * `fn`: The traversal function.
+
+```js
+var a = new SourceNode(1, 2, "a.js", "generated from a");
+a.setSourceContent("a.js", "original a");
+var b = new SourceNode(1, 2, "b.js", "generated from b");
+b.setSourceContent("b.js", "original b");
+var c = new SourceNode(1, 2, "c.js", "generated from c");
+c.setSourceContent("c.js", "original c");
+
+var node = new SourceNode(null, null, null, [a, b, c]);
+node.walkSourceContents(function (source, contents) { console.log("WALK:", source, ":", contents); })
+// WALK: a.js : original a
+// WALK: b.js : original b
+// WALK: c.js : original c
+```
 
 #### SourceNode.prototype.join(sep)
 
@@ -424,19 +663,47 @@ between each of this source node's children.
 
 * `sep`: The separator.
 
+```js
+var lhs = new SourceNode(1, 2, "a.rs", "my_copy");
+var operand = new SourceNode(3, 4, "a.rs", "=");
+var rhs = new SourceNode(5, 6, "a.rs", "orig.clone()");
+
+var node = new SourceNode(null, null, null, [ lhs, operand, rhs ]);
+var joinedNode = node.join(" ");
+```
+
 #### SourceNode.prototype.replaceRight(pattern, replacement)
 
 Call `String.prototype.replace` on the very right-most source snippet. Useful
-for trimming whitespace from the end of a source node, etc.
+for trimming white space from the end of a source node, etc.
 
 * `pattern`: The pattern to replace.
 
 * `replacement`: The thing to replace the pattern with.
 
+```js
+// Trim trailing white space.
+node.replaceRight(/\s*$/, "");
+```
+
 #### SourceNode.prototype.toString()
 
 Return the string representation of this source node. Walks over the tree and
 concatenates all the various snippets together to one string.
+
+```js
+var node = new SourceNode(1, 2, "a.js", [
+  new SourceNode(3, 4, "b.js", "uno"),
+  "dos",
+  [
+    "tres",
+    new SourceNode(5, 6, "c.js", "quatro")
+  ]
+]);
+
+node.toString()
+// 'unodostresquatro'
+```
 
 #### SourceNode.prototype.toStringWithSourceMap([startOfSourceMap])
 
@@ -445,3 +712,18 @@ SourceMapGenerator which contains all the mappings between the generated and
 original sources.
 
 The arguments are the same as those to `new SourceMapGenerator`.
+
+```js
+var node = new SourceNode(1, 2, "a.js", [
+  new SourceNode(3, 4, "b.js", "uno"),
+  "dos",
+  [
+    "tres",
+    new SourceNode(5, 6, "c.js", "quatro")
+  ]
+]);
+
+node.toStringWithSourceMap({ file: "my-output-file.js" })
+// { code: 'unodostresquatro',
+//   map: [object SourceMapGenerator] }
+```

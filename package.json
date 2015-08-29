@@ -54,9 +54,11 @@
   "license": "BSD-3-Clause",
   "scripts": {
     "test": "node test/run-tests.js",
-    "build": "webpack --color"
+    "build": "webpack --color",
+    "toc": "doctoc --title '## Table of Contents' README.md"
   },
   "devDependencies": {
+    "doctoc": "^0.15.0",
     "webpack": "^1.12.0"
   }
 }
