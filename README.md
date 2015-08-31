@@ -3,15 +3,13 @@
 This is a library to generate and consume the source map format
 [described here][format].
 
-This library is written in the Asynchronous Module Definition format, and works
-in the following environments:
+This library is compatible with the following environments:
 
-* Modern Browsers supporting ECMAScript 5 (either after the build, or with an
-  AMD loader such as RequireJS)
+* Node.js versions 0.8.X and higher
 
-* Inside Firefox (as a JSM file, after the build)
+* On the web, with browsers supporting ECMAScript 5 (after the build)
 
-* With NodeJS versions 0.8.X and higher
+* Inside Firefox (after the build)
 
 ## Node
 
@@ -23,19 +21,22 @@ Install Node and then run
 
     $ git clone https://fitzgen@github.com/mozilla/source-map.git
     $ cd source-map
-    $ npm link .
 
 Next, run
 
-    $ node Makefile.dryice.js
+    $ npm run build
 
-This should spew a bunch of stuff to stdout, and create the following files:
+This will create the following files:
 
-* `dist/source-map.js` - The unminified browser version.
+* `dist/source-map.js` - The plain browser build.
 
-* `dist/source-map.min.js` - The minified browser version.
+* `dist/source-map.min.js` - The minified browser build.
 
-* `dist/SourceMap.jsm` - The JavaScript Module for inclusion in Firefox source.
+* `dist/source-map.min.js.map` - The source map for the minified browser build.
+
+* `dist/source-map.debug.js` - The debug browser build.
+
+* `dist/source-map.debug.js.map` - The source map for the debug browser build.
 
 ## Examples
 
@@ -152,8 +153,7 @@ var sourceMap = require('source-map');
 var sourceMap = window.sourceMap;
 
 // Inside Firefox
-let sourceMap = {};
-Components.utils.import('resource:///modules/devtools/SourceMap.jsm', sourceMap);
+const sourceMap = require("devtools/toolkit/sourcemap/source-map.js");
 ```
 
 ### SourceMapConsumer
@@ -473,20 +473,19 @@ The arguments are the same as those to `new SourceMapGenerator`.
 
 [![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
 
-Install NodeJS version 0.8.0 or greater, then run `node test/run-tests.js`.
+Install NodeJS version 0.8.0 or greater, then run `npm test`.
 
-To add new tests, create a new file named `test/test-<your new test name>.js`
-and export your test functions with names that start with "test", for example
+To add new tests, create a new file named
+`test/source-map/test-your-new-test-name.js` and export your test functions with
+names that start with "test", for example
 
 ```js
-exports["test doing the foo bar"] = function (assert, util) {
+exports["test doing the foo bar"] = function (assert) {
   ...
 };
 ```
 
-The new test will be located automatically when you run the suite.
-
-The `util` argument is the test utility module located at `test/source-map/util`.
+The new tests will be located automatically when you run the suite.
 
 The `assert` argument is a cut down version of node's assert module. You have
 access to the following assertion functions:
@@ -502,8 +501,8 @@ access to the following assertion functions:
 * `throws`
 
 (The reason for the restricted set of test functions is because we need the
-tests to run inside Firefox's test suite as well and so the assert module is
-shimmed in that environment. See `build/assert-shim.js`.)
+tests to run inside Firefox's test suite as well and Firefox has a shimmed
+assert module.)
 
 [format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
 [feature]: https://wiki.mozilla.org/DevTools/Features/SourceMap

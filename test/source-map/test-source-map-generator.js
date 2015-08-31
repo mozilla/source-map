@@ -4,17 +4,13 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
   var SourceNode = require('../../lib/source-map/source-node').SourceNode;
   var util = require('./util');
 
-  exports['test some simple stuff'] = function (assert, util) {
+  exports['test some simple stuff'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'foo.js',
       sourceRoot: '.'
@@ -26,7 +22,7 @@ define(function (require, exports, module) {
     assert.ok(!('sourceRoot' in map));
   };
 
-  exports['test JSON serialization'] = function (assert, util) {
+  exports['test JSON serialization'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'foo.js',
       sourceRoot: '.'
@@ -34,7 +30,7 @@ define(function (require, exports, module) {
     assert.equal(map.toString(), JSON.stringify(map));
   };
 
-  exports['test adding mappings (case 1)'] = function (assert, util) {
+  exports['test adding mappings (case 1)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -47,7 +43,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (case 2)'] = function (assert, util) {
+  exports['test adding mappings (case 2)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -62,7 +58,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (case 3)'] = function (assert, util) {
+  exports['test adding mappings (case 3)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -78,7 +74,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings (invalid)'] = function (assert, util) {
+  exports['test adding mappings (invalid)'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -98,7 +94,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test adding mappings with skipValidation'] = function (assert, util) {
+  exports['test adding mappings with skipValidation'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.',
@@ -119,7 +115,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test that the correct mappings are being generated'] = function (assert, util) {
+  exports['test that the correct mappings are being generated'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'min.js',
       sourceRoot: '/the/root'
@@ -202,7 +198,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map, util.testMap);
   };
 
-  exports['test that adding a mapping with an empty string name does not break generation'] = function (assert, util) {
+  exports['test that adding a mapping with an empty string name does not break generation'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated-foo.js',
       sourceRoot: '.'
@@ -220,7 +216,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test that source content can be set'] = function (assert, util) {
+  exports['test that source content can be set'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'min.js',
       sourceRoot: '/the/root'
@@ -244,18 +240,18 @@ define(function (require, exports, module) {
     assert.equal(map.sourcesContent[1], null);
   };
 
-  exports['test .fromSourceMap'] = function (assert, util) {
+  exports['test .fromSourceMap'] = function (assert) {
     var map = SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMap));
     util.assertEqualMaps(assert, map.toJSON(), util.testMap);
   };
 
-  exports['test .fromSourceMap with sourcesContent'] = function (assert, util) {
+  exports['test .fromSourceMap with sourcesContent'] = function (assert) {
     var map = SourceMapGenerator.fromSourceMap(
       new SourceMapConsumer(util.testMapWithSourcesContent));
     util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
   };
 
-  exports['test applySourceMap'] = function (assert, util) {
+  exports['test applySourceMap'] = function (assert) {
     var node = new SourceNode(null, null, null, [
       new SourceNode(2, 0, 'fileX', 'lineX2\n'),
       'genA1\n',
@@ -312,7 +308,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, actualMap, expectedMap);
   };
 
-  exports['test applySourceMap throws when file is missing'] = function (assert, util) {
+  exports['test applySourceMap throws when file is missing'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'test.js'
     });
@@ -322,7 +318,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test the two additional parameters of applySourceMap'] = function (assert, util) {
+  exports['test the two additional parameters of applySourceMap'] = function (assert) {
     // Assume the following directory structure:
     //
     // http://foo.org/
@@ -468,7 +464,7 @@ define(function (require, exports, module) {
     ]));
   };
 
-  exports['test applySourceMap name handling'] = function (assert, util) {
+  exports['test applySourceMap name handling'] = function (assert) {
     // Imagine some CoffeeScript code being compiled into JavaScript and then
     // minified.
 
@@ -524,7 +520,7 @@ define(function (require, exports, module) {
     assertName(null, null, null);
   };
 
-  exports['test sorting with duplicate generated mappings'] = function (assert, util) {
+  exports['test sorting with duplicate generated mappings'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'test.js'
     });
@@ -554,7 +550,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test ignore duplicate mappings.'] = function (assert, util) {
+  exports['test ignore duplicate mappings.'] = function (assert) {
     var init = { file: 'min.js', sourceRoot: '/the/root' };
     var map1, map2;
 
@@ -644,7 +640,7 @@ define(function (require, exports, module) {
     util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
   };
 
-  exports['test github issue #72, check for duplicate names or sources'] = function (assert, util) {
+  exports['test github issue #72, check for duplicate names or sources'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'test.js'
     });
@@ -669,14 +665,14 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test setting sourcesContent to null when already null'] = function (assert, util) {
+  exports['test setting sourcesContent to null when already null'] = function (assert) {
     var smg = new SourceMapGenerator({ file: "foo.js" });
     assert.doesNotThrow(function() {
       smg.setSourceContent("bar.js", null);
     });
   };
 
-  exports['test applySourceMap with unexact match'] = function (assert, util) {
+  exports['test applySourceMap with unexact match'] = function (assert) {
       var map1 = new SourceMapGenerator({
         file: 'bundled-source'
       });
@@ -719,7 +715,7 @@ define(function (require, exports, module) {
       util.assertEqualMaps(assert, map1.toJSON(), expectedMap.toJSON());
     };
 
-  exports['test issue #192'] = function (assert, util) {
+  exports['test issue #192'] = function (assert) {
     var generator = new SourceMapGenerator();
     generator.addMapping({
       source: 'a.js',
@@ -741,5 +737,4 @@ define(function (require, exports, module) {
                  "Should not de-duplicate mappings that have the same " +
                  "generated positions, but different original positions.");
   };
-
-});
+}

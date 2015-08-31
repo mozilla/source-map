@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -52,17 +52,14 @@
     "build/"
   ],
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=0.10.0"
   },
   "license": "BSD-3-Clause",
-  "dependencies": {
-    "amdefine": ">=0.0.4"
-  },
-  "devDependencies": {
-    "dryice": ">=0.4.8"
-  },
   "scripts": {
     "test": "node test/run-tests.js",
-    "build": "node Makefile.dryice.js"
+    "build": "webpack --color"
+  },
+  "devDependencies": {
+    "webpack": "^1.12.0"
   }
 }

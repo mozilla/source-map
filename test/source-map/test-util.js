@@ -4,14 +4,10 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
   var libUtil = require('../../lib/source-map/util');
 
-  exports['test urls'] = function (assert, util) {
+  exports['test urls'] = function (assert) {
     var assertUrl = function (url) {
       assert.equal(url, libUtil.urlGenerate(libUtil.urlParse(url)));
     };
@@ -38,7 +34,7 @@ define(function (require, exports, module) {
     assert.equal(libUtil.urlParse('data:foo,bar'), null);
   };
 
-  exports['test normalize()'] = function (assert, util) {
+  exports['test normalize()'] = function (assert) {
     assert.equal(libUtil.normalize('/..'), '/');
     assert.equal(libUtil.normalize('/../'), '/');
     assert.equal(libUtil.normalize('/../../../..'), '/');
@@ -75,7 +71,7 @@ define(function (require, exports, module) {
     assert.equal(libUtil.normalize('http://www.example.com/./..//a/b/c/.././d//'), 'http://www.example.com/a/b/d/');
   };
 
-  exports['test join()'] = function (assert, util) {
+  exports['test join()'] = function (assert) {
     assert.equal(libUtil.join('a', 'b'), 'a/b');
     assert.equal(libUtil.join('a/', 'b'), 'a/b');
     assert.equal(libUtil.join('a//', 'b'), 'a/b');
@@ -200,7 +196,7 @@ define(function (require, exports, module) {
   };
 
   // TODO Issue #128: Define and test this function properly.
-  exports['test relative()'] = function (assert, util) {
+  exports['test relative()'] = function (assert) {
     assert.equal(libUtil.relative('/the/root', '/the/root/one.js'), 'one.js');
     assert.equal(libUtil.relative('http://the/root', 'http://the/root/one.js'), 'one.js');
     assert.equal(libUtil.relative('/the/root', '/the/rootone.js'), '../rootone.js');
@@ -216,5 +212,4 @@ define(function (require, exports, module) {
     assert.equal(libUtil.relative('/', '/the/root/one.js'), 'the/root/one.js');
     assert.equal(libUtil.relative('/', 'the/root/one.js'), 'the/root/one.js');
   };
-
-});
+}

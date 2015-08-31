@@ -4,17 +4,14 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module, require);
-}
-define(function (require, exports, module) {
-
+{
+  var util = require("./util");
   var SourceMapConsumer = require('../../lib/source-map/source-map-consumer').SourceMapConsumer;
   var IndexedSourceMapConsumer = require('../../lib/source-map/source-map-consumer').IndexedSourceMapConsumer;
   var BasicSourceMapConsumer = require('../../lib/source-map/source-map-consumer').BasicSourceMapConsumer;
   var SourceMapGenerator = require('../../lib/source-map/source-map-generator').SourceMapGenerator;
 
-  exports['test that we can instantiate with a string or an object'] = function (assert, util) {
+  exports['test that we can instantiate with a string or an object'] = function (assert) {
     assert.doesNotThrow(function () {
       var map = new SourceMapConsumer(util.testMap);
     });
@@ -23,19 +20,19 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test that the object returned from new SourceMapConsumer inherits from SourceMapConsumer'] = function (assert, util) {
+  exports['test that the object returned from new SourceMapConsumer inherits from SourceMapConsumer'] = function (assert) {
     assert.ok(new SourceMapConsumer(util.testMap) instanceof SourceMapConsumer);
   }
 
-  exports['test that a BasicSourceMapConsumer is returned for sourcemaps without sections'] = function(assert, util) {
+  exports['test that a BasicSourceMapConsumer is returned for sourcemaps without sections'] = function(assert) {
     assert.ok(new SourceMapConsumer(util.testMap) instanceof BasicSourceMapConsumer);
   };
 
-  exports['test that an IndexedSourceMapConsumer is returned for sourcemaps with sections'] = function(assert, util) {
+  exports['test that an IndexedSourceMapConsumer is returned for sourcemaps with sections'] = function(assert) {
     assert.ok(new SourceMapConsumer(util.indexedTestMap) instanceof IndexedSourceMapConsumer);
   };
 
-  exports['test that the `sources` field has the original sources'] = function (assert, util) {
+  exports['test that the `sources` field has the original sources'] = function (assert) {
     var map;
     var sources;
 
@@ -70,7 +67,7 @@ define(function (require, exports, module) {
     assert.equal(sources.length, 2);
   };
 
-  exports['test that the source root is reflected in a mapping\'s source field'] = function (assert, util) {
+  exports['test that the source root is reflected in a mapping\'s source field'] = function (assert) {
     var map;
     var mapping;
 
@@ -119,7 +116,7 @@ define(function (require, exports, module) {
     assert.equal(mapping.source, 'one.js');
   };
 
-  exports['test mapping tokens back exactly'] = function (assert, util) {
+  exports['test mapping tokens back exactly'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
 
     util.assertMapping(1, 1, '/the/root/one.js', 1, 1, null, null, map, assert);
@@ -138,7 +135,7 @@ define(function (require, exports, module) {
     util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
   };
 
-  exports['test mapping tokens back exactly in indexed source map'] = function (assert, util) {
+  exports['test mapping tokens back exactly in indexed source map'] = function (assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
 
     util.assertMapping(1, 1, '/the/root/one.js', 1, 1, null, null, map, assert);
@@ -158,7 +155,7 @@ define(function (require, exports, module) {
   };
 
 
-  exports['test mapping tokens back exactly'] = function (assert, util) {
+  exports['test mapping tokens back exactly'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
 
     util.assertMapping(1, 1, '/the/root/one.js', 1, 1, null, null, map, assert);
@@ -177,7 +174,7 @@ define(function (require, exports, module) {
     util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
   };
 
-  exports['test mapping tokens fuzzy'] = function (assert, util) {
+  exports['test mapping tokens fuzzy'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
 
     // Finding original positions with default (glb) bias.
@@ -201,7 +198,7 @@ define(function (require, exports, module) {
     util.assertMapping(2, 9, '/the/root/two.js', 1, 6, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   };
 
-  exports['test mapping tokens fuzzy in indexed source map'] = function (assert, util) {
+  exports['test mapping tokens fuzzy in indexed source map'] = function (assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
 
     // Finding original positions with default (glb) bias.
@@ -225,7 +222,7 @@ define(function (require, exports, module) {
     util.assertMapping(2, 9, '/the/root/two.js', 1, 6, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   };
 
-  exports['test mappings and end of lines'] = function (assert, util) {
+  exports['test mappings and end of lines'] = function (assert) {
     var smg = new SourceMapGenerator({
       file: 'foo.js'
     });
@@ -257,13 +254,13 @@ define(function (require, exports, module) {
     util.assertMapping(null, null, 'bar.js', 3, 1, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   };
 
-  exports['test creating source map consumers with )]}\' prefix'] = function (assert, util) {
+  exports['test creating source map consumers with )]}\' prefix'] = function (assert) {
     assert.doesNotThrow(function () {
       var map = new SourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
     });
   };
 
-  exports['test eachMapping'] = function (assert, util) {
+  exports['test eachMapping'] = function (assert) {
     var map;
 
     map = new SourceMapConsumer(util.testMap);
@@ -295,7 +292,7 @@ define(function (require, exports, module) {
     });
   };
 
-  exports['test eachMapping for indexed source maps'] = function(assert, util) {
+  exports['test eachMapping for indexed source maps'] = function(assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
     var previousLine = -Infinity;
     var previousColumn = -Infinity;
@@ -318,7 +315,7 @@ define(function (require, exports, module) {
   };
 
 
-  exports['test iterating over mappings in a different order'] = function (assert, util) {
+  exports['test iterating over mappings in a different order'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
     var previousLine = -Infinity;
     var previousColumn = -Infinity;
@@ -346,7 +343,7 @@ define(function (require, exports, module) {
     }, null, SourceMapConsumer.ORIGINAL_ORDER);
   };
 
-  exports['test iterating over mappings in a different order in indexed source maps'] = function (assert, util) {
+  exports['test iterating over mappings in a different order in indexed source maps'] = function (assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
     var previousLine = -Infinity;
     var previousColumn = -Infinity;
@@ -374,7 +371,7 @@ define(function (require, exports, module) {
     }, null, SourceMapConsumer.ORIGINAL_ORDER);
   };
 
-  exports['test that we can set the context for `this` in eachMapping'] = function (assert, util) {
+  exports['test that we can set the context for `this` in eachMapping'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
     var context = {};
     map.eachMapping(function () {
@@ -382,7 +379,7 @@ define(function (require, exports, module) {
     }, context);
   };
 
-  exports['test that we can set the context for `this` in eachMapping in indexed source maps'] = function (assert, util) {
+  exports['test that we can set the context for `this` in eachMapping in indexed source maps'] = function (assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
     var context = {};
     map.eachMapping(function () {
@@ -390,7 +387,7 @@ define(function (require, exports, module) {
     }, context);
   };
 
-  exports['test that the `sourcesContent` field has the original sources'] = function (assert, util) {
+  exports['test that the `sourcesContent` field has the original sources'] = function (assert) {
     var map = new SourceMapConsumer(util.testMapWithSourcesContent);
     var sourcesContent = map.sourcesContent;
 
@@ -399,7 +396,7 @@ define(function (require, exports, module) {
     assert.equal(sourcesContent.length, 2);
   };
 
-  exports['test that we can get the original sources for the sources'] = function (assert, util) {
+  exports['test that we can get the original sources for the sources'] = function (assert) {
     var map = new SourceMapConsumer(util.testMapWithSourcesContent);
     var sources = map.sources;
 
@@ -418,7 +415,7 @@ define(function (require, exports, module) {
     }, Error);
   };
 
-  exports['test that we can get the original source content with relative source paths'] = function (assert, util) {
+  exports['test that we can get the original source content with relative source paths'] = function (assert) {
     var map = new SourceMapConsumer(util.testMapRelativeSources);
     var sources = map.sources;
 
@@ -437,7 +434,7 @@ define(function (require, exports, module) {
     }, Error);
   };
 
-  exports['test that we can get the original source content for the sources on an indexed source map'] = function (assert, util) {
+  exports['test that we can get the original source content for the sources on an indexed source map'] = function (assert) {
     var map = new SourceMapConsumer(util.indexedTestMap);
     var sources = map.sources;
 
@@ -456,7 +453,7 @@ define(function (require, exports, module) {
     }, Error);
   };
 
-  exports['test hasContentsOfAllSources, single source with contents'] = function (assert, util) {
+  exports['test hasContentsOfAllSources, single source with contents'] = function (assert) {
     // Has one source: foo.js (with contents).
     var mapWithContents = new SourceMapGenerator();
     mapWithContents.addMapping({ source: 'foo.js',
@@ -467,7 +464,7 @@ define(function (require, exports, module) {
     assert.ok(consumer.hasContentsOfAllSources());
   };
 
-  exports['test hasContentsOfAllSources, single source without contents'] = function (assert, util) {
+  exports['test hasContentsOfAllSources, single source without contents'] = function (assert) {
     // Has one source: foo.js (without contents).
     var mapWithoutContents = new SourceMapGenerator();
     mapWithoutContents.addMapping({ source: 'foo.js',
@@ -477,7 +474,7 @@ define(function (require, exports, module) {
     assert.ok(!consumer.hasContentsOfAllSources());
   };
 
-  exports['test hasContentsOfAllSources, two sources with contents'] = function (assert, util) {
+  exports['test hasContentsOfAllSources, two sources with contents'] = function (assert) {
     // Has two sources: foo.js (with contents) and bar.js (with contents).
     var mapWithBothContents = new SourceMapGenerator();
     mapWithBothContents.addMapping({ source: 'foo.js',
@@ -492,7 +489,7 @@ define(function (require, exports, module) {
     assert.ok(consumer.hasContentsOfAllSources());
   };
 
-  exports['test hasContentsOfAllSources, two sources one with and one without contents'] = function (assert, util) {
+  exports['test hasContentsOfAllSources, two sources one with and one without contents'] = function (assert) {
     // Has two sources: foo.js (with contents) and bar.js (without contents).
     var mapWithoutSomeContents = new SourceMapGenerator();
     mapWithoutSomeContents.addMapping({ source: 'foo.js',
@@ -506,7 +503,7 @@ define(function (require, exports, module) {
     assert.ok(!consumer.hasContentsOfAllSources());
 };
 
-  exports['test sourceRoot + generatedPositionFor'] = function (assert, util) {
+  exports['test sourceRoot + generatedPositionFor'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
       file: 'baz.js'
@@ -544,7 +541,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 2);
   };
 
-  exports['test sourceRoot + generatedPositionFor for path above the root'] = function (assert, util) {
+  exports['test sourceRoot + generatedPositionFor for path above the root'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
       file: 'baz.js'
@@ -567,7 +564,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 2);
   };
 
-  exports['test allGeneratedPositionsFor for line'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for line'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -610,7 +607,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[1].column, 3);
   };
 
-  exports['test allGeneratedPositionsFor for line fuzzy'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for line fuzzy'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -641,7 +638,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[0].column, 2);
   };
 
-  exports['test allGeneratedPositionsFor for empty source map'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for empty source map'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -655,7 +652,7 @@ define(function (require, exports, module) {
     assert.equal(mappings.length, 0);
   };
 
-  exports['test allGeneratedPositionsFor for column'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for column'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -684,7 +681,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[1].column, 3);
   };
 
-  exports['test allGeneratedPositionsFor for column fuzzy'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for column fuzzy'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -713,7 +710,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[1].column, 3);
   };
 
-  exports['test allGeneratedPositionsFor for column on different line fuzzy'] = function (assert, util) {
+  exports['test allGeneratedPositionsFor for column on different line fuzzy'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -738,7 +735,7 @@ define(function (require, exports, module) {
     assert.equal(mappings.length, 0);
   };
 
-  exports['test computeColumnSpans'] = function (assert, util) {
+  exports['test computeColumnSpans'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -804,7 +801,7 @@ define(function (require, exports, module) {
     assert.equal(mappings[1].lastColumn, Infinity);
   };
 
-  exports['test sourceRoot + originalPositionFor'] = function (assert, util) {
+  exports['test sourceRoot + originalPositionFor'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'foo/bar',
       file: 'baz.js'
@@ -827,7 +824,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 1);
   };
 
-  exports['test github issue #56'] = function (assert, util) {
+  exports['test github issue #56'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'http://',
       file: 'www.example.com/foo.js'
@@ -844,7 +841,7 @@ define(function (require, exports, module) {
     assert.equal(sources[0], 'http://www.example.com/original.js');
   };
 
-  exports['test github issue #43'] = function (assert, util) {
+  exports['test github issue #43'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'http://example.com',
       file: 'foo.js'
@@ -863,7 +860,7 @@ define(function (require, exports, module) {
                  'Should not be joined with the sourceRoot.');
   };
 
-  exports['test absolute path, but same host sources'] = function (assert, util) {
+  exports['test absolute path, but same host sources'] = function (assert) {
     var map = new SourceMapGenerator({
       sourceRoot: 'http://example.com/foo/bar',
       file: 'foo.js'
@@ -882,7 +879,7 @@ define(function (require, exports, module) {
                  'Source should be relative the host of the source root.');
   };
 
-  exports['test indexed source map errors when sections are out of order by line'] = function(assert, util) {
+  exports['test indexed source map errors when sections are out of order by line'] = function(assert) {
     // Make a deep copy of the indexedTestMap
     var misorderedIndexedTestMap = JSON.parse(JSON.stringify(util.indexedTestMap));
 
@@ -896,7 +893,7 @@ define(function (require, exports, module) {
     }, Error);
   };
 
-  exports['test github issue #64'] = function (assert, util) {
+  exports['test github issue #64'] = function (assert) {
     var map = new SourceMapConsumer({
       "version": 3,
       "file": "foo.js",
@@ -911,7 +908,7 @@ define(function (require, exports, module) {
     assert.equal(map.sourceContentFor("/a"), "foo");
   };
 
-  exports['test bug 885597'] = function (assert, util) {
+  exports['test bug 885597'] = function (assert) {
     var map = new SourceMapConsumer({
       "version": 3,
       "file": "foo.js",
@@ -926,7 +923,7 @@ define(function (require, exports, module) {
     assert.equal(map.sourceContentFor(s), "foo");
   };
 
-  exports['test github issue #72, duplicate sources'] = function (assert, util) {
+  exports['test github issue #72, duplicate sources'] = function (assert) {
     var map = new SourceMapConsumer({
       "version": 3,
       "file": "foo.js",
@@ -961,7 +958,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 5);
   };
 
-  exports['test github issue #72, duplicate names'] = function (assert, util) {
+  exports['test github issue #72, duplicate names'] = function (assert) {
     var map = new SourceMapConsumer({
       "version": 3,
       "file": "foo.js",
@@ -996,7 +993,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 5);
   };
 
-  exports['test SourceMapConsumer.fromSourceMap'] = function (assert, util) {
+  exports['test SourceMapConsumer.fromSourceMap'] = function (assert) {
     var smg = new SourceMapGenerator({
       sourceRoot: 'http://example.com/',
       file: 'foo.js'
@@ -1057,7 +1054,7 @@ define(function (require, exports, module) {
     assert.equal(pos.column, 4);
   };
 
-  exports['test issue #191'] = function (assert, util) {
+  exports['test issue #191'] = function (assert) {
     var generator = new SourceMapGenerator({ file: 'a.css' });
     generator.addMapping({
       source:   'b.css',
@@ -1081,7 +1078,7 @@ define(function (require, exports, module) {
                     "SourceMapConsumer from it should not throw");
   };
 
-  exports['test sources where their prefix is the source root: issue #199'] = function (assert, util) {
+  exports['test sources where their prefix is the source root: issue #199'] = function (assert) {
     var testSourceMap = {
       "version": 3,
       "sources": ["/source/app/app/app.js"],
@@ -1102,7 +1099,7 @@ define(function (require, exports, module) {
     testSourceMap.sources.forEach(consumerHasSource);
   };
 
-  exports['test sources where their prefix is the source root and the source root is a url: issue #199'] = function (assert, util) {
+  exports['test sources where their prefix is the source root and the source root is a url: issue #199'] = function (assert) {
     var testSourceMap = {
       "version": 3,
       "sources": ["http://example.com/source/app/app/app.js"],
@@ -1121,5 +1118,4 @@ define(function (require, exports, module) {
     consumer.sources.forEach(consumerHasSource);
     testSourceMap.sources.forEach(consumerHasSource);
   };
-
-});
+}
