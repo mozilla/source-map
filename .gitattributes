@@ -1,1 +1,18 @@
+dist/source-map.debug.js binary
+dist/source-map.js binary
+dist/source-map.min.js binary
+dist/source-map.min.js.map binary
+
+dist/test/test_api.js binary
+dist/test/test_array_set.js binary
+dist/test/test_base64.js binary
+dist/test/test_base64_vlq.js binary
+dist/test/test_binary_search.js binary
+dist/test/test_dog_fooding.js binary
+dist/test/test_quick_sort.js binary
+dist/test/test_source_map_consumer.js binary
+dist/test/test_source_map_generator.js binary
+dist/test/test_source_node.js binary
+dist/test/test_util.js binary
+
 bench/scalajs-runtime-sourcemap.js binary

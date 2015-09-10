@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var binarySearch = require('../../lib/source-map/binary-search');
+  var binarySearch = require('../lib/binary-search');
 
   function numberCompare(a, b) {
     return a - b;

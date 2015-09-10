@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 {
-  var libUtil = require('../../lib/source-map/util');
+  var libUtil = require('../lib/util');
 
   exports['test urls'] = function (assert) {
     var assertUrl = function (url) {
