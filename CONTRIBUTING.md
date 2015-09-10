@@ -3,12 +3,45 @@
 Thank you for your interest in contributing to this library! Contributions are
 very appreciated.
 
+--------------------------------------------------------------------------------
+
+<!-- `npm run toc` to regenerate the Table of Contents -->
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Table of Contents
+
+- [Filing Issues](#filing-issues)
+- [Building From Source](#building-from-source)
+- [Submitting Pull Requests](#submitting-pull-requests)
+- [Running Tests](#running-tests)
+- [Writing New Tests](#writing-new-tests)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+
+## Filing Issues
+
+If you are filing an issue for a bug or other misbehavior, please provide:
+
+* **A test case.** The more minimal the better, but sometimes a larger test case
+  cannot be helped. This should be in the form of a gist, node script,
+  repository, etc.
+
+* **Steps to reproduce the bug.** The more exact and specific the better.
+
+* **The result you expected.**
+
+* **The actual result.**
+
 ## Building From Source
 
 Install Node.js and then run
 
     $ git clone https://github.com/mozilla/source-map.git
     $ cd source-map/
+    $ npm install
 
 Next, run
 
@@ -28,20 +61,6 @@ This will create the following files:
 
 * `dist/test/*` - These are the test files built for running as xpcshell unit
   tests within mozilla-central.
-
-## Filing Issues
-
-If you are filing an issue for a bug or other misbehavior, please provide:
-
-* **A test case.** The more minimal the better, but sometimes a larger test case
-  cannot be helped. This should be in the form of a gist, node script,
-  repository, etc.
-
-* **Steps to reproduce the bug.** The more exact and specific the better.
-
-* **The result you expected.**
-
-* **The actual result.**
 
 ## Submitting Pull Requests
 
