@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.5.0
+
+* Node 0.8 is no longer supported.
+
+* Use webpack instead of dryice for bundling.
+
+* Big speedups serializing source maps. See pull request #203.
+
+* Fix a bug with `SourceMapConsumer.prototype.sourceContentFor` and sources that
+  explicitly start with the source root. See issue #199.
+
 ## 0.4.4
 
 * Fix an issue where using a `SourceMapGenerator` after having created a
