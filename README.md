@@ -196,7 +196,7 @@ following attributes:
 
 * `sources`: An array of URLs to the original source files.
 
-* `names`: An array of identifiers which can be referrenced by individual
+* `names`: An array of identifiers which can be referenced by individual
   mappings.
 
 * `sourceRoot`: Optional. The URL root from which all sources are relative.
