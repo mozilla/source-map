@@ -495,7 +495,7 @@ generator.setSourceContent("module-one.scm",
 Applies a SourceMap for a source file to the SourceMap.
 Each mapping to the supplied source file is rewritten using the
 supplied SourceMap. Note: The resolution for the resulting mappings
-is the minimium of this map and the supplied map.
+is the minimum of this map and the supplied map.
 
 * `sourceMapConsumer`: The SourceMap to be applied.
 
