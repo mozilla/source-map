@@ -154,26 +154,6 @@
     util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
   };
 
-
-  exports['test mapping tokens back exactly'] = function (assert) {
-    var map = new SourceMapConsumer(util.testMap);
-
-    util.assertMapping(1, 1, '/the/root/one.js', 1, 1, null, null, map, assert);
-    util.assertMapping(1, 5, '/the/root/one.js', 1, 5, null, null, map, assert);
-    util.assertMapping(1, 9, '/the/root/one.js', 1, 11, null, null, map, assert);
-    util.assertMapping(1, 18, '/the/root/one.js', 1, 21, 'bar', null, map, assert);
-    util.assertMapping(1, 21, '/the/root/one.js', 2, 3, null, null, map, assert);
-    util.assertMapping(1, 28, '/the/root/one.js', 2, 10, 'baz', null, map, assert);
-    util.assertMapping(1, 32, '/the/root/one.js', 2, 14, 'bar', null, map, assert);
-
-    util.assertMapping(2, 1, '/the/root/two.js', 1, 1, null, null, map, assert);
-    util.assertMapping(2, 5, '/the/root/two.js', 1, 5, null, null, map, assert);
-    util.assertMapping(2, 9, '/the/root/two.js', 1, 11, null, null, map, assert);
-    util.assertMapping(2, 18, '/the/root/two.js', 1, 21, 'n', null, map, assert);
-    util.assertMapping(2, 21, '/the/root/two.js', 2, 3, null, null, map, assert);
-    util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
-  };
-
   exports['test mapping tokens fuzzy'] = function (assert) {
     var map = new SourceMapConsumer(util.testMap);
 
