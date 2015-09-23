@@ -1,4 +1,3 @@
-// var ConcatSource = require("webpack/lib/ConcatSource");
 var BannerPlugin = require("webpack/lib/BannerPlugin");
 var fs = require("fs");
 var path = require("path");
