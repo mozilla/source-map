@@ -1921,7 +1921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Returns the original source content. The only argument is the url of the
 	   * original source file. Returns null if no original source content is
-	   * availible.
+	   * available.
 	   */
 	  BasicSourceMapConsumer.prototype.sourceContentFor =
 	    function SourceMapConsumer_sourceContentFor(aSource, nullOnMissing) {
@@ -2301,7 +2301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var section = this._sections[i];
 	        var sectionMappings = section.consumer._generatedMappings;
 	        for (var j = 0; j < sectionMappings.length; j++) {
-	          var mapping = sectionMappings[i];
+	          var mapping = sectionMappings[j];
 
 	          var source = section.consumer._sources.at(mapping.source);
 	          if (section.consumer.sourceRoot !== null) {
@@ -2322,10 +2322,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            source: source,
 	            generatedLine: mapping.generatedLine +
 	              (section.generatedOffset.generatedLine - 1),
-	            generatedColumn: mapping.column +
-	              (section.generatedOffset.generatedLine === mapping.generatedLine)
+	            generatedColumn: mapping.generatedColumn +
+	              (section.generatedOffset.generatedLine === mapping.generatedLine
 	              ? section.generatedOffset.generatedColumn - 1
-	              : 0,
+	              : 0),
 	            originalLine: mapping.originalLine,
 	            originalColumn: mapping.originalColumn,
 	            name: name
@@ -2673,7 +2673,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	          // We add the code from "lastMapping" to "mapping":
 	          // First check if there is a new line in between.
 	          if (lastGeneratedLine < mapping.generatedLine) {
-	            var code = "";
 	            // Associate first line with "lastMapping"
 	            addMappingWithCode(lastMapping, shiftNextLine());
 	            lastGeneratedLine++;

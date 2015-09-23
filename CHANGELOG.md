@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.1
+
+* Fix latent bugs in IndexedSourceMapConsumer.prototype._parseMappings. See
+  ff05274becc9e6e1295ed60f3ea090d31d843379.
+
 ## 0.5.0
 
 * Node 0.8 is no longer supported.
