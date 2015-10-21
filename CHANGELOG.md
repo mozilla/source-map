@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.2
+
+* Include browser distributions of the library in package.json's `files`. See
+  issue #212.
+
 ## 0.5.1
 
 * Fix latent bugs in IndexedSourceMapConsumer.prototype._parseMappings. See
