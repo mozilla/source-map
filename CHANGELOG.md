@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.5.3
+
+* Do not include unnecessary distribution files. See
+  commit ef7006f8d1647e0a83fdc60f04f5a7ca54886f86.
+
 ## 0.5.2
 
 * Include browser distributions of the library in package.json's `files`. See
