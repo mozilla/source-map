@@ -50,7 +50,10 @@
   "files": [
     "source-map.js",
     "lib/",
-    "dist/"
+    "dist/source-map.debug.js",
+    "dist/source-map.js",
+    "dist/source-map.min.js",
+    "dist/source-map.min.js.map"
   ],
   "engines": {
     "node": ">=0.10.0"
