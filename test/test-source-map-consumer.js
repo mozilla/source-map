@@ -587,7 +587,7 @@
     assert.equal(mappings[1].column, 3);
   };
 
-  exports['test allGeneratedPositionsFor for line fuzzy'] = function (assert) {
+  exports['test allGeneratedPositionsFor for empty line'] = function (assert) {
     var map = new SourceMapGenerator({
       file: 'generated.js'
     });
@@ -613,9 +613,7 @@
       source: 'bar.coffee'
     });
 
-    assert.equal(mappings.length, 1);
-    assert.equal(mappings[0].line, 4);
-    assert.equal(mappings[0].column, 2);
+    assert.equal(mappings.length, 0);
   };
 
   exports['test allGeneratedPositionsFor for empty source map'] = function (assert) {
