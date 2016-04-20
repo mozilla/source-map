@@ -205,11 +205,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!this._sourcesContents) {
 	          this._sourcesContents = Object.create(null);
 	        }
-	        this._sourcesContents[source] = aSourceContent;
+	        this._sourcesContents[util.toSetString(source)] = aSourceContent;
 	      } else if (this._sourcesContents) {
 	        // Remove the source file from the _sourcesContents map.
 	        // If the _sourcesContents map is empty, set the property to null.
-	        delete this._sourcesContents[source];
+	        delete this._sourcesContents[util.toSetString(source)];
 	        if (Object.keys(this._sourcesContents).length === 0) {
 	          this._sourcesContents = null;
 	        }
@@ -411,7 +411,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        }
 
-	        result += next
+	        result += next;
 	      }
 
 	      return result;
@@ -426,8 +426,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (aSourceRoot != null) {
 	          source = util.relative(aSourceRoot, source);
 	        }
-	        return source in this._sourcesContents
-	          ? this._sourcesContents[source]
+	        var key = util.toSetString(source);
+	        return Object.prototype.hasOwnProperty.call(this._sourcesContents, key)
+	          ? this._sourcesContents[key]
 	          : null;
 	      }, this);
 	    };
@@ -930,12 +931,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  function toSetString(aStr) {
-	    return '$' + aStr;
+	    if (/^\$*__proto__$/.test(aStr)) return '$' + aStr;
+	    return aStr;
 	  }
 	  exports.toSetString = toSetString;
-
-	  function fromSetString(aStr) {
-	    return aStr.substr(1);
+	   function fromSetString(aStr) {
+	    if (/^\$*__proto__$/.test(aStr)) return aStr.substr(1);
+	    return aStr;
 	  }
 	  exports.fromSetString = fromSetString;
 
@@ -1076,6 +1078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	{
 	  var util = __webpack_require__(4);
+	  var has = Object.prototype.hasOwnProperty;
 
 	  /**
 	   * A data structure which is a combination of an array and a set. Adding a new
@@ -1085,7 +1088,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  function ArraySet() {
 	    this._array = [];
-	    this._set = Object.create(null);
+	    this._set = {};
 	  }
 
 	  /**
@@ -1115,13 +1118,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.add = function ArraySet_add(aStr, aAllowDuplicates) {
-	    var isDuplicate = aStr in this._set
+	    var sStr = util.toSetString(aStr);
+	    var isDuplicate = has.call(this._set, sStr);
 	    var idx = this._array.length;
 	    if (!isDuplicate || aAllowDuplicates) {
 	      this._array.push(aStr);
 	    }
 	    if (!isDuplicate) {
-	      this._set[aStr] = idx;
+	      this._set[sStr] = idx;
 	    }
 	  };
 
@@ -1131,7 +1135,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.has = function ArraySet_has(aStr) {
-	    return aStr in this._set
+	    var sStr = util.toSetString(aStr);
+	    return has.call(this._set, sStr);
 	  };
 
 	  /**
@@ -1140,8 +1145,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.indexOf = function ArraySet_indexOf(aStr) {
-	    if (aStr in this._set) {
-	      return this._set[aStr];
+	    var sStr = util.toSetString(aStr);
+	    if (has.call(this._set, sStr)) {
+	      return this._set[sStr];
 	    }
 	    throw new Error('"' + aStr + '" is not in the set.');
 	  };
@@ -2872,7 +2878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  SourceNode.prototype.setSourceContent =
 	    function SourceNode_setSourceContent(aSourceFile, aSourceContent) {
-	      this.sourceContents[aSourceFile] = aSourceContent;
+	      this.sourceContents[util.toSetString(aSourceFile)] = aSourceContent;
 	    };
 
 	  /**
@@ -2891,7 +2897,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var sources = Object.keys(this.sourceContents);
 	      for (var i = 0, len = sources.length; i < len; i++) {
-	        aFn(sources[i], this.sourceContents[sources[i]]);
+	        aFn(util.fromSetString(sources[i]), this.sourceContents[sources[i]]);
 	      }
 	    };
 
