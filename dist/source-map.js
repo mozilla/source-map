@@ -203,13 +203,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Add the source content to the _sourcesContents map.
 	        // Create a new _sourcesContents map if the property is null.
 	        if (!this._sourcesContents) {
-	          this._sourcesContents = {};
+	          this._sourcesContents = Object.create(null);
 	        }
-	        this._sourcesContents[util.toSetString(source)] = aSourceContent;
+	        this._sourcesContents[source] = aSourceContent;
 	      } else if (this._sourcesContents) {
 	        // Remove the source file from the _sourcesContents map.
 	        // If the _sourcesContents map is empty, set the property to null.
-	        delete this._sourcesContents[util.toSetString(source)];
+	        delete this._sourcesContents[source];
 	        if (Object.keys(this._sourcesContents).length === 0) {
 	          this._sourcesContents = null;
 	        }
@@ -360,6 +360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var previousName = 0;
 	      var previousSource = 0;
 	      var result = '';
+	      var next;
 	      var mapping;
 	      var nameIdx;
 	      var sourceIdx;
@@ -367,11 +368,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var mappings = this._mappings.toArray();
 	      for (var i = 0, len = mappings.length; i < len; i++) {
 	        mapping = mappings[i];
+	        next = ''
 
 	        if (mapping.generatedLine !== previousGeneratedLine) {
 	          previousGeneratedColumn = 0;
 	          while (mapping.generatedLine !== previousGeneratedLine) {
-	            result += ';';
+	            next += ';';
 	            previousGeneratedLine++;
 	          }
 	        }
@@ -380,34 +382,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!util.compareByGeneratedPositionsInflated(mapping, mappings[i - 1])) {
 	              continue;
 	            }
-	            result += ',';
+	            next += ',';
 	          }
 	        }
 
-	        result += base64VLQ.encode(mapping.generatedColumn
+	        next += base64VLQ.encode(mapping.generatedColumn
 	                                   - previousGeneratedColumn);
 	        previousGeneratedColumn = mapping.generatedColumn;
 
 	        if (mapping.source != null) {
 	          sourceIdx = this._sources.indexOf(mapping.source);
-	          result += base64VLQ.encode(sourceIdx - previousSource);
+	          next += base64VLQ.encode(sourceIdx - previousSource);
 	          previousSource = sourceIdx;
 
 	          // lines are stored 0-based in SourceMap spec version 3
-	          result += base64VLQ.encode(mapping.originalLine - 1
+	          next += base64VLQ.encode(mapping.originalLine - 1
 	                                     - previousOriginalLine);
 	          previousOriginalLine = mapping.originalLine - 1;
 
-	          result += base64VLQ.encode(mapping.originalColumn
+	          next += base64VLQ.encode(mapping.originalColumn
 	                                     - previousOriginalColumn);
 	          previousOriginalColumn = mapping.originalColumn;
 
 	          if (mapping.name != null) {
 	            nameIdx = this._names.indexOf(mapping.name);
-	            result += base64VLQ.encode(nameIdx - previousName);
+	            next += base64VLQ.encode(nameIdx - previousName);
 	            previousName = nameIdx;
 	          }
 	        }
+
+	        result += next
 	      }
 
 	      return result;
@@ -422,10 +426,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (aSourceRoot != null) {
 	          source = util.relative(aSourceRoot, source);
 	        }
-	        var key = util.toSetString(source);
-	        return Object.prototype.hasOwnProperty.call(this._sourcesContents,
-	                                                    key)
-	          ? this._sourcesContents[key]
+	        return source in this._sourcesContents
+	          ? this._sourcesContents[source]
 	          : null;
 	      }, this);
 	    };
@@ -1083,7 +1085,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  function ArraySet() {
 	    this._array = [];
-	    this._set = {};
+	    this._set = Object.create(null);
 	  }
 
 	  /**
@@ -1113,14 +1115,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.add = function ArraySet_add(aStr, aAllowDuplicates) {
-	    var sStr = util.toSetString(aStr);
-	    var isDuplicate = this._set.hasOwnProperty(sStr);
+	    var isDuplicate = aStr in this._set
 	    var idx = this._array.length;
 	    if (!isDuplicate || aAllowDuplicates) {
 	      this._array.push(aStr);
 	    }
 	    if (!isDuplicate) {
-	      this._set[sStr] = idx;
+	      this._set[aStr] = idx;
 	    }
 	  };
 
@@ -1130,8 +1131,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.has = function ArraySet_has(aStr) {
-	    var sStr = util.toSetString(aStr);
-	    return this._set.hasOwnProperty(sStr);
+	    return aStr in this._set
 	  };
 
 	  /**
@@ -1140,9 +1140,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	   * @param String aStr
 	   */
 	  ArraySet.prototype.indexOf = function ArraySet_indexOf(aStr) {
-	    var sStr = util.toSetString(aStr);
-	    if (this._set.hasOwnProperty(sStr)) {
-	      return this._set[sStr];
+	    if (aStr in this._set) {
+	      return this._set[aStr];
 	    }
 	    throw new Error('"' + aStr + '" is not in the set.');
 	  };
@@ -2873,7 +2872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  SourceNode.prototype.setSourceContent =
 	    function SourceNode_setSourceContent(aSourceFile, aSourceContent) {
-	      this.sourceContents[util.toSetString(aSourceFile)] = aSourceContent;
+	      this.sourceContents[aSourceFile] = aSourceContent;
 	    };
 
 	  /**
@@ -2892,7 +2891,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      var sources = Object.keys(this.sourceContents);
 	      for (var i = 0, len = sources.length; i < len; i++) {
-	        aFn(util.fromSetString(sources[i]), this.sourceContents[sources[i]]);
+	        aFn(sources[i], this.sourceContents[sources[i]]);
 	      }
 	    };
 
