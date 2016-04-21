@@ -203,7 +203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Add the source content to the _sourcesContents map.
 	        // Create a new _sourcesContents map if the property is null.
 	        if (!this._sourcesContents) {
-	          this._sourcesContents = {};
+	          this._sourcesContents = Object.create(null);
 	        }
 	        this._sourcesContents[util.toSetString(source)] = aSourceContent;
 	      } else if (this._sourcesContents) {
@@ -360,6 +360,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var previousName = 0;
 	      var previousSource = 0;
 	      var result = '';
+	      var next;
 	      var mapping;
 	      var nameIdx;
 	      var sourceIdx;
@@ -367,11 +368,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var mappings = this._mappings.toArray();
 	      for (var i = 0, len = mappings.length; i < len; i++) {
 	        mapping = mappings[i];
+	        next = ''
 
 	        if (mapping.generatedLine !== previousGeneratedLine) {
 	          previousGeneratedColumn = 0;
 	          while (mapping.generatedLine !== previousGeneratedLine) {
-	            result += ';';
+	            next += ';';
 	            previousGeneratedLine++;
 	          }
 	        }
@@ -380,34 +382,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (!util.compareByGeneratedPositionsInflated(mapping, mappings[i - 1])) {
 	              continue;
 	            }
-	            result += ',';
+	            next += ',';
 	          }
 	        }
 
-	        result += base64VLQ.encode(mapping.generatedColumn
+	        next += base64VLQ.encode(mapping.generatedColumn
 	                                   - previousGeneratedColumn);
 	        previousGeneratedColumn = mapping.generatedColumn;
 
 	        if (mapping.source != null) {
 	          sourceIdx = this._sources.indexOf(mapping.source);
-	          result += base64VLQ.encode(sourceIdx - previousSource);
+	          next += base64VLQ.encode(sourceIdx - previousSource);
 	          previousSource = sourceIdx;
 
 	          // lines are stored 0-based in SourceMap spec version 3
-	          result += base64VLQ.encode(mapping.originalLine - 1
+	          next += base64VLQ.encode(mapping.originalLine - 1
 	                                     - previousOriginalLine);
 	          previousOriginalLine = mapping.originalLine - 1;
 
-	          result += base64VLQ.encode(mapping.originalColumn
+	          next += base64VLQ.encode(mapping.originalColumn
 	                                     - previousOriginalColumn);
 	          previousOriginalColumn = mapping.originalColumn;
 
 	          if (mapping.name != null) {
 	            nameIdx = this._names.indexOf(mapping.name);
-	            result += base64VLQ.encode(nameIdx - previousName);
+	            next += base64VLQ.encode(nameIdx - previousName);
 	            previousName = nameIdx;
 	          }
 	        }
+
+	        result += next;
 	      }
 
 	      return result;
@@ -423,8 +427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          source = util.relative(aSourceRoot, source);
 	        }
 	        var key = util.toSetString(source);
-	        return Object.prototype.hasOwnProperty.call(this._sourcesContents,
-	                                                    key)
+	        return Object.prototype.hasOwnProperty.call(this._sourcesContents, key)
 	          ? this._sourcesContents[key]
 	          : null;
 	      }, this);
@@ -927,15 +930,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	   *
 	   * @param String aStr
 	   */
+
 	  function toSetString(aStr) {
-	    return '$' + aStr;
+	    if (isProtoString(aStr)) {
+	      return '$' + aStr;
+	    }
+
+	    return aStr;
 	  }
 	  exports.toSetString = toSetString;
+	   function fromSetString(aStr) {
+	    if (isProtoString(aStr)) {
+	      return aStr.substr(1);
+	    }
 
-	  function fromSetString(aStr) {
-	    return aStr.substr(1);
+	    return aStr;
 	  }
 	  exports.fromSetString = fromSetString;
+
+	  function isProtoString(s) {
+	    if (!s) {
+	      return false;
+	    }
+
+	    var length = s.length;
+
+	    if (length < 9 /* "__proto__".length */) {
+	      return false;
+	    }
+
+	    if (s.charCodeAt(length - 1) !== 95  /* '_' */ ||
+	        s.charCodeAt(length - 2) !== 95  /* '_' */ ||
+	        s.charCodeAt(length - 3) !== 111 /* 'o' */ ||
+	        s.charCodeAt(length - 4) !== 116 /* 't' */ ||
+	        s.charCodeAt(length - 5) !== 111 /* 'o' */ ||
+	        s.charCodeAt(length - 6) !== 114 /* 'r' */ ||
+	        s.charCodeAt(length - 7) !== 112 /* 'p' */ ||
+	        s.charCodeAt(length - 8) !== 95  /* '_' */ ||
+	        s.charCodeAt(length - 9) !== 95  /* '_' */) {
+	      return false;
+	    }
+
+	    for (var i = length - 10; i >= 0; i--) {
+	      if (s.charCodeAt(i) !== 36 /* '$' */) {
+	        return false;
+	      }
+	    }
+
+	    return true;
+	  }
 
 	  /**
 	   * Comparator between two mappings where the original positions are compared.
@@ -1074,6 +1117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	{
 	  var util = __webpack_require__(4);
+	  var has = Object.prototype.hasOwnProperty;
 
 	  /**
 	   * A data structure which is a combination of an array and a set. Adding a new
@@ -1114,7 +1158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  ArraySet.prototype.add = function ArraySet_add(aStr, aAllowDuplicates) {
 	    var sStr = util.toSetString(aStr);
-	    var isDuplicate = this._set.hasOwnProperty(sStr);
+	    var isDuplicate = has.call(this._set, sStr);
 	    var idx = this._array.length;
 	    if (!isDuplicate || aAllowDuplicates) {
 	      this._array.push(aStr);
@@ -1131,7 +1175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  ArraySet.prototype.has = function ArraySet_has(aStr) {
 	    var sStr = util.toSetString(aStr);
-	    return this._set.hasOwnProperty(sStr);
+	    return has.call(this._set, sStr);
 	  };
 
 	  /**
@@ -1141,7 +1185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  ArraySet.prototype.indexOf = function ArraySet_indexOf(aStr) {
 	    var sStr = util.toSetString(aStr);
-	    if (this._set.hasOwnProperty(sStr)) {
+	    if (has.call(this._set, sStr)) {
 	      return this._set[sStr];
 	    }
 	    throw new Error('"' + aStr + '" is not in the set.');
