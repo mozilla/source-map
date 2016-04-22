@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.5.4
+
+* Large performance improvements to source-map serialization. See #228 and #229.
+
 ## 0.5.3
 
 * Do not include unnecessary distribution files. See
