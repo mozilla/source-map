@@ -938,7 +938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return aStr;
 	  }
-	  exports.toSetString = toSetString;
+	  exports.toSetString = supportsNullProto() ? identity : toSetString;
 	   function fromSetString(aStr) {
 	    if (isProtoString(aStr)) {
 	      return aStr.substr(1);
@@ -946,7 +946,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return aStr;
 	  }
-	  exports.fromSetString = fromSetString;
+	  exports.fromSetString = supportsNullProto() ? identity : fromSetString;
 
 	  function isProtoString(s) {
 	    if (!s) {
@@ -978,6 +978,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return true;
+	  }
+
+	  function identity (s) {
+	    return s;
+	  }
+
+	  function supportsNullProto() {
+	    var obj = Object.create(null);
+	    return !('__proto__' in obj);
 	  }
 
 	  /**
@@ -1127,7 +1136,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	   */
 	  function ArraySet() {
 	    this._array = [];
-	    this._set = {};
+	    this._set = Object.create(null);
 	  }
 
 	  /**
