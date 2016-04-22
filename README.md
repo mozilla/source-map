@@ -218,7 +218,7 @@ inclusive.
 
 ```js
 // Before:
-consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+consumer.allGeneratedPositionsFor({ line: 2, source: "foo.coffee" })
 // [ { line: 2,
 //     column: 1 },
 //   { line: 2,
@@ -229,7 +229,7 @@ consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
 consumer.computeColumnSpans();
 
 // After:
-consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+consumer.allGeneratedPositionsFor({ line: 2, source: "foo.coffee" })
 // [ { line: 2,
 //     column: 1,
 //     lastColumn: 9 },
