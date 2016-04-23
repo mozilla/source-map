@@ -921,6 +921,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	  exports.relative = relative;
 
+	  var supportsNullProto = (function () {
+	    var obj = Object.create(null);
+	    return !('__proto__' in obj);
+	  }());
+
 	  /**
 	   * Because behavior goes wacky when you set `__proto__` on objects, we
 	   * have to prefix all the strings in our set with an arbitrary character.
@@ -944,9 +949,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return aStr;
 	  }
 	  exports.toSetString = supportsNullProto ? identity : toSetString;
-	   function fromSetString(aStr) {
+	  function fromSetString(aStr) {
 	    if (isProtoString(aStr)) {
-	      return aStr.substr(1);
+	      return aStr.slice(1);
 	    }
 
 	    return aStr;
@@ -987,6 +992,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return true;
+	  }
+
+	  function identity (s) {
+	    return s;
 	  }
 
 	  /**
