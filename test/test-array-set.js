@@ -134,4 +134,11 @@
 
     assert.strictEqual(set.size(), 3);
   };
+
+  exports['test numbers allowed as keys'] = function (assert) {
+    var set = new ArraySet();
+
+    set.add(1, true);
+    assert.strictEqual(set.has(1), true);
+  };
 }
