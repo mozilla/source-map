@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.5.5
+
+* Fix "regression" of unsupported, implementation behavior that half the world
+  happens to have come to depend on. See #235.
+
+* Fix regression involving function hoisting in SpiderMonkey. See #233.
+
 ## 0.5.4
 
 * Large performance improvements to source-map serialization. See #228 and #229.
