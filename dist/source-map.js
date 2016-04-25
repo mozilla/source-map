@@ -175,8 +175,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._sources.add(source);
 	      }
 
-	      if (name != null && !this._names.has(name)) {
-	        this._names.add(name);
+	      if (name != null) {
+	        name = String(name);
+	        if (!this._names.has(name)) {
+	          this._names.add(name);
+	        }
 	      }
 
 	      this._mappings.add({
