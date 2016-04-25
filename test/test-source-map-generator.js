@@ -738,4 +738,18 @@
                  "Should not de-duplicate mappings that have the same " +
                  "generated positions, but different original positions.");
   };
+
+  exports['test numeric names #231'] = function (assert) {
+    var generator = new SourceMapGenerator();
+    generator.addMapping({
+      source: 'a.js',
+      generated: { line: 1, column: 10 },
+      original: { line: 1, column: 10 },
+      name: 8
+    });
+    var map = generator.toJSON();
+    assert.ok(map, "Adding a mapping with a numeric name did not throw");
+    assert.equal(map.names.length, 1, "Should have one name");
+    assert.equal(map.names[0], "8", "Should have the right name");
+  };
 }
