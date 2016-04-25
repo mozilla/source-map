@@ -926,6 +926,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return !('__proto__' in obj);
 	  }());
 
+	  function identity (s) {
+	    return s;
+	  }
+
 	  /**
 	   * Because behavior goes wacky when you set `__proto__` on objects, we
 	   * have to prefix all the strings in our set with an arbitrary character.
@@ -983,10 +987,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return true;
-	  }
-
-	  function identity (s) {
-	    return s;
 	  }
 
 	  /**
