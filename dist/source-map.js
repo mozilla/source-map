@@ -171,8 +171,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	      this._validateMapping(generated, original, source, name);
 	    }
 
-	    if (source != null && !this._sources.has(source)) {
-	      this._sources.add(source);
+	    if (source != null) {
+	      source = String(source);
+	      if (!this._sources.has(source)) {
+	        this._sources.add(source);
+	      }
 	    }
 
 	    if (name != null) {
@@ -1616,6 +1619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 
 	  sources = sources
+	    .map(String)
 	    // Some source maps produce relative source paths like "./foo.js" instead of
 	    // "foo.js".  Normalize these first so that future comparisons will succeed.
 	    // See bugzil.la/1090768.
@@ -1634,7 +1638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // are intended to be compressed and deduplicated, the TypeScript compiler
 	  // sometimes generates source maps with duplicates in them. See Github issue
 	  // #72 and bugzil.la/889492.
-	  this._names = ArraySet.fromArray(names, true);
+	  this._names = ArraySet.fromArray(names.map(String), true);
 	  this._sources = ArraySet.fromArray(sources, true);
 
 	  this.sourceRoot = sourceRoot;
