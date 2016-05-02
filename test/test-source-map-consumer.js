@@ -1098,3 +1098,24 @@ exports['test sources where their prefix is the source root and the source root 
   consumer.sources.forEach(consumerHasSource);
   testSourceMap.sources.forEach(consumerHasSource);
 };
+
+exports['test consuming names and sources that are numbers'] = function (assert) {
+  var testSourceMap = {
+    "version": 3,
+    "sources": [0],
+    "names": [1],
+    "mappings": "AAAAA",
+  };
+
+  var consumer = new SourceMapConsumer(testSourceMap);
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], "0");
+
+  var i = 0;
+  consumer.eachMapping(function (m) {
+    i++;
+    assert.equal(m.name, "1");
+  });
+  assert.equal(i, 1);
+};
