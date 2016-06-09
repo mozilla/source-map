@@ -16,9 +16,17 @@ export interface Position {
     column: number;
 }
 
+export interface LineRange extends Position {
+    lastColumn: number;
+}
+
 export interface FindPosition extends Position {
     // SourceMapConsumer.GREATEST_LOWER_BOUND or SourceMapConsumer.LEAST_UPPER_BOUND
     bias?: number;
+}
+
+export interface SourceFindPosition extends FindPosition {
+    source: string;
 }
 
 export interface MappedPosition extends Position {
@@ -45,7 +53,7 @@ export class SourceMapConsumer {
     constructor(rawSourceMap: RawSourceMap);
     computeColumnSpans(): void;
     originalPositionFor(generatedPosition: FindPosition): MappedPosition;
-    generatedPositionFor(originalPosition: FindPosition): Position;
+    generatedPositionFor(originalPosition: SourceFindPosition): LineRange;
     allGeneratedPositionsFor(originalPosition: MappedPosition): Position[];
     hasContentsOfAllSources(): boolean;
     sourceContentFor(source: string, returnNullOnMissing?: boolean): string;
