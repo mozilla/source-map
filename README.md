@@ -566,7 +566,7 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
   should be relative to.
 
 ```js
-var consumer = new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map"));
+var consumer = new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
 var node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"),
                                               consumer);
 ```
