@@ -51,6 +51,42 @@ exports.testMapEmptySourceRoot = {
   sourceRoot: '',
   mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
 };
+exports.testMapEmptyMappings = {
+  version: 3,
+  file: 'min.js',
+  names: [],
+  sources: ['one.js', 'two.js'],
+  sourcesContent: [
+    ' ONE.foo = 1;',
+    ' TWO.inc = 2;'
+  ],
+  sourceRoot: '',
+  mappings: ''
+};
+exports.testMapEmptyMappingsRelativeSources = {
+  version: 3,
+  file: 'min.js',
+  names: [],
+  sources: ['./one.js', './two.js'],
+  sourcesContent: [
+    ' ONE.foo = 1;',
+    ' TWO.inc = 2;'
+  ],
+  sourceRoot: '/the/root',
+  mappings: ''
+};
+exports.testMapEmptyMappingsRelativeSources_generatedExpected = {
+  version: 3,
+  file: 'min.js',
+  names: [],
+  sources: ['one.js', 'two.js'],
+  sourcesContent: [
+    ' ONE.foo = 1;',
+    ' TWO.inc = 2;'
+  ],
+  sourceRoot: '/the/root',
+  mappings: ''
+};
 // This mapping is identical to above, but uses the indexed format instead.
 exports.indexedTestMap = {
   version: 3,

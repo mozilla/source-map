@@ -252,6 +252,18 @@ exports['test .fromSourceMap with sourcesContent'] = function (assert) {
   util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
 };
 
+exports['test .fromSourceMap with empty mappings'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+    new SourceMapConsumer(util.testMapEmptyMappings));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappings);
+};
+
+exports['test .fromSourceMap with empty mappings and relative sources'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+    new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
+};
+
 exports['test applySourceMap'] = function (assert) {
   var node = new SourceNode(null, null, null, [
     new SourceNode(2, 0, 'fileX', 'lineX2\n'),
