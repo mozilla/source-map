@@ -252,6 +252,12 @@ exports['test .fromSourceMap with sourcesContent'] = function (assert) {
   util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
 };
 
+exports['test .fromSourceMap with single source'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+      new SourceMapConsumer(util.testMapSingleSource));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapSingleSource);
+};
+
 exports['test .fromSourceMap with empty mappings'] = function (assert) {
   var map = SourceMapGenerator.fromSourceMap(
     new SourceMapConsumer(util.testMapEmptyMappings));
