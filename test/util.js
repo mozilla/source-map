@@ -95,6 +95,14 @@ exports.testMapEmptyMappingsRelativeSources_generatedExpected = {
   sourceRoot: '/the/root',
   mappings: ''
 };
+exports.testMapMultiSourcesMappingRefersSingleSourceOnly = {
+    version: 3,
+    file: 'min.js',
+    names: ['bar', 'baz'],
+    sources: ['one.js', 'withoutMappings.js'],
+    sourceRoot: '',
+    mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID'
+};
 // This mapping is identical to above, but uses the indexed format instead.
 exports.indexedTestMap = {
   version: 3,

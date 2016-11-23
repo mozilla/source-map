@@ -270,6 +270,12 @@ exports['test .fromSourceMap with empty mappings and relative sources'] = functi
   util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
 };
 
+exports['test .fromSourceMap with multiple sources where mappings refers only to single source'] = function (assert) {
+    var map = SourceMapGenerator.fromSourceMap(
+        new SourceMapConsumer(util.testMapMultiSourcesMappingRefersSingleSourceOnly));
+    util.assertEqualMaps(assert, map.toJSON(), util.testMapMultiSourcesMappingRefersSingleSourceOnly);
+};
+
 exports['test applySourceMap'] = function (assert) {
   var node = new SourceNode(null, null, null, [
     new SourceNode(2, 0, 'fileX', 'lineX2\n'),
