@@ -1,0 +1,20 @@
+{
+  "name": "source-map",
+  "repo": "mozilla/source-map",
+  "version": "0.1.31",
+  "main": "lib/source-map.js",
+  "scripts": [
+    "lib/source-map.js",
+    "lib/source-map/array-set.js",
+    "lib/source-map/base64-vlq.js",
+    "lib/source-map/base64.js",
+    "lib/source-map/binary-search.js",
+    "lib/source-map/source-map-consumer.js",
+    "lib/source-map/source-map-generator.js",
+    "lib/source-map/source-node.js",
+    "lib/source-map/util.js"
+  ],
+  "dependencies": {
+    "jrburke/amdefine": ">=0.0.4"
+  }
+}
