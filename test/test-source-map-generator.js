@@ -42,6 +42,13 @@ exports['test adding mappings (case 1)'] = function (assert) {
       generated: { line: 1, column: 1 }
     });
   });
+
+  assert.doesNotThrow(function () {
+    map.addMapping({
+        generated: { line: 1, column: 1 },
+        original: { line: null, column: null }
+    });
+  });
 };
 
 exports['test adding mappings (case 2)'] = function (assert) {
