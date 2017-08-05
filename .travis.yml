@@ -13,10 +13,6 @@ cache:
   directories:
     - node_modules
 
-install:
-  - npm i -g npm@latest
-  - npm install
-
 os:
   - linux
   - osx
