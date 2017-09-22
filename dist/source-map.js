@@ -746,7 +746,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.getArg = getArg;
 
-	var urlRegexp = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(\S*)$/;
+	var urlRegexp = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(.*)$/;
 	var dataUrlRegexp = /^data:.+\,.+$/;
 
 	function urlParse(aUrl) {
@@ -902,7 +902,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.join = join;
 
 	exports.isAbsolute = function (aPath) {
-	  return aPath.charAt(0) === '/' || !!aPath.match(urlRegexp);
+	  return aPath.charAt(0) === '/' || urlRegexp.test(aPath);
 	};
 
 	/**
