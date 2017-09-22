@@ -821,26 +821,27 @@ exports['test github issue #56'] = function (assert) {
   assert.equal(sources[0], 'http://www.example.com/original.js');
 };
 
-exports['test github issue #43'] = function (assert) {
+// Was github issue #43, but that's no longer valid.
+exports['test source resolution with sourceMapURL'] = function (assert) {
   var map = new SourceMapGenerator({
-    sourceRoot: 'http://example.com',
+    sourceRoot: '',
     file: 'foo.js'
   });
   map.addMapping({
     original: { line: 1, column: 1 },
     generated: { line: 2, column: 2 },
-    source: 'http://cdn.example.com/original.js'
+    source: 'original.js',
   });
-  map = new SourceMapConsumer(map.toString());
+  map = new SourceMapConsumer(map.toString(), 'http://cdn.example.com');
 
   var sources = map.sources;
   assert.equal(sources.length, 1,
                'Should only be one source.');
   assert.equal(sources[0], 'http://cdn.example.com/original.js',
-               'Should not be joined with the sourceRoot.');
+               'Should be joined with the source map URL.');
 };
 
-exports['test absolute path, but same host sources'] = function (assert) {
+exports['test sourceRoot prepending'] = function (assert) {
   var map = new SourceMapGenerator({
     sourceRoot: 'http://example.com/foo/bar',
     file: 'foo.js'
@@ -855,8 +856,8 @@ exports['test absolute path, but same host sources'] = function (assert) {
   var sources = map.sources;
   assert.equal(sources.length, 1,
                'Should only be one source.');
-  assert.equal(sources[0], 'http://example.com/original.js',
-               'Source should be relative the host of the source root.');
+  assert.equal(sources[0], 'http://example.com/foo/bar/original.js',
+               'Source include the source root.');
 };
 
 exports['test indexed source map errors when sections are out of order by line'] = function(assert) {
@@ -886,6 +887,22 @@ exports['test github issue #64'] = function (assert) {
 
   assert.equal(map.sourceContentFor("a"), "foo");
   assert.equal(map.sourceContentFor("/a"), "foo");
+};
+
+exports['test full source content with sourceMapURL'] = function (assert) {
+  var map = new SourceMapConsumer({
+    'version': 3,
+    'file': 'foo.js',
+    'sourceRoot': '',
+    'sources': ['original.js'],
+    'names': [],
+    'mappings': 'AACA',
+    'sourcesContent': ['yellow warbler']
+  }, 'http://cdn.example.com');
+
+  var sources = map.sources;
+  assert.equal(map.sourceContentFor('http://cdn.example.com/original.js'), 'yellow warbler',
+               'Source content should be found using full URL');
 };
 
 exports['test bug 885597'] = function (assert) {
@@ -1148,4 +1165,64 @@ exports['test webpack URL resolution'] = function (assert) {
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+};
+
+exports['test webpack URL resolution with sourceMapURL'] = function (assert) {
+  var map = {
+    version: 3,
+    sources:  ["webpack:///webpack/bootstrap 67e184f9679733298d44"],
+    names: [],
+    mappings: "CAAS",
+    file: "static/js/manifest.b7cf97680f7a50fa150f.js",
+    sourceRoot: ""
+  };
+  var consumer = new SourceMapConsumer(map, 'http://www.example.com/q.js.map');
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+};
+
+exports['test relative webpack URL resolution with sourceMapURL'] = function (assert) {
+  var map = {
+    version: 3,
+    sources:  ["webpack/bootstrap.js"],
+    names: [],
+    mappings: "CAAS",
+    file: "static/js/manifest.b7cf97680f7a50fa150f.js",
+    sourceRoot: "webpack:///"
+  };
+  var consumer = new SourceMapConsumer(map, 'http://www.example.com/q.js.map');
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap.js");
+};
+
+exports['test basic URL resolution with sourceMapURL'] = function (assert) {
+  var map = {
+    version: 3,
+    sources:  ["something.js"],
+    names: [],
+    mappings: "CAAS",
+    file: "static/js/manifest.b7cf97680f7a50fa150f.js",
+    sourceRoot: "src"
+  };
+  var consumer = new SourceMapConsumer(map, 'http://www.example.com/x/q.js.map');
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], 'http://www.example.com/x/src/something.js');
+};
+
+exports['test absolute sourceURL resolution with sourceMapURL'] = function (assert) {
+  var map = {
+    version: 3,
+    sources:  ["something.js"],
+    names: [],
+    mappings: "CAAS",
+    file: "static/js/manifest.b7cf97680f7a50fa150f.js",
+    sourceRoot: "http://www.example.com/src"
+  };
+  var consumer = new SourceMapConsumer(map, 'http://www.example.com/x/q.js.map');
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], 'http://www.example.com/src/something.js');
 };
