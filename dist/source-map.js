@@ -1671,6 +1671,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    throw new Error('Unsupported version: ' + version);
 	  }
 
+	  if (sourceRoot) {
+	    sourceRoot = util.normalize(sourceRoot);
+	  }
+
 	  sources = sources
 	    .map(String)
 	    // Some source maps produce relative source paths like "./foo.js" instead of
