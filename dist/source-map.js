@@ -142,6 +142,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	      generator.addMapping(newMapping);
 	    });
 	    aSourceMapConsumer.sources.forEach(function (sourceFile) {
+	      var sourceRelative = sourceFile;
+	      if (sourceRoot !== null) {
+	        sourceRelative = util.relative(sourceRoot, sourceFile);
+	      }
+
+	      if (!generator._sources.has(sourceRelative)) {
+	        generator._sources.add(sourceRelative);
+	      }
+
 	      var content = aSourceMapConsumer.sourceContentFor(sourceFile);
 	      if (content != null) {
 	        generator.setSourceContent(sourceFile, content);
@@ -1013,7 +1022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * stubbed out mapping.
 	 */
 	function compareByOriginalPositions(mappingA, mappingB, onlyCompareOriginal) {
-	  var cmp = mappingA.source - mappingB.source;
+	  var cmp = strcmp(mappingA.source, mappingB.source);
 	  if (cmp !== 0) {
 	    return cmp;
 	  }
@@ -1038,7 +1047,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return cmp;
 	  }
 
-	  return mappingA.name - mappingB.name;
+	  return strcmp(mappingA.name, mappingB.name);
 	}
 	exports.compareByOriginalPositions = compareByOriginalPositions;
 
@@ -1062,7 +1071,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return cmp;
 	  }
 
-	  cmp = mappingA.source - mappingB.source;
+	  cmp = strcmp(mappingA.source, mappingB.source);
 	  if (cmp !== 0) {
 	    return cmp;
 	  }
@@ -1077,13 +1086,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return cmp;
 	  }
 
-	  return mappingA.name - mappingB.name;
+	  return strcmp(mappingA.name, mappingB.name);
 	}
 	exports.compareByGeneratedPositionsDeflated = compareByGeneratedPositionsDeflated;
 
 	function strcmp(aStr1, aStr2) {
 	  if (aStr1 === aStr2) {
 	    return 0;
+	  }
+
+	  if (aStr1 === null) {
+	    return 1; // aStr2 !== null
+	  }
+
+	  if (aStr2 === null) {
+	    return -1; // aStr1 !== null
 	  }
 
 	  if (aStr1 > aStr2) {
@@ -1409,6 +1426,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	SourceMapConsumer.prototype.__generatedMappings = null;
 	Object.defineProperty(SourceMapConsumer.prototype, '_generatedMappings', {
+	  configurable: true,
+	  enumerable: true,
 	  get: function () {
 	    if (!this.__generatedMappings) {
 	      this._parseMappings(this._mappings, this.sourceRoot);
@@ -1420,6 +1439,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	SourceMapConsumer.prototype.__originalMappings = null;
 	Object.defineProperty(SourceMapConsumer.prototype, '_originalMappings', {
+	  configurable: true,
+	  enumerable: true,
 	  get: function () {
 	    if (!this.__originalMappings) {
 	      this._parseMappings(this._mappings, this.sourceRoot);
@@ -1512,13 +1533,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * The only argument is an object with the following properties:
 	 *
 	 *   - source: The filename of the original source.
-	 *   - line: The line number in the original source.
+	 *   - line: The line number in the original source.  The line number is 1-based.
 	 *   - column: Optional. the column number in the original source.
+	 *    The column number is 0-based.
 	 *
 	 * and an array of objects is returned, each with the following properties:
 	 *
-	 *   - line: The line number in the generated source, or null.
+	 *   - line: The line number in the generated source, or null.  The
+	 *    line number is 1-based.
 	 *   - column: The column number in the generated source, or null.
+	 *    The column number is 0-based.
 	 */
 	SourceMapConsumer.prototype.allGeneratedPositionsFor =
 	  function SourceMapConsumer_allGeneratedPositionsFor(aArgs) {
@@ -1925,8 +1949,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * source's line and column positions provided. The only argument is an object
 	 * with the following properties:
 	 *
-	 *   - line: The line number in the generated source.
-	 *   - column: The column number in the generated source.
+	 *   - line: The line number in the generated source.  The line number
+	 *     is 1-based.
+	 *   - column: The column number in the generated source.  The column
+	 *     number is 0-based.
 	 *   - bias: Either 'SourceMapConsumer.GREATEST_LOWER_BOUND' or
 	 *     'SourceMapConsumer.LEAST_UPPER_BOUND'. Specifies whether to return the
 	 *     closest element that is smaller than or greater than the one we are
@@ -1936,8 +1962,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * and an object is returned with the following properties:
 	 *
 	 *   - source: The original source file, or null.
-	 *   - line: The line number in the original source, or null.
-	 *   - column: The column number in the original source, or null.
+	 *   - line: The line number in the original source, or null.  The
+	 *     line number is 1-based.
+	 *   - column: The column number in the original source, or null.  The
+	 *     column number is 0-based.
 	 *   - name: The original identifier, or null.
 	 */
 	BasicSourceMapConsumer.prototype.originalPositionFor =
@@ -2057,8 +2085,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * the following properties:
 	 *
 	 *   - source: The filename of the original source.
-	 *   - line: The line number in the original source.
-	 *   - column: The column number in the original source.
+	 *   - line: The line number in the original source.  The line number
+	 *     is 1-based.
+	 *   - column: The column number in the original source.  The column
+	 *     number is 0-based.
 	 *   - bias: Either 'SourceMapConsumer.GREATEST_LOWER_BOUND' or
 	 *     'SourceMapConsumer.LEAST_UPPER_BOUND'. Specifies whether to return the
 	 *     closest element that is smaller than or greater than the one we are
@@ -2067,8 +2097,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * and an object is returned with the following properties:
 	 *
-	 *   - line: The line number in the generated source, or null.
+	 *   - line: The line number in the generated source, or null.  The
+	 *     line number is 1-based.
 	 *   - column: The column number in the generated source, or null.
+	 *     The column number is 0-based.
 	 */
 	BasicSourceMapConsumer.prototype.generatedPositionFor =
 	  function SourceMapConsumer_generatedPositionFor(aArgs) {
@@ -2242,14 +2274,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * source's line and column positions provided. The only argument is an object
 	 * with the following properties:
 	 *
-	 *   - line: The line number in the generated source.
-	 *   - column: The column number in the generated source.
+	 *   - line: The line number in the generated source.  The line number
+	 *     is 1-based.
+	 *   - column: The column number in the generated source.  The column
+	 *     number is 0-based.
 	 *
 	 * and an object is returned with the following properties:
 	 *
 	 *   - source: The original source file, or null.
-	 *   - line: The line number in the original source, or null.
-	 *   - column: The column number in the original source, or null.
+	 *   - line: The line number in the original source, or null.  The
+	 *     line number is 1-based.
+	 *   - column: The column number in the original source, or null.  The
+	 *     column number is 0-based.
 	 *   - name: The original identifier, or null.
 	 */
 	IndexedSourceMapConsumer.prototype.originalPositionFor =
@@ -2333,13 +2369,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * the following properties:
 	 *
 	 *   - source: The filename of the original source.
-	 *   - line: The line number in the original source.
-	 *   - column: The column number in the original source.
+	 *   - line: The line number in the original source.  The line number
+	 *     is 1-based.
+	 *   - column: The column number in the original source.  The column
+	 *     number is 0-based.
 	 *
 	 * and an object is returned with the following properties:
 	 *
-	 *   - line: The line number in the generated source, or null.
+	 *   - line: The line number in the generated source, or null.  The
+	 *     line number is 1-based. 
 	 *   - column: The column number in the generated source, or null.
+	 *     The column number is 0-based.
 	 */
 	IndexedSourceMapConsumer.prototype.generatedPositionFor =
 	  function IndexedSourceMapConsumer_generatedPositionFor(aArgs) {
