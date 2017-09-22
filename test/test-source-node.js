@@ -606,3 +606,18 @@ exports['test walkSourceContents'] = function (assert) {
   assert.equal(results[1][0], 'b.js');
   assert.equal(results[1][1], 'otherContent');
 };
+
+exports['test from issue 258'] = function (assert) {
+  var node = new SourceNode();
+
+  var reactCode =
+      ";require(0);\n//# sourceMappingURL=/index.ios.map?platform=ios&dev=false&minify=true";
+
+  var reactMap =
+      "{\"version\":3,\"file\":\"/index.ios.bundle?platform=ios&dev=false&minify=true\",\"sections\":[{\"offset\":{\"line\":0,\"column\":0},\"map\":{\"version\":3,\"sources\":[\"require-0.js\"],\"names\":[],\"mappings\":\"AAAA;\",\"file\":\"require-0.js\",\"sourcesContent\":[\";require(0);\"]}}]}";
+
+  node.add(SourceNode.fromStringWithSourceMap(
+    reactCode,
+    new SourceMapConsumer(reactMap)
+  ));
+}

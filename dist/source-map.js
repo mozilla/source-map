@@ -2447,9 +2447,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._sources.add(source);
 	        source = this._sources.indexOf(source);
 
-	        var name = section.consumer._names.at(mapping.name);
-	        this._names.add(name);
-	        name = this._names.indexOf(name);
+	        var name = null;
+	        if (mapping.name) {
+	          name = section.consumer._names.at(mapping.name);
+	          this._names.add(name);
+	          name = this._names.indexOf(name);
+	        }
 
 	        // The mappings coming from the consumer for the section have
 	        // generated positions relative to the start of the section, so we
