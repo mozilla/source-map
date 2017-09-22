@@ -252,6 +252,30 @@ exports['test .fromSourceMap with sourcesContent'] = function (assert) {
   util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
 };
 
+exports['test .fromSourceMap with single source'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+      new SourceMapConsumer(util.testMapSingleSource));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapSingleSource);
+};
+
+exports['test .fromSourceMap with empty mappings'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+    new SourceMapConsumer(util.testMapEmptyMappings));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappings);
+};
+
+exports['test .fromSourceMap with empty mappings and relative sources'] = function (assert) {
+  var map = SourceMapGenerator.fromSourceMap(
+    new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
+};
+
+exports['test .fromSourceMap with multiple sources where mappings refers only to single source'] = function (assert) {
+    var map = SourceMapGenerator.fromSourceMap(
+        new SourceMapConsumer(util.testMapMultiSourcesMappingRefersSingleSourceOnly));
+    util.assertEqualMaps(assert, map.toJSON(), util.testMapMultiSourcesMappingRefersSingleSourceOnly);
+};
+
 exports['test applySourceMap'] = function (assert) {
   var node = new SourceNode(null, null, null, [
     new SourceNode(2, 0, 'fileX', 'lineX2\n'),

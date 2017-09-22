@@ -1,1 +1,4 @@
+*.iml
+*.log
+.idea
 node_modules/*
