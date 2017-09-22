@@ -32,6 +32,11 @@ exports['test urls'] = function (assert) {
   assert.equal(libUtil.urlParse('a//b'), null);
   assert.equal(libUtil.urlParse('/a'), null);
   assert.equal(libUtil.urlParse('data:foo,bar'), null);
+
+  var parsed = libUtil.urlParse('http://x-y.com/bar');
+  assert.equal(parsed.scheme, 'http');
+  assert.equal(parsed.host, 'x-y.com');
+  assert.equal(parsed.path, '/bar');
 };
 
 exports['test normalize()'] = function (assert) {
