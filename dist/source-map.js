@@ -1144,6 +1144,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.compareByGeneratedPositionsInflated = compareByGeneratedPositionsInflated;
 
+	/**
+	 * Compute the URL of a source given the the source root and the
+	 * source map's URL.
+	 */
+	function computeSourceURL(sourceRoot, sourceURL) {
+	  sourceURL = sourceURL || '';
+
+	  if (sourceRoot) {
+	    // This follows what Chrome does.
+	    if (!sourceRoot.endsWith('/') && !sourceURL.startsWith('/')) {
+	      sourceRoot += '/';
+	    }
+	    // The source map spec specifies plain prepending here.
+	    sourceURL = sourceRoot + sourceURL;
+	  }
+
+	  return sourceURL;
+	}
+	exports.computeSourceURL = computeSourceURL;
+
 
 /***/ }),
 /* 5 */
@@ -1374,15 +1394,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	var base64VLQ = __webpack_require__(2);
 	var quickSort = __webpack_require__(9).quickSort;
 
-	function SourceMapConsumer(aSourceMap) {
+	function SourceMapConsumer(aSourceMap, aSourceMapURL = null) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
 	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
 	  }
 
 	  return sourceMap.sections != null
-	    ? new IndexedSourceMapConsumer(sourceMap)
-	    : new BasicSourceMapConsumer(sourceMap);
+	    ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
+	    : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
 	}
 
 	SourceMapConsumer.fromSourceMap = function(aSourceMap) {
@@ -1508,9 +1528,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var sourceRoot = this.sourceRoot;
 	    mappings.map(function (mapping) {
 	      var source = mapping.source === null ? null : this._sources.at(mapping.source);
-	      if (source != null && sourceRoot != null) {
-	        source = util.join(sourceRoot, source);
-	      }
+	      source = util.computeSourceURL(sourceRoot, source);
 	      return {
 	        source: source,
 	        generatedLine: mapping.generatedLine,
@@ -1624,7 +1642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * query for information about the original file positions by giving it a file
 	 * position in the generated source.
 	 *
-	 * The only parameter is the raw source map (either as a JSON string, or
+	 * The first parameter is the raw source map (either as a JSON string, or
 	 * already parsed to an object). According to the spec, source maps have the
 	 * following attributes:
 	 *
@@ -1647,9 +1665,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *       mappings: "AA,AB;;ABCDE;"
 	 *     }
 	 *
+	 * The second parameter, if given, is a string whose value is the URL
+	 * at which the source map was found.  This URL is used to compute the
+	 * sources array.
+	 *
 	 * [0]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit?pli=1#
 	 */
-	function BasicSourceMapConsumer(aSourceMap) {
+	function BasicSourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
 	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
@@ -1671,7 +1693,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    throw new Error('Unsupported version: ' + version);
 	  }
 
-	  if (sourceRoot) {
+	  if (aSourceMapURL) {
+	    sourceRoot = util.join(aSourceMapURL, sourceRoot);
+	  } else if (sourceRoot) {
 	    sourceRoot = util.normalize(sourceRoot);
 	  }
 
@@ -1771,7 +1795,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(BasicSourceMapConsumer.prototype, 'sources', {
 	  get: function () {
 	    return this._sources.toArray().map(function (s) {
-	      return this.sourceRoot != null ? util.join(this.sourceRoot, s) : s;
+	      return util.computeSourceURL(this.sourceRoot, s);
 	    }, this);
 	  }
 	});
@@ -1995,9 +2019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var source = util.getArg(mapping, 'source', null);
 	        if (source !== null) {
 	          source = this._sources.at(source);
-	          if (this.sourceRoot != null) {
-	            source = util.join(this.sourceRoot, source);
-	          }
+	          source = util.computeSourceURL(this.sourceRoot, source);
 	        }
 	        var name = util.getArg(mapping, 'name', null);
 	        if (name !== null) {
@@ -2163,7 +2185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * that it takes "indexed" source maps (i.e. ones with a "sections" field) as
 	 * input.
 	 *
-	 * The only parameter is a raw source map (either as a JSON string, or already
+	 * The first parameter is a raw source map (either as a JSON string, or already
 	 * parsed to an object). According to the spec for indexed source maps, they
 	 * have the following attributes:
 	 *
@@ -2200,9 +2222,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *    }],
 	 *  }
 	 *
+	 * The second parameter, if given, is a string whose value is the URL
+	 * at which the source map was found.  This URL is used to compute the
+	 * sources array.
+	 *
 	 * [0]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit#heading=h.535es3xeprgt
 	 */
-	function IndexedSourceMapConsumer(aSourceMap) {
+	function IndexedSourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
 	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
@@ -2245,7 +2271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        generatedLine: offsetLine + 1,
 	        generatedColumn: offsetColumn + 1
 	      },
-	      consumer: new SourceMapConsumer(util.getArg(s, 'map'))
+	      consumer: new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL)
 	    }
 	  });
 	}
@@ -2431,9 +2457,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var mapping = sectionMappings[j];
 
 	        var source = section.consumer._sources.at(mapping.source);
-	        if (section.consumer.sourceRoot !== null) {
-	          source = util.join(section.consumer.sourceRoot, source);
-	        }
+	        source = util.computeSourceURL(section.consumer.sourceRoot, source);
 	        this._sources.add(source);
 	        source = this._sources.indexOf(source);
 
