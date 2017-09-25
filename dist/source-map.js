@@ -1144,6 +1144,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.compareByGeneratedPositionsInflated = compareByGeneratedPositionsInflated;
 
+	/**
+	 * Strip any JSON XSSI avoidance prefix from the string (as documented
+	 * in the source maps specification), and then parse the string as
+	 * JSON.
+	 */
+	function parseSourceMapInput(str) {
+	  return JSON.parse(str.replace(/^\)]}'[^\n]*\n/, ''));
+	}
+	exports.parseSourceMapInput = parseSourceMapInput;
+
 
 /***/ }),
 /* 5 */
@@ -1377,7 +1387,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function SourceMapConsumer(aSourceMap) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
+	    sourceMap = util.parseSourceMapInput(aSourceMap);
 	  }
 
 	  return sourceMap.sections != null
@@ -1652,7 +1662,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function BasicSourceMapConsumer(aSourceMap) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
+	    sourceMap = util.parseSourceMapInput(aSourceMap);
 	  }
 
 	  var version = util.getArg(sourceMap, 'version');
@@ -2205,7 +2215,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function IndexedSourceMapConsumer(aSourceMap) {
 	  var sourceMap = aSourceMap;
 	  if (typeof aSourceMap === 'string') {
-	    sourceMap = JSON.parse(aSourceMap.replace(/^\)\]\}'/, ''));
+	    sourceMap = util.parseSourceMapInput(aSourceMap);
 	  }
 
 	  var version = util.getArg(sourceMap, 'version');

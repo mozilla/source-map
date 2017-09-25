@@ -236,7 +236,7 @@ exports['test mappings and end of lines'] = function (assert) {
 
 exports['test creating source map consumers with )]}\' prefix'] = function (assert) {
   assert.doesNotThrow(function () {
-    var map = new SourceMapConsumer(")]}'" + JSON.stringify(util.testMap));
+    var map = new SourceMapConsumer(")]}'\n" + JSON.stringify(util.testMap));
   });
 };
 
