@@ -38,10 +38,12 @@ exports['test urls'] = function (assert) {
   assert.equal(parsed.host, 'x-y.com');
   assert.equal(parsed.path, '/bar');
 
-  var parsed = libUtil.urlParse('webpack:///webpack/bootstrap 67e184f9679733298d44');
+  var webpackURL = 'webpack:///webpack/bootstrap 67e184f9679733298d44'
+  parsed = libUtil.urlParse(webpackURL);
   assert.equal(parsed.scheme, 'webpack');
   assert.equal(parsed.host, '');
-  assert.equal(parsed.path, 'webpack/bootstrap 67e184f9679733298d44');
+  assert.equal(parsed.path, '/webpack/bootstrap 67e184f9679733298d44');
+  assert.equal(webpackURL, libUtil.urlGenerate(parsed));
 };
 
 exports['test normalize()'] = function (assert) {
