@@ -1119,3 +1119,18 @@ exports['test consuming names and sources that are numbers'] = function (assert)
   });
   assert.equal(i, 1);
 };
+
+exports['test non-normalized sourceRoot (from issue #227)'] = function (assert) {
+  var consumer = new SourceMapConsumer({
+    version: 3,
+    sources: [ 'index.js' ],
+    names: [],
+    mappings: ';;AAAA,IAAI,OAAO,MAAP',
+    file: 'index.js',
+    sourceRoot: './src/',
+    sourcesContent: [ 'var name = "Mark"\n' ]
+  });
+  assert.equal(consumer.sourceRoot, 'src/', 'sourceRoot was normalized');
+  // Before the fix, this threw an exception.
+  consumer.sourceContentFor(consumer.sources[0]);
+};
