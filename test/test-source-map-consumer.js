@@ -1134,3 +1134,18 @@ exports['test non-normalized sourceRoot (from issue #227)'] = function (assert) 
   // Before the fix, this threw an exception.
   consumer.sourceContentFor(consumer.sources[0]);
 };
+
+exports['test webpack URL resolution'] = function (assert) {
+  var map = {
+    "version":3,
+    "sources": ["webpack:///webpack/bootstrap 67e184f9679733298d44"],
+    "names":[],
+    "mappings":"CAAS",
+    "file":"static/js/manifest.b7cf97680f7a50fa150f.js",
+    "sourceRoot":""
+  };
+  var consumer = new SourceMapConsumer(map);
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+};

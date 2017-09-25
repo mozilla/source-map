@@ -746,7 +746,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.getArg = getArg;
 
-	var urlRegexp = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(\S*)$/;
+	var urlRegexp = /^(?:([\w+\-.]+):)?\/\/(?:(\w+:\w+)@)?([\w.-]*)(?::(\d+))?(.*)$/;
 	var dataUrlRegexp = /^data:.+\,.+$/;
 
 	function urlParse(aUrl) {
