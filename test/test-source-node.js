@@ -278,7 +278,6 @@ exports['test .fromStringWithSourceMap() third argument'] = function (assert) {
   // Assume the following directory structure:
   //
   // http://foo.org/
-  //   bar.coffee
   //   app/
   //     coffee/
   //       foo.coffee
@@ -290,14 +289,9 @@ exports['test .fromStringWithSourceMap() third argument'] = function (assert) {
   //     public/
   //       app.js # Made from {foo,coffeeBundle}.js
   //       app.js.map
-  //
-  // http://www.example.com/
-  //   baz.coffee
 
   var coffeeBundle = new SourceNode(1, 0, 'foo.coffee', 'foo(coffee);\n');
   coffeeBundle.setSourceContent('foo.coffee', 'foo coffee');
-  coffeeBundle.add(new SourceNode(2, 0, '/bar.coffee', 'bar(coffee);\n'));
-  coffeeBundle.add(new SourceNode(3, 0, 'http://www.example.com/baz.coffee', 'baz(coffee);'));
   coffeeBundle = coffeeBundle.toStringWithSourceMap({
     file: 'foo.js',
     sourceRoot: '..'
@@ -325,8 +319,6 @@ exports['test .fromStringWithSourceMap() third argument'] = function (assert) {
 
   test('../coffee/maps', [
     '../coffee/foo.coffee',
-    '/bar.coffee',
-    'http://www.example.com/baz.coffee',
     'foo.js'
   ]);
 
@@ -335,29 +327,21 @@ exports['test .fromStringWithSourceMap() third argument'] = function (assert) {
 
   test(undefined, [
     '../foo.coffee',
-    '/bar.coffee',
-    'http://www.example.com/baz.coffee',
     'foo.js'
   ]);
 
   test('', [
     '../foo.coffee',
-    '/bar.coffee',
-    'http://www.example.com/baz.coffee',
     'foo.js'
   ]);
 
   test('.', [
     '../foo.coffee',
-    '/bar.coffee',
-    'http://www.example.com/baz.coffee',
     'foo.js'
   ]);
 
   test('./', [
     '../foo.coffee',
-    '/bar.coffee',
-    'http://www.example.com/baz.coffee',
     'foo.js'
   ]);
 };
