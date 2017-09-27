@@ -2895,7 +2895,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          // There is no new line in between.
 	          // Associate the code between "lastGeneratedColumn" and
 	          // "mapping.generatedColumn" with "lastMapping"
-	          var nextLine = remainingLines[remainingLinesIndex];
+	          var nextLine = remainingLines[remainingLinesIndex] || '';
 	          var code = nextLine.substr(0, mapping.generatedColumn -
 	                                        lastGeneratedColumn);
 	          remainingLines[remainingLinesIndex] = nextLine.substr(mapping.generatedColumn -
@@ -2915,7 +2915,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        lastGeneratedLine++;
 	      }
 	      if (lastGeneratedColumn < mapping.generatedColumn) {
-	        var nextLine = remainingLines[remainingLinesIndex];
+	        var nextLine = remainingLines[remainingLinesIndex] || '';
 	        node.add(nextLine.substr(0, mapping.generatedColumn));
 	        remainingLines[remainingLinesIndex] = nextLine.substr(mapping.generatedColumn);
 	        lastGeneratedColumn = mapping.generatedColumn;
