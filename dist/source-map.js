@@ -1448,8 +1448,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
 	}
 
-	SourceMapConsumer.fromSourceMap = function(aSourceMap) {
-	  return BasicSourceMapConsumer.fromSourceMap(aSourceMap);
+	SourceMapConsumer.fromSourceMap = function(aSourceMap, aSourceMapURL) {
+	  return BasicSourceMapConsumer.fromSourceMap(aSourceMap, aSourceMapURL);
 	}
 
 	/**
@@ -1619,13 +1619,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      originalColumn: util.getArg(aArgs, 'column', 0)
 	    };
 
-	    if (this.sourceRoot != null) {
-	      needle.source = util.relative(this.sourceRoot, needle.source);
-	    }
-	    if (!this._sources.has(needle.source)) {
+	    needle.source = this._findSourceIndex(needle.source);
+	    if (needle.source < 0) {
 	      return [];
 	    }
-	    needle.source = this._sources.indexOf(needle.source);
 
 	    var mappings = [];
 
@@ -1763,6 +1760,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._names = ArraySet.fromArray(names.map(String), true);
 	  this._sources = ArraySet.fromArray(sources, true);
 
+	  this._absoluteSources = this._sources.toArray().map(function (s) {
+	    return util.computeSourceURL(sourceRoot, s, aSourceMapURL);
+	  });
+
 	  this.sourceRoot = sourceRoot;
 	  this.sourcesContent = sourcesContent;
 	  this._mappings = mappings;
@@ -1772,6 +1773,32 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	BasicSourceMapConsumer.prototype = Object.create(SourceMapConsumer.prototype);
 	BasicSourceMapConsumer.prototype.consumer = SourceMapConsumer;
+
+	/**
+	 * Utility function to find the index of a source.  Returns -1 if not
+	 * found.
+	 */
+	BasicSourceMapConsumer.prototype._findSourceIndex = function(aSource) {
+	  var relativeSource = aSource;
+	  if (this.sourceRoot != null) {
+	    relativeSource = util.relative(this.sourceRoot, relativeSource);
+	  }
+
+	  if (this._sources.has(relativeSource)) {
+	    return this._sources.indexOf(relativeSource);
+	  }
+
+	  // Maybe aSource is an absolute URL as returned by |sources|.  In
+	  // this case we can't simply undo the transform.
+	  var i;
+	  for (i = 0; i < this._absoluteSources.length; ++i) {
+	    if (this._absoluteSources[i] == aSource) {
+	      return i;
+	    }
+	  }
+
+	  return -1;
+	};
 
 	/**
 	 * Create a BasicSourceMapConsumer from a SourceMapGenerator.
@@ -1793,6 +1820,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                            smc.sourceRoot);
 	    smc.file = aSourceMap._file;
 	    smc._sourceMapURL = aSourceMapURL;
+	    smc._absoluteSources = smc._sources.toArray().map(function (s) {
+	      return util.computeSourceURL(smc.sourceRoot, s, aSourceMapURL);
+	    });
 
 	    // Because we are modifying the entries (by converting string sources and
 	    // names to indices into the sources and names ArraySets), we have to make
@@ -1839,9 +1869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	Object.defineProperty(BasicSourceMapConsumer.prototype, 'sources', {
 	  get: function () {
-	    return this._sources.toArray().map(function (s) {
-	      return util.computeSourceURL(this.sourceRoot, s, this._sourceMapURL);
-	    }, this);
+	    return this._absoluteSources.slice();
 	  }
 	});
 
@@ -2111,23 +2139,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return null;
 	    }
 
+	    var index = this._findSourceIndex(aSource);
+	    if (index >= 0) {
+	      return this.sourcesContent[index];
+	    }
+
 	    var relativeSource = aSource;
 	    if (this.sourceRoot != null) {
 	      relativeSource = util.relative(this.sourceRoot, relativeSource);
-	    }
-
-	    if (this._sources.has(relativeSource)) {
-	      return this.sourcesContent[this._sources.indexOf(relativeSource)];
-	    }
-
-	    // Maybe aSource is an absolute URL as returned by |sources|.  In
-	    // this case we can't simply undo the transform.
-	    var sourceArray = this.sources;
-	    var i;
-	    for (i = 0; i < sourceArray.length; ++i) {
-	      if (sourceArray[i] == aSource) {
-	        return this.sourcesContent[i];
-	      }
 	    }
 
 	    var url;
@@ -2187,17 +2206,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	BasicSourceMapConsumer.prototype.generatedPositionFor =
 	  function SourceMapConsumer_generatedPositionFor(aArgs) {
 	    var source = util.getArg(aArgs, 'source');
-	    if (this.sourceRoot != null) {
-	      source = util.relative(this.sourceRoot, source);
-	    }
-	    if (!this._sources.has(source)) {
+	    source = this._findSourceIndex(source);
+	    if (source < 0) {
 	      return {
 	        line: null,
 	        column: null,
 	        lastColumn: null
 	      };
 	    }
-	    source = this._sources.indexOf(source);
 
 	    var needle = {
 	      source: source,
@@ -2474,7 +2490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	      // Only consider this section if the requested source is in the list of
 	      // sources of the consumer.
-	      if (section.consumer.sources.indexOf(util.getArg(aArgs, 'source')) === -1) {
+	      if (section.consumer._findSourceIndex(util.getArg(aArgs, 'source')) === -1) {
 	        continue;
 	      }
 	      var generatedPosition = section.consumer.generatedPositionFor(aArgs);

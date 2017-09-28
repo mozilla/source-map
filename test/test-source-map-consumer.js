@@ -498,7 +498,7 @@ exports['test sourceRoot + generatedPositionFor'] = function (assert) {
     generated: { line: 6, column: 6 },
     source: 'bang.coffee'
   });
-  map = new SourceMapConsumer(map.toString());
+  map = new SourceMapConsumer(map.toString(), 'http://example.com/');
 
   // Should handle without sourceRoot.
   var pos = map.generatedPositionFor({
@@ -515,6 +515,16 @@ exports['test sourceRoot + generatedPositionFor'] = function (assert) {
     line: 1,
     column: 1,
     source: 'foo/bar/bang.coffee'
+  });
+
+  assert.equal(pos.line, 2);
+  assert.equal(pos.column, 2);
+
+  // Should handle absolute case.
+  var pos = map.generatedPositionFor({
+    line: 1,
+    column: 1,
+    source: 'http://example.com/foo/bar/bang.coffee'
   });
 
   assert.equal(pos.line, 2);
@@ -573,11 +583,22 @@ exports['test allGeneratedPositionsFor for line'] = function (assert) {
     generated: { line: 4, column: 2 },
     source: 'bar.coffee'
   });
-  map = new SourceMapConsumer(map.toString());
+  map = new SourceMapConsumer(map.toString(), 'http://example.com/');
 
   var mappings = map.allGeneratedPositionsFor({
     line: 2,
     source: 'bar.coffee'
+  });
+
+  assert.equal(mappings.length, 2);
+  assert.equal(mappings[0].line, 3);
+  assert.equal(mappings[0].column, 2);
+  assert.equal(mappings[1].line, 3);
+  assert.equal(mappings[1].column, 3);
+
+  mappings = map.allGeneratedPositionsFor({
+    line: 2,
+    source: 'http://example.com/bar.coffee'
   });
 
   assert.equal(mappings.length, 2);
