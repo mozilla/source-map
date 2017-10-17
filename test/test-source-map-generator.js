@@ -740,6 +740,18 @@ exports['test applySourceMap with unexact match'] = function (assert) {
   util.assertEqualMaps(assert, map1.toJSON(), expectedMap.toJSON());
 };
 
+exports['test applySourceMap with empty mappings'] = function (assert) {
+  var generator =  SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMapEmptyMappings));
+  generator.applySourceMap(new SourceMapConsumer(util.testMapEmptyMappings));
+  util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappings);
+};
+
+exports['test applySourceMap with empty mappings and relative sources'] = function (assert) {
+  var generator =  SourceMapGenerator.fromSourceMap(new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  generator.applySourceMap(new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
+};
+
 exports['test issue #192'] = function (assert) {
   var generator = new SourceMapGenerator();
   generator.addMapping({
