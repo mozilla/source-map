@@ -73,6 +73,7 @@ export class SourceMapGenerator {
     addMapping(mapping: Mapping): void;
     setSourceContent(sourceFile: string, sourceContent: string): void;
     applySourceMap(sourceMapConsumer: SourceMapConsumer, sourceFile?: string, sourceMapPath?: string): void;
+    toJSON(): RawSourceMap;
     toString(): string;
 }
 
