@@ -1364,7 +1364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * A data structure to provide a sorted view of accumulated mappings in a
-	 * performance conscious manner. It trades a neglibable overhead in general
+	 * performance conscious manner. It trades a negligible overhead in general
 	 * case for a large speedup in case of mappings being added in order.
 	 */
 	function MappingList() {
@@ -1688,7 +1688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 *   - version: Which version of the source map spec this map is following.
 	 *   - sources: An array of URLs to the original source files.
-	 *   - names: An array of identifiers which can be referrenced by individual mappings.
+	 *   - names: An array of identifiers which can be referenced by individual mappings.
 	 *   - sourceRoot: Optional. The URL root from which all sources are relative.
 	 *   - sourcesContent: Optional. An array of contents of the original source files.
 	 *   - mappings: A string of base64 VLQs which contain the actual mappings.
