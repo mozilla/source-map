@@ -270,6 +270,11 @@ exports['test eachMapping'] = function (assert) {
   map.eachMapping(function (mapping) {
     assert.ok(mapping.source === 'one.js' || mapping.source === 'two.js');
   });
+
+  map = new SourceMapConsumer(util.mapWithSourcelessMapping);
+  map.eachMapping(function (mapping) {
+    assert.ok(mapping.source === null || (typeof mapping.originalColumn === 'number' && typeof mapping.originalLine === 'number'));
+  });
 };
 
 exports['test eachMapping for indexed source maps'] = function(assert) {
