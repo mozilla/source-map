@@ -267,7 +267,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    // Applying the SourceMap can add and remove items from the sources and
 	    // the names array.
-	    var newSources = new ArraySet();
+	    var newSources = this._mappings.toArray().length > 0
+	      ? new ArraySet()
+	      : this._sources;
 	    var newNames = new ArraySet();
 
 	    // Find mappings for the "sourceFile"
@@ -1443,9 +1445,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    sourceMap = util.parseSourceMapInput(aSourceMap);
 	  }
 
-	  return sourceMap.sections != null
-	    ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
-	    : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
+	  return Promise.resolve().then(_ => {
+	    return sourceMap.sections != null
+	      ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
+	      : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
+	  });
 	}
 
 	SourceMapConsumer.fromSourceMap = function(aSourceMap, aSourceMapURL) {
@@ -1493,7 +1497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  enumerable: true,
 	  get: function () {
 	    if (!this.__generatedMappings) {
-	      this._parseMappings(this._mappings, this.sourceRoot);
+	      this._sortGeneratedMappings();
 	    }
 
 	    return this.__generatedMappings;
@@ -1506,10 +1510,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	  enumerable: true,
 	  get: function () {
 	    if (!this.__originalMappings) {
-	      this._parseMappings(this._mappings, this.sourceRoot);
+	      this._sortOriginalMappings();
 	    }
 
 	    return this.__originalMappings;
+	  }
+	});
+
+	SourceMapConsumer.prototype.__generatedMappingsUnsorted = null;
+	Object.defineProperty(SourceMapConsumer.prototype, '_generatedMappingsUnsorted', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__generatedMappingsUnsorted) {
+	      this._parseMappings(this._mappings, this.sourceRoot);
+	    }
+
+	    return this.__generatedMappingsUnsorted;
+	  }
+	});
+
+	SourceMapConsumer.prototype.__originalMappingsUnsorted = null;
+	Object.defineProperty(SourceMapConsumer.prototype, '_originalMappingsUnsorted', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__originalMappingsUnsorted) {
+	      this._parseMappings(this._mappings, this.sourceRoot);
+	    }
+
+	    return this.__originalMappingsUnsorted;
 	  }
 	});
 
@@ -1527,6 +1557,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	SourceMapConsumer.prototype._parseMappings =
 	  function SourceMapConsumer_parseMappings(aStr, aSourceRoot) {
 	    throw new Error("Subclasses must implement _parseMappings");
+	  };
+
+	SourceMapConsumer.prototype._sortGeneratedMappings =
+	  function SourceMapConsumer_sortGeneratedMappings() {
+	    const mappings = this._generatedMappingsUnsorted;
+	    quickSort(mappings, util.compareByGeneratedPositionsDeflated);
+	    this.__generatedMappings = mappings;
+	  };
+
+	SourceMapConsumer.prototype._sortOriginalMappings =
+	  function SourceMapConsumer_sortOriginalMappings() {
+	    const mappings = this._originalMappingsUnsorted;
+	    quickSort(mappings, util.compareByOriginalPositions);
+	    this.__originalMappings = mappings;
 	  };
 
 	SourceMapConsumer.GENERATED_ORDER = 1;
@@ -1570,8 +1614,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var sourceRoot = this.sourceRoot;
 	    mappings.map(function (mapping) {
-	      var source = mapping.source === null ? null : this._sources.at(mapping.source);
-	      source = util.computeSourceURL(sourceRoot, source, this._sourceMapURL);
+	      var source = null;
+	      if(mapping.source !== null) {
+	        source = this._sources.at(mapping.source);
+	        source = util.computeSourceURL(sourceRoot, source, this._sourceMapURL);
+	      }
 	      return {
 	        source: source,
 	        generatedLine: mapping.generatedLine,
@@ -1987,11 +2034,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 
-	    quickSort(generatedMappings, util.compareByGeneratedPositionsDeflated);
-	    this.__generatedMappings = generatedMappings;
+	    this.__generatedMappingsUnsorted = generatedMappings;
 
-	    quickSort(originalMappings, util.compareByOriginalPositions);
-	    this.__originalMappings = originalMappings;
+	    this.__originalMappingsUnsorted = originalMappings;
 	  };
 
 	/**
@@ -2320,7 +2365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    line: -1,
 	    column: 0
 	  };
-	  this._sections = sections.map(function (s) {
+	  return Promise.all(sections.map(s => {
 	    if (s.url) {
 	      // The url field will require support for asynchronicity.
 	      // See https://github.com/mozilla/source-map/issues/16
@@ -2336,15 +2381,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    lastOffset = offset;
 
-	    return {
-	      generatedOffset: {
-	        // The offset fields are 0-based, but we use 1-based indices when
-	        // encoding/decoding from VLQ.
-	        generatedLine: offsetLine + 1,
-	        generatedColumn: offsetColumn + 1
-	      },
-	      consumer: new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL)
-	    }
+	    const consumer = new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL);
+	    return consumer.then(consumer => {
+	      return {
+	        generatedOffset: {
+	          // The offset fields are 0-based, but we use 1-based indices when
+	          // encoding/decoding from VLQ.
+	          generatedLine: offsetLine + 1,
+	          generatedColumn: offsetColumn + 1
+	        },
+	        consumer: consumer
+	      };
+	    });
+	  })).then(sections => {
+	    this._sections = sections;
+	    return this;
 	  });
 	}
 
@@ -2479,7 +2530,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * and an object is returned with the following properties:
 	 *
 	 *   - line: The line number in the generated source, or null.  The
-	 *     line number is 1-based. 
+	 *     line number is 1-based.
 	 *   - column: The column number in the generated source, or null.
 	 *     The column number is 0-based.
 	 */
@@ -2520,8 +2571,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	IndexedSourceMapConsumer.prototype._parseMappings =
 	  function IndexedSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
-	    this.__generatedMappings = [];
-	    this.__originalMappings = [];
+	    const generatedMappings = this.__generatedMappingsUnsorted = [];
+	    const originalMappings = this.__originalMappingsUnsorted = [];
 	    for (var i = 0; i < this._sections.length; i++) {
 	      var section = this._sections[i];
 	      var sectionMappings = section.consumer._generatedMappings;
@@ -2557,15 +2608,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          name: name
 	        };
 
-	        this.__generatedMappings.push(adjustedMapping);
+	        generatedMappings.push(adjustedMapping);
 	        if (typeof adjustedMapping.originalLine === 'number') {
-	          this.__originalMappings.push(adjustedMapping);
+	          originalMappings.push(adjustedMapping);
 	        }
 	      }
 	    }
-
-	    quickSort(this.__generatedMappings, util.compareByGeneratedPositionsDeflated);
-	    quickSort(this.__originalMappings, util.compareByOriginalPositions);
 	  };
 
 	exports.IndexedSourceMapConsumer = IndexedSourceMapConsumer;

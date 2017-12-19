@@ -57,7 +57,7 @@
     "dist/source-map.min.js.map"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=9.3.0"
   },
   "license": "BSD-3-Clause",
   "scripts": {
