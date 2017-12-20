@@ -15,18 +15,25 @@ exports['test that we can instantiate with a string or an object'] = async funct
   var map = await new SourceMapConsumer(util.testMap);
   map = await new SourceMapConsumer(JSON.stringify(util.testMap));
   assert.ok(true);
+  map.destroy();
 };
 
 exports['test that the object returned from await new SourceMapConsumer inherits from SourceMapConsumer'] = async function (assert) {
-  assert.ok(await new SourceMapConsumer(util.testMap) instanceof SourceMapConsumer);
+  var map = await new SourceMapConsumer(util.testMap);
+  assert.ok(map instanceof SourceMapConsumer);
+  map.destroy();
 }
 
 exports['test that a BasicSourceMapConsumer is returned for sourcemaps without sections'] = async function(assert) {
-  assert.ok(await new SourceMapConsumer(util.testMap) instanceof BasicSourceMapConsumer);
+  var map = await new SourceMapConsumer(util.testMap);
+  assert.ok(map instanceof BasicSourceMapConsumer);
+  map.destroy();
 };
 
 exports['test that an IndexedSourceMapConsumer is returned for sourcemaps with sections'] = async function(assert) {
-  assert.ok(await new SourceMapConsumer(util.indexedTestMap) instanceof IndexedSourceMapConsumer);
+  var map = await new SourceMapConsumer(util.indexedTestMap);
+  assert.ok(map instanceof IndexedSourceMapConsumer);
+  map.destroy();
 };
 
 exports['test that the `sources` field has the original sources'] = async function (assert) {
@@ -38,30 +45,35 @@ exports['test that the `sources` field has the original sources'] = async functi
   assert.equal(sources[0], '/the/root/one.js');
   assert.equal(sources[1], '/the/root/two.js');
   assert.equal(sources.length, 2);
+  map.destroy();
 
   map = await new SourceMapConsumer(util.indexedTestMap);
   sources = map.sources;
   assert.equal(sources[0], '/the/root/one.js');
   assert.equal(sources[1], '/the/root/two.js');
   assert.equal(sources.length, 2);
+  map.destroy();
 
   map = await new SourceMapConsumer(util.indexedTestMapDifferentSourceRoots);
   sources = map.sources;
   assert.equal(sources[0], '/the/root/one.js');
   assert.equal(sources[1], '/different/root/two.js');
   assert.equal(sources.length, 2);
+  map.destroy();
 
   map = await new SourceMapConsumer(util.testMapNoSourceRoot);
   sources = map.sources;
   assert.equal(sources[0], 'one.js');
   assert.equal(sources[1], 'two.js');
   assert.equal(sources.length, 2);
+  map.destroy();
 
   map = await new SourceMapConsumer(util.testMapEmptySourceRoot);
   sources = map.sources;
   assert.equal(sources[0], 'one.js');
   assert.equal(sources[1], 'two.js');
   assert.equal(sources.length, 2);
+  map.destroy();
 };
 
 exports['test that the source root is reflected in a mapping\'s source field'] = async function (assert) {
@@ -74,6 +86,7 @@ exports['test that the source root is reflected in a mapping\'s source field'] =
     line: 2,
     column: 1
   });
+  console.log(mapping);
   assert.equal(mapping.source, '/the/root/two.js');
 
   mapping = map.originalPositionFor({
@@ -81,6 +94,7 @@ exports['test that the source root is reflected in a mapping\'s source field'] =
     column: 1
   });
   assert.equal(mapping.source, '/the/root/one.js');
+  map.destroy();
 
 
   map = await new SourceMapConsumer(util.testMapNoSourceRoot);
@@ -96,6 +110,7 @@ exports['test that the source root is reflected in a mapping\'s source field'] =
     column: 1
   });
   assert.equal(mapping.source, 'one.js');
+  map.destroy();
 
 
   map = await new SourceMapConsumer(util.testMapEmptySourceRoot);
@@ -111,6 +126,7 @@ exports['test that the source root is reflected in a mapping\'s source field'] =
     column: 1
   });
   assert.equal(mapping.source, 'one.js');
+  map.destroy();
 };
 
 exports['test mapping tokens back exactly'] = async function (assert) {
@@ -130,6 +146,8 @@ exports['test mapping tokens back exactly'] = async function (assert) {
   util.assertMapping(2, 18, '/the/root/two.js', 1, 21, 'n', null, map, assert);
   util.assertMapping(2, 21, '/the/root/two.js', 2, 3, null, null, map, assert);
   util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
+
+  map.destroy();
 };
 
 exports['test mapping tokens back exactly in indexed source map'] = async function (assert) {
@@ -149,6 +167,8 @@ exports['test mapping tokens back exactly in indexed source map'] = async functi
   util.assertMapping(2, 18, '/the/root/two.js', 1, 21, 'n', null, map, assert);
   util.assertMapping(2, 21, '/the/root/two.js', 2, 3, null, null, map, assert);
   util.assertMapping(2, 28, '/the/root/two.js', 2, 10, 'n', null, map, assert);
+
+  map.destroy();
 };
 
 exports['test mapping tokens fuzzy'] = async function (assert) {
@@ -173,6 +193,8 @@ exports['test mapping tokens fuzzy'] = async function (assert) {
   util.assertMapping(1, 18, '/the/root/one.js', 1, 20, 'bar', SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   util.assertMapping(1, 28, '/the/root/one.js', 2, 7, 'baz', SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   util.assertMapping(2, 9, '/the/root/two.js', 1, 6, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
+
+  map.destroy();
 };
 
 exports['test mapping tokens fuzzy in indexed source map'] = async function (assert) {
@@ -197,6 +219,8 @@ exports['test mapping tokens fuzzy in indexed source map'] = async function (ass
   util.assertMapping(1, 18, '/the/root/one.js', 1, 20, 'bar', SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   util.assertMapping(1, 28, '/the/root/one.js', 2, 7, 'baz', SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
   util.assertMapping(2, 9, '/the/root/two.js', 1, 6, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
+
+  map.destroy();
 };
 
 exports['test mappings and end of lines'] = async function (assert) {
@@ -219,7 +243,7 @@ exports['test mappings and end of lines'] = async function (assert) {
     source: 'baz.js'
   });
 
-  var map = SourceMapConsumer.fromSourceMap(smg);
+  var map = await SourceMapConsumer.fromSourceMap(smg);
 
   // When finding original positions, mappings end at the end of the line.
   util.assertMapping(2, 1, null, null, null, null, null, map, assert, true)
@@ -229,11 +253,14 @@ exports['test mappings and end of lines'] = async function (assert) {
 
   // When finding generated positions with, mappings end at the end of the source.
   util.assertMapping(null, null, 'bar.js', 3, 1, null, SourceMapConsumer.LEAST_UPPER_BOUND, map, assert, null, true);
+
+  map.destroy();
 };
 
 exports['test creating source map consumers with )]}\' prefix'] = async function (assert) {
   var map = await new SourceMapConsumer(")]}'\n" + JSON.stringify(util.testMap));
   assert.ok(true);
+  map.destroy();
 };
 
 exports['test eachMapping'] = async function (assert) {
@@ -256,27 +283,32 @@ exports['test eachMapping'] = async function (assert) {
       previousColumn = -Infinity;
     }
   });
+  map.destroy();
 
   map = await new SourceMapConsumer(util.testMapNoSourceRoot);
   map.eachMapping(function (mapping) {
     assert.ok(mapping.source === 'one.js' || mapping.source === 'two.js');
   });
+  map.destroy();
 
   map = await new SourceMapConsumer(util.testMapEmptySourceRoot);
   map.eachMapping(function (mapping) {
     assert.ok(mapping.source === 'one.js' || mapping.source === 'two.js');
   });
+  map.destroy();
 
   map = await new SourceMapConsumer(util.mapWithSourcelessMapping);
   map.eachMapping(function (mapping) {
     assert.ok(mapping.source === null || (typeof mapping.originalColumn === 'number' && typeof mapping.originalLine === 'number'));
   });
+  map.destroy();
 };
 
 exports['test eachMapping for indexed source maps'] = async function(assert) {
   var map = await new SourceMapConsumer(util.indexedTestMap);
   var previousLine = -Infinity;
   var previousColumn = -Infinity;
+
   map.eachMapping(function (mapping) {
     assert.ok(mapping.generatedLine >= previousLine);
 
@@ -293,14 +325,16 @@ exports['test eachMapping for indexed source maps'] = async function(assert) {
       previousColumn = -Infinity;
     }
   });
-};
 
+  map.destroy();
+};
 
 exports['test iterating over mappings in a different order'] = async function (assert) {
   var map = await new SourceMapConsumer(util.testMap);
   var previousLine = -Infinity;
   var previousColumn = -Infinity;
   var previousSource = "";
+
   map.eachMapping(function (mapping) {
     assert.ok(mapping.source >= previousSource);
 
@@ -322,6 +356,8 @@ exports['test iterating over mappings in a different order'] = async function (a
       previousColumn = -Infinity;
     }
   }, null, SourceMapConsumer.ORIGINAL_ORDER);
+
+  map.destroy();
 };
 
 exports['test iterating over mappings in a different order in indexed source maps'] = async function (assert) {
@@ -350,6 +386,7 @@ exports['test iterating over mappings in a different order in indexed source map
       previousColumn = -Infinity;
     }
   }, null, SourceMapConsumer.ORIGINAL_ORDER);
+  map.destroy();
 };
 
 exports['test that we can set the context for `this` in eachMapping'] = async function (assert) {
@@ -358,6 +395,7 @@ exports['test that we can set the context for `this` in eachMapping'] = async fu
   map.eachMapping(function () {
     assert.equal(this, context);
   }, context);
+  map.destroy();
 };
 
 exports['test that we can set the context for `this` in eachMapping in indexed source maps'] = async function (assert) {
@@ -366,6 +404,7 @@ exports['test that we can set the context for `this` in eachMapping in indexed s
   map.eachMapping(function () {
     assert.equal(this, context);
   }, context);
+  map.destroy();
 };
 
 exports['test that the `sourcesContent` field has the original sources'] = async function (assert) {
@@ -375,6 +414,8 @@ exports['test that the `sourcesContent` field has the original sources'] = async
   assert.equal(sourcesContent[0], ' ONE.foo = function (bar) {\n   return baz(bar);\n };');
   assert.equal(sourcesContent[1], ' TWO.inc = function (n) {\n   return n + 1;\n };');
   assert.equal(sourcesContent.length, 2);
+
+  map.destroy();
 };
 
 exports['test that we can get the original sources for the sources'] = async function (assert) {
@@ -394,6 +435,8 @@ exports['test that we can get the original sources for the sources'] = async fun
   assert.throws(function () {
     map.sourceContentFor("three.js");
   }, Error);
+
+  map.destroy();
 };
 
 exports['test that we can get the original source content with relative source paths'] = async function (assert) {
@@ -413,6 +456,8 @@ exports['test that we can get the original source content with relative source p
   assert.throws(function () {
     map.sourceContentFor("three.js");
   }, Error);
+
+  map.destroy();
 };
 
 exports['test that we can get the original source content for the sources on an indexed source map'] = async function (assert) {
@@ -432,6 +477,8 @@ exports['test that we can get the original source content for the sources on an 
   assert.throws(function () {
     map.sourceContentFor("three.js");
   }, Error);
+
+  map.destroy();
 };
 
 exports['test hasContentsOfAllSources, single source with contents'] = async function (assert) {
@@ -441,8 +488,10 @@ exports['test hasContentsOfAllSources, single source with contents'] = async fun
                                original: { line: 1, column: 10 },
                                generated: { line: 1, column: 10 } });
   mapWithContents.setSourceContent('foo.js', 'content of foo.js');
+
   var consumer = await new SourceMapConsumer(mapWithContents.toJSON());
   assert.ok(consumer.hasContentsOfAllSources());
+  consumer.destroy();
 };
 
 exports['test hasContentsOfAllSources, single source without contents'] = async function (assert) {
@@ -453,6 +502,7 @@ exports['test hasContentsOfAllSources, single source without contents'] = async 
                                   generated: { line: 1, column: 10 } });
   var consumer = await new SourceMapConsumer(mapWithoutContents.toJSON());
   assert.ok(!consumer.hasContentsOfAllSources());
+  consumer.destroy();
 };
 
 exports['test hasContentsOfAllSources, two sources with contents'] = async function (assert) {
@@ -468,6 +518,7 @@ exports['test hasContentsOfAllSources, two sources with contents'] = async funct
   mapWithBothContents.setSourceContent('bar.js', 'content of bar.js');
   var consumer = await new SourceMapConsumer(mapWithBothContents.toJSON());
   assert.ok(consumer.hasContentsOfAllSources());
+  consumer.destroy();
 };
 
 exports['test hasContentsOfAllSources, two sources one with and one without contents'] = async function (assert) {
@@ -482,6 +533,7 @@ exports['test hasContentsOfAllSources, two sources one with and one without cont
   mapWithoutSomeContents.setSourceContent('foo.js', 'content of foo.js');
   var consumer = await new SourceMapConsumer(mapWithoutSomeContents.toJSON());
   assert.ok(!consumer.hasContentsOfAllSources());
+  consumer.destroy();
 };
 
 exports['test sourceRoot + generatedPositionFor'] = async function (assert) {
@@ -499,6 +551,8 @@ exports['test sourceRoot + generatedPositionFor'] = async function (assert) {
     generated: { line: 6, column: 6 },
     source: 'bang.coffee'
   });
+
+
   map = await new SourceMapConsumer(map.toString(), 'http://example.com/');
 
   // Should handle without sourceRoot.
@@ -530,6 +584,8 @@ exports['test sourceRoot + generatedPositionFor'] = async function (assert) {
 
   assert.equal(pos.line, 2);
   assert.equal(pos.column, 2);
+
+  map.destroy();
 };
 
 exports['test sourceRoot + generatedPositionFor for path above the root'] = async function (assert) {
@@ -542,6 +598,7 @@ exports['test sourceRoot + generatedPositionFor for path above the root'] = asyn
     generated: { line: 2, column: 2 },
     source: '../bang.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   // Should handle with sourceRoot.
@@ -553,6 +610,8 @@ exports['test sourceRoot + generatedPositionFor for path above the root'] = asyn
 
   assert.equal(pos.line, 2);
   assert.equal(pos.column, 2);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for line'] = async function (assert) {
@@ -584,6 +643,7 @@ exports['test allGeneratedPositionsFor for line'] = async function (assert) {
     generated: { line: 4, column: 2 },
     source: 'bar.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString(), 'http://example.com/');
 
   var mappings = map.allGeneratedPositionsFor({
@@ -607,6 +667,8 @@ exports['test allGeneratedPositionsFor for line'] = async function (assert) {
   assert.equal(mappings[0].column, 2);
   assert.equal(mappings[1].line, 3);
   assert.equal(mappings[1].column, 3);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for line fuzzy'] = async function (assert) {
@@ -628,6 +690,7 @@ exports['test allGeneratedPositionsFor for line fuzzy'] = async function (assert
     generated: { line: 4, column: 2 },
     source: 'bar.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var mappings = map.allGeneratedPositionsFor({
@@ -638,6 +701,8 @@ exports['test allGeneratedPositionsFor for line fuzzy'] = async function (assert
   assert.equal(mappings.length, 1);
   assert.equal(mappings[0].line, 4);
   assert.equal(mappings[0].column, 2);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for empty source map'] = async function (assert) {
@@ -652,6 +717,8 @@ exports['test allGeneratedPositionsFor for empty source map'] = async function (
   });
 
   assert.equal(mappings.length, 0);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for column'] = async function (assert) {
@@ -668,6 +735,7 @@ exports['test allGeneratedPositionsFor for column'] = async function (assert) {
     generated: { line: 1, column: 3 },
     source: 'foo.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var mappings = map.allGeneratedPositionsFor({
@@ -681,6 +749,8 @@ exports['test allGeneratedPositionsFor for column'] = async function (assert) {
   assert.equal(mappings[0].column, 2);
   assert.equal(mappings[1].line, 1);
   assert.equal(mappings[1].column, 3);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for column fuzzy'] = async function (assert) {
@@ -697,6 +767,7 @@ exports['test allGeneratedPositionsFor for column fuzzy'] = async function (asse
     generated: { line: 1, column: 3 },
     source: 'foo.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var mappings = map.allGeneratedPositionsFor({
@@ -710,6 +781,8 @@ exports['test allGeneratedPositionsFor for column fuzzy'] = async function (asse
   assert.equal(mappings[0].column, 2);
   assert.equal(mappings[1].line, 1);
   assert.equal(mappings[1].column, 3);
+
+  map.destroy();
 };
 
 exports['test allGeneratedPositionsFor for column on different line fuzzy'] = async function (assert) {
@@ -726,6 +799,7 @@ exports['test allGeneratedPositionsFor for column on different line fuzzy'] = as
     generated: { line: 2, column: 3 },
     source: 'foo.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var mappings = map.allGeneratedPositionsFor({
@@ -735,6 +809,8 @@ exports['test allGeneratedPositionsFor for column on different line fuzzy'] = as
   });
 
   assert.equal(mappings.length, 0);
+
+  map.destroy();
 };
 
 exports['test computeColumnSpans'] = async function (assert) {
@@ -771,6 +847,7 @@ exports['test computeColumnSpans'] = async function (assert) {
     generated: { line: 3, column: 2 },
     source: 'foo.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   map.computeColumnSpans();
@@ -801,6 +878,8 @@ exports['test computeColumnSpans'] = async function (assert) {
   assert.equal(mappings.length, 2);
   assert.equal(mappings[0].lastColumn, 1);
   assert.equal(mappings[1].lastColumn, Infinity);
+
+  map.destroy();
 };
 
 exports['test sourceRoot + originalPositionFor'] = async function (assert) {
@@ -813,6 +892,7 @@ exports['test sourceRoot + originalPositionFor'] = async function (assert) {
     generated: { line: 2, column: 2 },
     source: 'bang.coffee'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var pos = map.originalPositionFor({
@@ -824,6 +904,8 @@ exports['test sourceRoot + originalPositionFor'] = async function (assert) {
   assert.equal(pos.source, 'foo/bar/bang.coffee');
   assert.equal(pos.line, 1);
   assert.equal(pos.column, 1);
+
+  map.destroy();
 };
 
 exports['test github issue #56'] = async function (assert) {
@@ -836,11 +918,14 @@ exports['test github issue #56'] = async function (assert) {
     generated: { line: 2, column: 2 },
     source: 'www.example.com/original.js'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var sources = map.sources;
   assert.equal(sources.length, 1);
   assert.equal(sources[0], 'http://www.example.com/original.js');
+
+  map.destroy();
 };
 
 // Was github issue #43, but that's no longer valid.
@@ -854,6 +939,7 @@ exports['test source resolution with sourceMapURL'] = async function (assert) {
     generated: { line: 2, column: 2 },
     source: 'original.js',
   });
+
   map = await new SourceMapConsumer(map.toString(), 'http://cdn.example.com');
 
   var sources = map.sources;
@@ -861,6 +947,8 @@ exports['test source resolution with sourceMapURL'] = async function (assert) {
                'Should only be one source.');
   assert.equal(sources[0], 'http://cdn.example.com/original.js',
                'Should be joined with the source map URL.');
+
+  map.destroy();
 };
 
 exports['test sourceRoot prepending'] = async function (assert) {
@@ -873,6 +961,7 @@ exports['test sourceRoot prepending'] = async function (assert) {
     generated: { line: 2, column: 2 },
     source: '/original.js'
   });
+
   map = await new SourceMapConsumer(map.toString());
 
   var sources = map.sources;
@@ -880,6 +969,8 @@ exports['test sourceRoot prepending'] = async function (assert) {
                'Should only be one source.');
   assert.equal(sources[0], 'http://example.com/foo/bar/original.js',
                'Source include the source root.');
+
+  map.destroy();
 };
 
 exports['test indexed source map errors when sections are out of order by line'] = async function(assert) {
@@ -913,6 +1004,8 @@ exports['test github issue #64'] = async function (assert) {
 
   assert.equal(map.sourceContentFor("a"), "foo");
   assert.equal(map.sourceContentFor("/a"), "foo");
+
+  map.destroy();
 };
 
 exports['test full source content with sourceMapURL'] = async function (assert) {
@@ -929,6 +1022,8 @@ exports['test full source content with sourceMapURL'] = async function (assert) 
   var sources = map.sources;
   assert.equal(map.sourceContentFor('http://cdn.example.com/original.js'), 'yellow warbler',
                'Source content should be found using full URL');
+
+  map.destroy();
 };
 
 exports['test bug 885597'] = async function (assert) {
@@ -944,6 +1039,8 @@ exports['test bug 885597'] = async function (assert) {
 
   var s = map.sources[0];
   assert.equal(map.sourceContentFor(s), "foo");
+
+  map.destroy();
 };
 
 exports['test github issue #72, duplicate sources'] = async function (assert) {
@@ -979,6 +1076,8 @@ exports['test github issue #72, duplicate sources'] = async function (assert) {
   assert.equal(pos.source, 'http://example.com/source3.js');
   assert.equal(pos.line, 5);
   assert.equal(pos.column, 5);
+
+  map.destroy();
 };
 
 exports['test github issue #72, duplicate names'] = async function (assert) {
@@ -1014,6 +1113,8 @@ exports['test github issue #72, duplicate names'] = async function (assert) {
   assert.equal(pos.name, 'name3');
   assert.equal(pos.line, 5);
   assert.equal(pos.column, 5);
+
+  map.destroy();
 };
 
 exports['test SourceMapConsumer.fromSourceMap'] = async function (assert) {
@@ -1034,7 +1135,7 @@ exports['test SourceMapConsumer.fromSourceMap'] = async function (assert) {
   });
   smg.setSourceContent('baz.js', 'baz.js content');
 
-  var smc = SourceMapConsumer.fromSourceMap(smg);
+  var smc = await SourceMapConsumer.fromSourceMap(smg);
   assert.equal(smc.file, 'foo.js');
   assert.equal(smc.sourceRoot, 'http://example.com/');
   assert.equal(smc.sources.length, 2);
@@ -1075,6 +1176,8 @@ exports['test SourceMapConsumer.fromSourceMap'] = async function (assert) {
   });
   assert.equal(pos.line, 4);
   assert.equal(pos.column, 4);
+
+  smc.destroy();
 };
 
 exports['test issue #191'] = async function (assert) {
@@ -1092,13 +1195,15 @@ exports['test issue #191'] = async function (assert) {
   });
 
   // Create a SourceMapConsumer from the SourceMapGenerator, ...
-  var consumer  = SourceMapConsumer.fromSourceMap(generator);
+  var consumer = await SourceMapConsumer.fromSourceMap(generator);
   // ... and then try and use the SourceMapGenerator again. This should not
   // throw.
   generator.toJSON();
 
   assert.ok(true, "Using a SourceMapGenerator again after creating a " +
                   "SourceMapConsumer from it should not throw");
+
+  consumer.destroy();
 };
 
 exports['test sources where their prefix is the source root: issue #199'] = async function (assert) {
@@ -1120,6 +1225,8 @@ exports['test sources where their prefix is the source root: issue #199'] = asyn
 
   consumer.sources.forEach(consumerHasSource);
   testSourceMap.sources.forEach(consumerHasSource);
+
+  consumer.destroy();
 };
 
 exports['test sources where their prefix is the source root and the source root is a url: issue #199'] = async function (assert) {
@@ -1140,6 +1247,8 @@ exports['test sources where their prefix is the source root and the source root 
 
   consumer.sources.forEach(consumerHasSource);
   testSourceMap.sources.forEach(consumerHasSource);
+
+  consumer.destroy();
 };
 
 exports['test consuming names and sources that are numbers'] = async function (assert) {
@@ -1161,6 +1270,8 @@ exports['test consuming names and sources that are numbers'] = async function (a
     assert.equal(m.name, "1");
   });
   assert.equal(i, 1);
+
+  consumer.destroy();
 };
 
 exports['test non-normalized sourceRoot (from issue #227)'] = async function (assert) {
@@ -1176,6 +1287,8 @@ exports['test non-normalized sourceRoot (from issue #227)'] = async function (as
   assert.equal(consumer.sourceRoot, 'src/', 'sourceRoot was normalized');
   // Before the fix, this threw an exception.
   consumer.sourceContentFor(consumer.sources[0]);
+
+  consumer.destroy();
 };
 
 exports['test webpack URL resolution'] = async function (assert) {
@@ -1191,6 +1304,8 @@ exports['test webpack URL resolution'] = async function (assert) {
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+
+  consumer.destroy();
 };
 
 exports['test webpack URL resolution with sourceMapURL'] = async function (assert) {
@@ -1206,6 +1321,8 @@ exports['test webpack URL resolution with sourceMapURL'] = async function (asser
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+
+  consumer.destroy();
 };
 
 exports['test relative webpack URL resolution with sourceMapURL'] = async function (assert) {
@@ -1221,6 +1338,8 @@ exports['test relative webpack URL resolution with sourceMapURL'] = async functi
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap.js");
+
+  consumer.destroy();
 };
 
 exports['test basic URL resolution with sourceMapURL'] = async function (assert) {
@@ -1236,6 +1355,8 @@ exports['test basic URL resolution with sourceMapURL'] = async function (assert)
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], 'http://www.example.com/x/src/something.js');
+
+  consumer.destroy();
 };
 
 exports['test absolute sourceURL resolution with sourceMapURL'] = async function (assert) {
@@ -1251,4 +1372,6 @@ exports['test absolute sourceURL resolution with sourceMapURL'] = async function
 
   assert.equal(consumer.sources.length, 1);
   assert.equal(consumer.sources[0], 'http://www.example.com/src/something.js');
+
+  consumer.destroy();
 };

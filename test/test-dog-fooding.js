@@ -97,4 +97,6 @@ exports['test eating our own dog food'] = async function (assert) {
   util.assertMapping(6, 12, '/wu/tang/gza.coffee', 4, 9, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
   util.assertMapping(6, 12, '/wu/tang/gza.coffee', 5, 9, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
   util.assertMapping(null, null, '/wu/tang/gza.coffee', 6, 19, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
+
+  smc.destroy();
 };

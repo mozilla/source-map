@@ -19,6 +19,7 @@ async function run(tests) {
         total++;
         try {
           await tests[i].testCase[k](assert);
+          console.log('Passed ' + k);
           passed++;
         }
         catch (e) {

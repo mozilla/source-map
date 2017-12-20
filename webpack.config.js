@@ -15,5 +15,9 @@ module.exports = [
       library: "sourceMap",
       libraryTarget: "umd",
     },
+    externals: [
+      "fs",
+      "path",
+    ]
   }
 ];

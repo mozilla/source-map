@@ -205,18 +205,23 @@ exports['test .toStringWithSourceMap()'] = forEachNewline(async function (assert
   assert.equal(actual.source, null);
   assert.equal(actual.line, null);
   assert.equal(actual.column, null);
+
+  map.destroy();
 });
 
 exports['test .fromStringWithSourceMap()'] = forEachNewline(async function (assert, nl) {
   var testCode = util.testGeneratedCode.replace(/\n/g, nl);
+  let map = await new SourceMapConsumer(util.testMap);
   var node = SourceNode.fromStringWithSourceMap(
-                            testCode,
-                            await new SourceMapConsumer(util.testMap));
+    testCode,
+    map
+  );
+  map.destroy();
 
   var result = node.toStringWithSourceMap({
     file: 'min.js'
   });
-  var map = result.map;
+  map = result.map;
   var code = result.code;
 
   assert.equal(code, testCode);
@@ -228,13 +233,17 @@ exports['test .fromStringWithSourceMap()'] = forEachNewline(async function (asse
 });
 
 exports['test .fromStringWithSourceMap() empty map'] = forEachNewline(async function (assert, nl) {
+  let map = await new SourceMapConsumer(util.emptyMap);
   var node = SourceNode.fromStringWithSourceMap(
-                            util.testGeneratedCode.replace(/\n/g, nl),
-                            await new SourceMapConsumer(util.emptyMap));
+    util.testGeneratedCode.replace(/\n/g, nl),
+    map
+  );
+  map.destroy();
+
   var result = node.toStringWithSourceMap({
     file: 'min.js'
   });
-  var map = result.map;
+  map = result.map;
   var code = result.code;
 
   assert.equal(code, util.testGeneratedCode.replace(/\n/g, nl));
@@ -258,14 +267,17 @@ exports['test .fromStringWithSourceMap() complex version'] = forEachNewline(asyn
     file: 'foo.js'
   });
 
+  let map = await new SourceMapConsumer(input.map.toString());
   var node = SourceNode.fromStringWithSourceMap(
-                            input.code,
-                            await new SourceMapConsumer(input.map.toString()));
+    input.code,
+    map
+  );
+  map.destroy();
 
   var result = node.toStringWithSourceMap({
     file: 'foo.js'
   });
-  var map = result.map;
+  map = result.map;
   var code = result.code;
 
   assert.equal(code, input.code);
@@ -302,10 +314,15 @@ exports['test .fromStringWithSourceMap() third argument'] = async function (asse
 
   var test = async function(relativePath, expectedSources) {
     var app = new SourceNode();
+
+    let map = await new SourceMapConsumer(coffeeBundle.map.toString());
     app.add(SourceNode.fromStringWithSourceMap(
-                              coffeeBundle.code,
-                              await new SourceMapConsumer(coffeeBundle.map.toString()),
-                              relativePath));
+      coffeeBundle.code,
+      map,
+      relativePath
+    ));
+    map.destroy();
+
     app.add(foo);
     var i = 0;
     app.walk(function (chunk, loc) {
@@ -570,6 +587,8 @@ exports['test setSourceContent with toStringWithSourceMap'] = async function (as
   assert.equal(map.sourcesContent.length, 2);
   assert.equal(map.sourcesContent[0], 'someContent');
   assert.equal(map.sourcesContent[1], 'otherContent');
+
+  map.destroy();
 };
 
 exports['test walkSourceContents'] = function (assert) {
@@ -601,8 +620,10 @@ exports['test from issue 258'] = async function (assert) {
   var reactMap =
       "{\"version\":3,\"file\":\"/index.ios.bundle?platform=ios&dev=false&minify=true\",\"sections\":[{\"offset\":{\"line\":0,\"column\":0},\"map\":{\"version\":3,\"sources\":[\"require-0.js\"],\"names\":[],\"mappings\":\"AAAA;\",\"file\":\"require-0.js\",\"sourcesContent\":[\";require(0);\"]}}]}";
 
+  let map = await new SourceMapConsumer(reactMap);
   node.add(SourceNode.fromStringWithSourceMap(
     reactCode,
-    await new SourceMapConsumer(reactMap)
+    map
   ));
+  map.destroy();
 }
