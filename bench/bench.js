@@ -16,24 +16,24 @@ var __benchmarkResults = [];
 var benchmarkBlackbox = [].push.bind(__benchmarkResults);
 
 // Benchmark running an action n times.
-function benchmark(name, setup, action) {
+async function benchmark(name, setup, action) {
   __benchmarkResults = [];
-  setup();
+  await setup();
 
   // Warm up the JIT.
   var start = Date.now();
   while ((Date.now() - start) < 5000 /* 5 seconds */) {
-    action();
+    await action();
   }
 
   var stats = new Stats("ms");
 
   console.profile(name);
 
-  while ((Date.now() - start) < 30000 /* 30 seconds */) {
+  while ((Date.now() - start) < 60000 /* 60 seconds */) {
     console.time("iteration");
     var thisIterationStart = Date.now();
-    action();
+    await action();
     stats.take(Date.now() - thisIterationStart);
     console.timeEnd("iteration");
   }
@@ -50,25 +50,29 @@ var smg = null;
 function benchmarkSerializeSourceMap() {
   return benchmark(
     "serialize source map",
-    function () {
+    async function () {
       if (!smg) {
-        var smc = new sourceMap.SourceMapConsumer(testSourceMap);
+        var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
         smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
+        smc.destroy();
       }
     },
     function () {
-      benchmarkBlackbox(smg.toString());
+      benchmarkBlackbox(smg.toString().length);
     }
   );
 }
 
 function benchmarkParseSourceMap() {
-  return benchmark("parse source map", noop, function () {
-    var smc = new sourceMap.SourceMapConsumer(testSourceMap);
-    if (smc._generatedMappings.length !== EXPECTED_NUMBER_OF_MAPPINGS) {
+  return benchmark("parse source map", noop, async function () {
+    var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+    let numMappings = 0;
+    smc.eachMapping(_ => numMappings++);
+    if (numMappings !== EXPECTED_NUMBER_OF_MAPPINGS) {
       throw new Error("Expected " + EXPECTED_NUMBER_OF_MAPPINGS + " mappings, found "
                       + smc._generatedMappings.length);
     }
-    benchmarkBlackbox(smc._generatedMappings.length);
+    benchmarkBlackbox(numMappings);
+    smc.destroy();
   });
 }
