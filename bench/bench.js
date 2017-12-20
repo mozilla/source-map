@@ -43,7 +43,7 @@ async function benchmark(name, setup, action) {
   return stats;
 }
 
-var EXPECTED_NUMBER_OF_MAPPINGS = 2350714;
+var EXPECTED_NUMBER_OF_MAPPINGS = 1;
 
 var smg = null;
 
@@ -66,11 +66,15 @@ function benchmarkSerializeSourceMap() {
 function benchmarkParseSourceMap() {
   return benchmark("parse source map", noop, async function () {
     var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
-    let numMappings = 0;
-    smc.eachMapping(_ => numMappings++);
+
+    let numMappings = smc.allGeneratedPositionsFor({
+      source: smc.sources[0],
+      line: 1,
+    }).length;
+
     if (numMappings !== EXPECTED_NUMBER_OF_MAPPINGS) {
       throw new Error("Expected " + EXPECTED_NUMBER_OF_MAPPINGS + " mappings, found "
-                      + smc._generatedMappings.length);
+                      + numMappings);
     }
     benchmarkBlackbox(numMappings);
     smc.destroy();
