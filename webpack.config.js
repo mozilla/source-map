@@ -1,12 +1,10 @@
-var BannerPlugin = require("webpack/lib/BannerPlugin");
-var fs = require("fs");
 var path = require("path");
 var webpack = require("webpack");
 
 var distDir = path.join(__dirname, "dist");
 
 module.exports = [
-  // Node build.
+  // Web build.
   {
     entry: "./source-map.js",
     output: {

@@ -61,7 +61,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	exports.SourceMapGenerator = __webpack_require__(1).SourceMapGenerator;
 	exports.SourceMapConsumer = __webpack_require__(7).SourceMapConsumer;
-	exports.SourceNode = __webpack_require__(13).SourceNode;
+	exports.SourceNode = __webpack_require__(14).SourceNode;
 
 
 /***/ }),
@@ -1438,7 +1438,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ArraySet = __webpack_require__(5).ArraySet;
 	var base64VLQ = __webpack_require__(2);
 	var quickSort = __webpack_require__(9).quickSort;
-	var wasm = __webpack_require__(10);
+	var readWasm = __webpack_require__(10);
+	var wasm = __webpack_require__(13);
 
 	function SourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
@@ -1452,6 +1453,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	      : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
 	  });
 	}
+
+	SourceMapConsumer.initialize = opts => {
+	  readWasm.initialize(opts["lib/mappings.wasm"]);
+	};
 
 	SourceMapConsumer.fromSourceMap = function(aSourceMap, aSourceMapURL) {
 	  return BasicSourceMapConsumer.fromSourceMap(aSourceMap, aSourceMapURL);
@@ -1626,10 +1631,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._sourceMapURL = aSourceMapURL;
 	  this.file = file;
 
+	  this._computedColumnSpans = false;
 	  this._mappingsPtr = 0;
 	  this._wasm = null;
 
-	  return wasm.then(wasm => {
+	  return wasm().then(wasm => {
 	    this._wasm = wasm;
 	    return this;
 	  });
@@ -1697,7 +1703,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this._parseMappings(this._mappings, this.sourceRoot);
 	  }
 
-	  console.log("this._mappingsPtr = 0x" + this._mappingsPtr.toString(16));
 	  return this._mappingsPtr;
 	};
 
@@ -1707,7 +1712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * `this.__originalMappings` properties).
 	 */
 	BasicSourceMapConsumer.prototype._parseMappings =
-	  function SourceMapConsumer_parseMappings(aStr, aSourceRoot) {
+	  function BasicSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
 	    const size = aStr.length;
 
 	    const mappingsBufPtr = this._wasm.exports.allocate_mappings(size);
@@ -1764,30 +1769,43 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	BasicSourceMapConsumer.prototype.allGeneratedPositionsFor =
 	  function BasicSourceMapConsumer_allGeneratedPositionsFor(aArgs) {
-	    var originalLine = util.getArg(aArgs, 'line');
 	    var source = util.getArg(aArgs, 'source');
+	    var originalLine = util.getArg(aArgs, 'line');
+	    var originalColumn = aArgs.column || 0;
 
 	    source = this._findSourceIndex(source);
 	    if (source < 0) {
 	      return [];
 	    }
 
+	    if (originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
 	    var mappings = [];
 
 	    this._wasm.withMappingCallback(
 	      m => {
+	        let lastColumn = m.lastGeneratedColumn;
+	        if (this._computedColumnSpans && lastColumn === null) {
+	          lastColumn = Infinity;
+	        }
 	        mappings.push({
 	          line: m.generatedLine,
 	          column: m.generatedColumn,
-	          lastColumn: m.lastGeneratedColumn,
+	          lastColumn,
 	        });
 	      }, () => {
 	        this._wasm.exports.all_generated_locations_for(
 	          this._getMappingsPtr(),
 	          source,
-	          originalLine,
+	          originalLine - 1,
 	          'column' in aArgs,
-	          aArgs.column || 0
+	          originalColumn
 	        );
 	      }
 	    );
@@ -1797,7 +1815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	BasicSourceMapConsumer.prototype.destroy =
 	  function BasicSourceMapConsumer_destroy() {
-	    if (this._mappingsPtr === 0) {
+	    if (this._mappingsPtr !== 0) {
 	      this._wasm.exports.free_mappings(this._mappingsPtr);
 	      this._mappingsPtr = 0;
 	    }
@@ -1848,13 +1866,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	      generatedColumn: util.getArg(aArgs, 'column')
 	    };
 
+	    if (needle.generatedLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (needle.generatedColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
+	    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+	    if (bias == null) {
+	      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+	    }
+
 	    var mapping;
 	    this._wasm.withMappingCallback(m => mapping = m, () => {
 	      this._wasm.exports.original_location_for(
 	        this._getMappingsPtr(),
 	        needle.generatedLine - 1,
 	        needle.generatedColumn,
-	        util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
+	        bias
 	      );
 	    });
 
@@ -1994,6 +2025,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	      originalColumn: util.getArg(aArgs, 'column')
 	    };
 
+	    if (needle.originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (needle.originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
+	    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+	    if (bias == null) {
+	      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+	    }
+
 	    var mapping;
 	    this._wasm.withMappingCallback(m => mapping = m, () => {
 	      this._wasm.exports.generated_location_for(
@@ -2001,16 +2045,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        needle.source,
 	        needle.originalLine - 1,
 	        needle.originalColumn,
-	        util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
+	        bias
 	      );
 	    });
 
 	    if (mapping) {
 	      if (mapping.source === needle.source) {
+	        let lastColumn = mapping.lastGeneratedColumn;
+	        if (this._computedColumnSpans && lastColumn === null) {
+	          lastColumn = Infinity;
+	        }
 	        return {
 	          line: util.getArg(mapping, 'generatedLine', null),
 	          column: util.getArg(mapping, 'generatedColumn', null),
-	          lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
+	          lastColumn,
 	        };
 	      }
 	    }
@@ -2406,16 +2454,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      for (var j = 0; j < sectionMappings.length; j++) {
 	        var mapping = sectionMappings[j];
 
-	        var source = section.consumer._sources.at(mapping.source);
-	        source = util.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
+	        var source = util.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
 	        this._sources.add(source);
 	        source = this._sources.indexOf(source);
 
 	        var name = null;
 	        if (mapping.name) {
-	          name = section.consumer._names.at(mapping.name);
-	          this._names.add(name);
-	          name = this._names.indexOf(name);
+	          this._names.add(mapping.name);
+	          name = this._names.indexOf(mapping.name);
 	        }
 
 	        // The mappings coming from the consumer for the section have
@@ -2521,6 +2567,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	      return [];
 	    }
 
+	    if (needle.originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (needle.originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
 	    var mappings = [];
 
 	    var index = this._findMapping(needle,
@@ -2540,10 +2594,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // mappings are sorted, this is guaranteed to find all mappings for
 	        // the line we found.
 	        while (mapping && mapping.originalLine === originalLine) {
+	          let lastColumn = mapping.lastGeneratedColumn;
+	          if (this._computedColumnSpans && lastColumn === null) {
+	            lastColumn = Infinity;
+	          }
 	          mappings.push({
 	            line: util.getArg(mapping, 'generatedLine', null),
 	            column: util.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
+	            lastColumn,
 	          });
 
 	          mapping = this._originalMappings[++index];
@@ -2558,10 +2616,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        while (mapping &&
 	               mapping.originalLine === line &&
 	               mapping.originalColumn == originalColumn) {
+	          let lastColumn = mapping.lastGeneratedColumn;
+	          if (this._computedColumnSpans && lastColumn === null) {
+	            lastColumn = Infinity;
+	          }
 	          mappings.push({
 	            line: util.getArg(mapping, 'generatedLine', null),
 	            column: util.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
+	            lastColumn,
 	          });
 
 	          mapping = this._originalMappings[++index];
@@ -2575,7 +2637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	IndexedSourceMapConsumer.prototype.destroy =
 	  function IndexedSourceMapConsumer_destroy() {
 	    for (var i = 0; i < this._sections.length; i++) {
-	      this._sections[i].destroy();
+	      this._sections[i].consumer.destroy();
 	    }
 	  };
 
@@ -2823,88 +2885,46 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(__dirname) {const fs = __webpack_require__(11);
-	const path = __webpack_require__(12);
+	/* WEBPACK VAR INJECTION */(function(__dirname) {if (typeof fetch === "function") {
+	  // Web version of reading a wasm file into an array buffer.
 
-	/**
-	 * Provide the JIT with a nice shape / hidden class.
-	 */
-	function Mapping() {
-	  this.generatedLine = 0;
-	  this.generatedColumn = 0;
-	  this.lastGeneratedColumn = null;
-	  this.source = null;
-	  this.originalLine = null;
-	  this.originalColumn = null;
-	  this.name = null;
-	}
+	  let mappingsWasmUrl = null;
 
-	module.exports = new Promise((resolve, reject) => {
-	  const wasmPath = path.join(__dirname, "mappings.wasm");
-	  fs.readFile(wasmPath, null, (error, data) => {
-	    if (error) {
-	      return reject(error);
+	  module.exports = function readWasm() {
+	    if (typeof mappingsWasmUrl !== "string") {
+	      throw new Error("You must provide the URL of lib/mappings.wasm by calling " +
+	                      "SourceMapConsumer.initialize({ 'lib/mappings.wasm': ... }) " +
+	                      "before using SourceMapConsumer");
 	    }
 
-	    let currentCallback = null;
+	    return fetch(mappingsWasmUrl)
+	      .then(response => response.arrayBuffer());
+	  };
 
-	    WebAssembly.instantiate(data.buffer, {
-	      env: {
-	        mapping_callback: function (
-	          generatedLine,
-	          generatedColumn,
+	  module.exports.initialize = url => mappingsWasmUrl = url;
+	} else {
+	  // Node version of reading a wasm file into an array buffer.
+	  const fs = __webpack_require__(11);
+	  const path = __webpack_require__(12);
 
-	          hasLastGeneratedColumn,
-	          lastGeneratedColumn,
-
-	          hasOriginal,
-	          source,
-	          originalLine,
-	          originalColumn,
-
-	          hasName,
-	          name
-	        ) {
-	          const mapping = new Mapping;
-	          mapping.generatedLine = generatedLine + 1;
-	          mapping.generatedColumn = generatedColumn;
-
-	          if (hasLastGeneratedColumn) {
-	            mapping.lastGeneratedColumn = lastGeneratedColumn;
-	          }
-
-	          if (hasOriginal) {
-	            mapping.source = source;
-	            mapping.originalLine = originalLine + 1;
-	            mapping.originalColumn = originalColumn;
-
-	            if (hasName) {
-	              mapping.name = name;
-	            }
-	          }
-
-	          currentCallback(mapping);
+	  module.exports = function readWasm() {
+	    return new Promise((resolve, reject) => {
+	      const wasmPath = path.join(__dirname, "mappings.wasm");
+	      fs.readFile(wasmPath, null, (error, data) => {
+	        if (error) {
+	          reject(error);
+	          return;
 	        }
-	      }
-	    }).then(
-	      wasm => {
-	        resolve({
-	          exports: wasm.instance.exports,
-	          withMappingCallback: (mappingCallback, f) => {
-	            currentCallback = mappingCallback;
-	            try {
-	              f();
-	            } finally {
-	              currentCallback = null;
-	            }
-	          }
-	        });
-	      },
-	      error => {
-	        reject(error);
+
+	        resolve(data.buffer);
 	      });
-	  });
-	});
+	    });
+	  };
+
+	  module.exports.initialize = _ => {
+	    console.debug("SourceMapConsumer.initialize is a no-op when running in node.js");
+	  };
+	}
 
 	/* WEBPACK VAR INJECTION */}.call(exports, "/"))
 
@@ -2922,6 +2942,98 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	const readWasm = __webpack_require__(10);
+
+	/**
+	 * Provide the JIT with a nice shape / hidden class.
+	 */
+	function Mapping() {
+	  this.generatedLine = 0;
+	  this.generatedColumn = 0;
+	  this.lastGeneratedColumn = null;
+	  this.source = null;
+	  this.originalLine = null;
+	  this.originalColumn = null;
+	  this.name = null;
+	}
+
+	let cachedWasm = null;
+
+	module.exports = function wasm() {
+	  if (cachedWasm) {
+	    return cachedWasm;
+	  }
+
+	  let currentCallback = null;
+
+	  cachedWasm = readWasm().then(buffer => {
+	      return WebAssembly.instantiate(buffer, {
+	        env: {
+	          mapping_callback: function (
+	            generatedLine,
+	            generatedColumn,
+
+	            hasLastGeneratedColumn,
+	            lastGeneratedColumn,
+
+	            hasOriginal,
+	            source,
+	            originalLine,
+	            originalColumn,
+
+	            hasName,
+	            name
+	          ) {
+	            const mapping = new Mapping;
+	            // JS uses 1-based line numbers, wasm uses 0-based.
+	            mapping.generatedLine = generatedLine + 1;
+	            mapping.generatedColumn = generatedColumn;
+
+	            if (hasLastGeneratedColumn) {
+	              // JS uses inclusive last generated column, wasm uses exclusive.
+	              mapping.lastGeneratedColumn = lastGeneratedColumn - 1;
+	            }
+
+	            if (hasOriginal) {
+	              mapping.source = source;
+	              // JS uses 1-based line numbers, wasm uses 0-based.
+	              mapping.originalLine = originalLine + 1;
+	              mapping.originalColumn = originalColumn;
+
+	              if (hasName) {
+	                mapping.name = name;
+	              }
+	            }
+
+	            currentCallback(mapping);
+	          }
+	        }
+	      });
+	  }).then(wasm => {
+	    return {
+	      exports: wasm.instance.exports,
+	      withMappingCallback: (mappingCallback, f) => {
+	        currentCallback = mappingCallback;
+	        try {
+	          f();
+	        } finally {
+	          currentCallback = null;
+	        }
+	      }
+	    };
+	  }).then(null, e => {
+	    cachedWasm = null;
+	    throw e;
+	  });
+
+	  return cachedWasm;
+	};
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* -*- Mode: js; js-indent-level: 2; -*- */
