@@ -1,9 +1,17 @@
+sourceMap.SourceMapConsumer.initialize({
+  "lib/mappings.wasm": "../lib/mappings.wasm",
+});
+
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
 function benchOnClick(button, results, bencher) {
-  button.addEventListener("click", function (e) {
+  button.addEventListener("click", async function (e) {
     e.preventDefault();
-    var stats = bencher();
+
+    button.setAttribute("disabled", true);
+    var stats = await bencher();
+    button.removeAttribute("disabled");
+
     results.innerHTML = `
       <table>
         <thead>

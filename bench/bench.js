@@ -36,6 +36,7 @@ async function benchmark(name, setup, action) {
     await action();
     stats.take(Date.now() - thisIterationStart);
     console.timeEnd("iteration");
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   console.profileEnd(name);
