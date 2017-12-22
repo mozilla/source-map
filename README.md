@@ -32,7 +32,9 @@ This is a library to generate and consume the source map format
     - [With SourceMapGenerator (low level API)](#with-sourcemapgenerator-low-level-api)
 - [API](#api)
   - [SourceMapConsumer](#sourcemapconsumer)
+    - [SourceMapConsumer.initialize(options)](#sourcemapconsumerinitializeoptions)
     - [new SourceMapConsumer(rawSourceMap)](#new-sourcemapconsumerrawsourcemap)
+    - [SourceMapConsumer.prototype.destroy()](#sourcemapconsumerprototypedestroy)
     - [SourceMapConsumer.prototype.computeColumnSpans()](#sourcemapconsumerprototypecomputecolumnspans)
     - [SourceMapConsumer.prototype.originalPositionFor(generatedPosition)](#sourcemapconsumerprototypeoriginalpositionforgeneratedposition)
     - [SourceMapConsumer.prototype.generatedPositionFor(originalPosition)](#sourcemapconsumerprototypegeneratedpositionfororiginalposition)
@@ -67,7 +69,7 @@ This is a library to generate and consume the source map format
 ### Consuming a source map
 
 ```js
-var rawSourceMap = {
+const rawSourceMap = {
   version: 3,
   file: 'min.js',
   names: ['bar', 'baz', 'n'],
@@ -76,7 +78,7 @@ var rawSourceMap = {
   mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
 };
 
-var smc = new SourceMapConsumer(rawSourceMap);
+const smc = await new SourceMapConsumer(rawSourceMap);
 
 console.log(smc.sources);
 // [ 'http://example.com/www/js/one.js',
@@ -101,6 +103,9 @@ console.log(smc.generatedPositionFor({
 smc.eachMapping(function (m) {
   // ...
 });
+
+// Free the SourceMapConsumer's manually managed wasm data.
+smc.destroy();
 ```
 
 ### Generating a source map
@@ -224,8 +229,23 @@ following attributes:
 
 * `file`: Optional. The generated filename this source map is associated with.
 
+The promise of the constructed souce map consumer is returned.
+
+When the `SourceMapConsumer` will no longer be used anymore, you must call its
+`destroy` method.
+
 ```js
-var consumer = new sourceMap.SourceMapConsumer(rawSourceMapJsonData);
+const consumer = await new sourceMap.SourceMapConsumer(rawSourceMapJsonData);
+doStuffWith(consumer);
+consumer.destroy();
+```
+
+#### SourceMapConsumer.prototype.destroy()
+
+Free this source map consumer's associated wasm data that is manually-managed.
+
+```js
+consumer.destroy();
 ```
 
 #### SourceMapConsumer.prototype.computeColumnSpans()
@@ -596,9 +616,9 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
   should be relative to.
 
 ```js
-var consumer = new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
-var node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"),
-                                              consumer);
+const consumer = await new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
+onst node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"),
+                                               consumer);
 ```
 
 #### SourceNode.prototype.add(chunk)
