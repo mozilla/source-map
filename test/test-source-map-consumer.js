@@ -86,7 +86,6 @@ exports['test that the source root is reflected in a mapping\'s source field'] =
     line: 2,
     column: 1
   });
-  console.log(mapping);
   assert.equal(mapping.source, '/the/root/two.js');
 
   mapping = map.originalPositionFor({
@@ -1374,4 +1373,46 @@ exports['test absolute sourceURL resolution with sourceMapURL'] = async function
   assert.equal(consumer.sources[0], 'http://www.example.com/src/something.js');
 
   consumer.destroy();
+};
+
+exports['test line numbers > 2**32'] = async function (assert) {
+  let map = await new SourceMapConsumer({
+    version: 3,
+    sources:  ["something.js"],
+    names: [],
+    mappings: "C+/////DAS",
+    file: "foo.js",
+  });
+
+  let error;
+  try {
+    // Triggers parse which fails on too big of a line number.
+    map.eachMapping(m => console.log(m));
+  } catch (e) {
+    error = e;
+  }
+
+  assert.ok(error != null);
+  map.destroy();
+};
+
+exports['test line numbers < 0'] = async function (assert) {
+  let map = await new SourceMapConsumer({
+    version: 3,
+    sources:  ["something.js"],
+    names: [],
+    mappings: "CDAS",
+    file: "foo.js",
+  });
+
+  let error;
+  try {
+    // Triggers parse which fails on too big of a line number.
+    map.eachMapping(m => console.log(m));
+  } catch (e) {
+    error = e;
+  }
+
+  assert.ok(error != null);
+  map.destroy();
 };
