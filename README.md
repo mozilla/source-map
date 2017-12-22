@@ -186,6 +186,23 @@ A SourceMapConsumer instance represents a parsed source map which we can query
 for information about the original file positions by giving it a file position
 in the generated source.
 
+#### SourceMapConsumer.initialize(options)
+
+When using `SourceMapConsumer` outside of node.js, for example on the web, it
+needs to know from what URL to load `lib/mappings.wasm`. You must inform it by
+calling `initialize` before constructing any `SourceMapConsumer`s.
+
+The options object has the following properties:
+
+* `"lib/mappings.wasm"`: A `String` containing the URL of the
+  `lib/mappings.wasm` file.
+
+```js
+sourceMap.SourceMapConsumer.initialize({
+  "lib/mappings.wasm": "https://example.com/vendor/source-map/lib/mappings.wasm"
+});
+```
+
 #### new SourceMapConsumer(rawSourceMap)
 
 The only parameter is the raw source map (either as a string which can be
