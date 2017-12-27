@@ -16,7 +16,7 @@ var __benchmarkResults = [];
 var benchmarkBlackbox = [].push.bind(__benchmarkResults);
 
 // Benchmark running an action n times.
-async function benchmark(name, setup, action) {
+async function benchmark(setup, action, tearDown = () => {}) {
   __benchmarkResults = [];
   await setup();
 
@@ -28,9 +28,7 @@ async function benchmark(name, setup, action) {
 
   var stats = new Stats("ms");
 
-  console.profile(name);
-
-  while ((Date.now() - start) < 60000 /* 60 seconds */) {
+  while ((Date.now() - start) < 20000 /* 60 seconds */) {
     console.time("iteration");
     var thisIterationStart = Date.now();
     await action();
@@ -39,8 +37,7 @@ async function benchmark(name, setup, action) {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  console.profileEnd(name);
-
+  await tearDown();
   return stats;
 }
 
@@ -48,9 +45,8 @@ var EXPECTED_NUMBER_OF_MAPPINGS = 1;
 
 var smg = null;
 
-function benchmarkSerializeSourceMap() {
-  return benchmark(
-    "serialize source map",
+var benchmarks = {
+  "SourceMapGenerator#toString": () => benchmark(
     async function () {
       if (!smg) {
         var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
@@ -61,23 +57,115 @@ function benchmarkSerializeSourceMap() {
     function () {
       benchmarkBlackbox(smg.toString().length);
     }
-  );
-}
+  ),
 
-function benchmarkParseSourceMap() {
-  return benchmark("parse source map", noop, async function () {
-    var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+  "set first breakpoint (parse + query-by-original-location)": () => benchmark(
+    noop,
+    async function () {
+      var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
-    let numMappings = smc.allGeneratedPositionsFor({
-      source: smc.sources[0],
-      line: 1,
-    }).length;
+      benchmarkBlackbox(smc.allGeneratedPositionsFor({
+        source: smc.sources[0],
+        line: 1,
+      }));
 
-    if (numMappings !== EXPECTED_NUMBER_OF_MAPPINGS) {
-      throw new Error("Expected " + EXPECTED_NUMBER_OF_MAPPINGS + " mappings, found "
-                      + numMappings);
+      smc.destroy();
     }
-    benchmarkBlackbox(numMappings);
-    smc.destroy();
-  });
-}
+  ),
+
+  "first pause at exception (parse + query-by-generated-location)": () => benchmark(
+    noop,
+    async function () {
+      var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+
+      benchmarkBlackbox(smc.originalPositionFor({
+        line: 1,
+        column: 0,
+      }));
+
+      smc.destroy();
+    }
+  ),
+
+  "subsequent setting breakpoints (already parsed; query-by-original-location)": () => {
+    var smc
+    return benchmark(
+      async function () {
+        smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+      },
+      async function () {
+        benchmarkBlackbox(smc.allGeneratedPositionsFor({
+          source: smc.sources[0],
+          line: 1,
+        }));
+      },
+      function () {
+        smc.destroy();
+      }
+    )
+  },
+
+  "subsequent pauses at exception (already parsed; query-by-generated-location)": () => {
+    var smc;
+    return benchmark(
+      async function () {
+        smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+      },
+      async function () {
+        benchmarkBlackbox(smc.originalPositionFor({
+          line: 1,
+          column: 0,
+        }));
+      },
+      function () {
+        smc.destroy();
+      }
+    );
+  },
+
+  "parse + iterating over all mappings": () => {
+    return benchmark(
+      noop,
+      async function () {
+        var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+
+        let maxLine = 0;
+        let maxCol = 0;
+        smc.eachMapping(m => {
+          maxLine = Math.max(maxLine, m.generatedLine);
+          maxLine = Math.max(maxLine, m.originalLine);
+          maxCol = Math.max(maxCol, m.generatedColumn);
+          maxCol = Math.max(maxCol, m.originalColumn);
+        });
+        benchmarkBlackbox(maxLine);
+        benchmarkBlackbox(maxCol);
+
+        smc.destroy();
+      }
+    );
+  },
+
+  "already parsed; iterating over all mappings": () => {
+    var smc;
+    return benchmark(
+      async function () {
+        smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+      },
+      async function () {
+        let maxLine = 0;
+        let maxCol = 0;
+        smc.eachMapping(m => {
+          maxLine = Math.max(maxLine, m.generatedLine);
+          maxLine = Math.max(maxLine, m.originalLine);
+          maxCol = Math.max(maxCol, m.generatedColumn);
+          maxCol = Math.max(maxCol, m.originalColumn);
+        });
+        benchmarkBlackbox(maxLine);
+        benchmarkBlackbox(maxCol);
+      },
+      function () {
+        smc.destroy();
+      }
+    );
+  }
+};

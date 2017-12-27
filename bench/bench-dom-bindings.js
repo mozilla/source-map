@@ -8,9 +8,12 @@ function benchOnClick(button, results, bencher) {
   button.addEventListener("click", async function (e) {
     e.preventDefault();
 
-    button.setAttribute("disabled", true);
+    const buttons = [...document.querySelectorAll("button")];
+    buttons.forEach(b => b.setAttribute("disabled", true));
+
     var stats = await bencher();
-    button.removeAttribute("disabled");
+
+    buttons.forEach(b => b.removeAttribute("disabled"));
 
     results.innerHTML = `
       <table>
@@ -35,10 +38,16 @@ function benchOnClick(button, results, bencher) {
   }, false);
 }
 
-benchOnClick(document.getElementById("bench-consumer"),
-             document.getElementById("consumer-results"),
-             benchmarkParseSourceMap);
+for (let bench of Object.keys(benchmarks)) {
+  const hr = document.createElement("hr");
+  document.body.appendChild(hr);
 
-benchOnClick(document.getElementById("bench-generator"),
-             document.getElementById("generator-results"),
-             benchmarkSerializeSourceMap);
+  const button = document.createElement("button");
+  button.innerHTML = `<h2>${bench}</h2>`;
+  document.body.appendChild(button);
+
+  const results = document.createElement("div");
+  document.body.appendChild(results);
+
+  benchOnClick(button, results, benchmarks[bench]);
+}
