@@ -2,6 +2,28 @@ sourceMap.SourceMapConsumer.initialize({
   "lib/mappings.wasm": "../lib/mappings.wasm",
 });
 
+function bindRange(labelId, updater) {
+  const label = document.getElementById(labelId);
+  const input = label.querySelector("input");
+
+  input.addEventListener("input", e => {
+    e.preventDefault();
+    updater(input.value);
+  });
+
+  updater(input.value);
+}
+
+bindRange("warm-up-iters", input => {
+  const value = parseInt(input, 10);
+  WARM_UP_ITERATIONS = value;
+});
+
+bindRange("bench-iters", input => {
+  const value = parseInt(input, 10);
+  BENCH_ITERATIONS = value;
+});
+
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
 function benchOnClick(button, results, bencher) {

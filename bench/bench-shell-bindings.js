@@ -13,6 +13,9 @@ if (typeof print !== "function") {
   };
 }
 
+WARM_UP_ITERATIONS = 5;
+BENCH_ITERATIONS = 100;
+
 sourceMap = require("../source-map.js");
 load("./scalajs-runtime-sourcemap.js");
 load("./stats.js");

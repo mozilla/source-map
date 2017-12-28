@@ -23,6 +23,21 @@
   <body>
     <h1>Benchmark <code>mozilla/source-map</code></h1>
 
+    <form>
+        <p>
+          <label id="warm-up-iters">
+            Warm up iterations:
+            <input type="number" value="5" min="1" max="50" step="1"/>
+          </label>
+        </p>
+        <p>
+          <label id="bench-iters">
+            Benchmark iterations:
+            <input type="number" value="100" min="1" max="1000" step="1"/>
+          </label>
+        </p>
+    </form>
+
     <script src="scalajs-runtime-sourcemap.js"></script>
     <script src="stats.js"></script>
     <script src="../dist/source-map.js"></script>

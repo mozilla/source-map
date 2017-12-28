@@ -15,24 +15,27 @@ if (!console.profile) {
 var __benchmarkResults = [];
 var benchmarkBlackbox = [].push.bind(__benchmarkResults);
 
+const now = typeof window === "object" && window.performance && window.performance.now
+      ? () => window.performance.now()
+      : () => now();
+
 // Benchmark running an action n times.
 async function benchmark(setup, action, tearDown = () => {}) {
   __benchmarkResults = [];
   await setup();
 
   // Warm up the JIT.
-  var start = Date.now();
-  while ((Date.now() - start) < 5000 /* 5 seconds */) {
+  for (let i = 0; i < WARM_UP_ITERATIONS; i++) {
     await action();
   }
 
   var stats = new Stats("ms");
 
-  while ((Date.now() - start) < 20000 /* 60 seconds */) {
+  for (let i = 0; i < BENCH_ITERATIONS; i++) {
     console.time("iteration");
-    var thisIterationStart = Date.now();
+    var thisIterationStart = now();
     await action();
-    stats.take(Date.now() - thisIterationStart);
+    stats.take(now() - thisIterationStart);
     console.timeEnd("iteration");
     await new Promise(resolve => setTimeout(resolve, 100));
   }
@@ -41,23 +44,29 @@ async function benchmark(setup, action, tearDown = () => {}) {
   return stats;
 }
 
-var EXPECTED_NUMBER_OF_MAPPINGS = 1;
-
-var smg = null;
+const TEST_MAPPING = {
+  generatedLine: 32994,
+  generatedColumn: 23,
+  source: "file:///Users/kraman/workspace/scala-js/scalalib/source/src/library/scala/Tuple2.scala",
+  originalLine: 19,
+  originalColumn: 11,
+  name: "$ScalaJSEnvironment"
+};
 
 var benchmarks = {
-  "SourceMapGenerator#toString": () => benchmark(
-    async function () {
-      if (!smg) {
+  "SourceMapGenerator#toString": () => {
+    var smg = null;
+    benchmark(
+      async function () {
         var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
         smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
         smc.destroy();
+      },
+      () => {
+        benchmarkBlackbox(smg.toString().length);
       }
-    },
-    function () {
-      benchmarkBlackbox(smg.toString().length);
-    }
-  ),
+    );
+  },
 
   "set first breakpoint (parse + query-by-original-location)": () => benchmark(
     noop,
@@ -65,9 +74,9 @@ var benchmarks = {
       var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
       benchmarkBlackbox(smc.allGeneratedPositionsFor({
-        source: smc.sources[0],
-        line: 1,
-      }));
+        source: TEST_MAPPING.source,
+        line: TEST_MAPPING.originalLine,
+      }).length);
 
       smc.destroy();
     }
@@ -79,8 +88,8 @@ var benchmarks = {
       var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
       benchmarkBlackbox(smc.originalPositionFor({
-        line: 1,
-        column: 0,
+        line: TEST_MAPPING.generatedLine,
+        column: TEST_MAPPING.generatedColumn,
       }));
 
       smc.destroy();
@@ -88,15 +97,15 @@ var benchmarks = {
   ),
 
   "subsequent setting breakpoints (already parsed; query-by-original-location)": () => {
-    var smc
+    var smc;
     return benchmark(
       async function () {
         smc = await new sourceMap.SourceMapConsumer(testSourceMap);
       },
       async function () {
         benchmarkBlackbox(smc.allGeneratedPositionsFor({
-          source: smc.sources[0],
-          line: 1,
+          source: TEST_MAPPING.source,
+          line: TEST_MAPPING.originalLine,
         }));
       },
       function () {
@@ -113,8 +122,8 @@ var benchmarks = {
       },
       async function () {
         benchmarkBlackbox(smc.originalPositionFor({
-          line: 1,
-          column: 0,
+          line: TEST_MAPPING.generatedLine,
+          column: TEST_MAPPING.generatedColumn,
         }));
       },
       function () {
