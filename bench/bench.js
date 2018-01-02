@@ -19,6 +19,10 @@ const now = typeof window === "object" && window.performance && window.performan
       ? () => window.performance.now()
       : () => now();
 
+const yieldForTick = typeof setTimeout === "function"
+      ? () => new Promise(resolve => setTimeout(resolve, 1))
+      : () => Promise.resolve();
+
 // Benchmark running an action n times.
 async function benchmark(setup, action, tearDown = () => {}) {
   __benchmarkResults = [];
@@ -27,7 +31,7 @@ async function benchmark(setup, action, tearDown = () => {}) {
   // Warm up the JIT.
   for (let i = 0; i < WARM_UP_ITERATIONS; i++) {
     await action();
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await yieldForTick();
   }
 
   var stats = new Stats("ms");
@@ -38,7 +42,8 @@ async function benchmark(setup, action, tearDown = () => {}) {
     await action();
     stats.take(now() - thisIterationStart);
     console.timeEnd("iteration");
-    await new Promise(resolve => setTimeout(resolve, 100));
+
+    await yieldForTick();
   }
 
   await tearDown();

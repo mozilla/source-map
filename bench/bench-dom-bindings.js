@@ -24,6 +24,12 @@ bindRange("bench-iters", input => {
   BENCH_ITERATIONS = value;
 });
 
+var testSourceMap = SCALA_JS_RUNTIME_SOURCE_MAP;
+document.getElementById("input-map").addEventListener("input", e => {
+  e.preventDefault();
+  testSourceMap = window[e.target.value];
+});
+
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
 function benchOnClick(button, results, bencher) {
