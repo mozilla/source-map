@@ -27,6 +27,7 @@ async function benchmark(setup, action, tearDown = () => {}) {
   // Warm up the JIT.
   for (let i = 0; i < WARM_UP_ITERATIONS; i++) {
     await action();
+    await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   var stats = new Stats("ms");
