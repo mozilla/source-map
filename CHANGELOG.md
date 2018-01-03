@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.7.0
+
+* `SourceMapConsumer` now uses WebAssembly, and is **much** faster!
+
+* **Breaking change:** `new SourceMapConsumer` now returns a `Promise` object
+  that resolves to the newly constructed `SourceMapConsumer` instance, rather
+  than returning the new instance immediately.
+
+* **Breaking change:** when you're done using a `SourceMapConsumer` instance,
+  you must call `SourceMapConsumer.prototype.destroy` on it. After calling
+  `destroy`, you must not use the instance again.
+
+* **Breaking change:** `SourceMapConsumer` used to be able to handle lines,
+  columns numbers and source and name indices up to `2^53 - 1` (aka
+  `Number.MAX_SAFE_INTEGER`). It can now only handle them up to `2^32 - 1`.
+
 ## 0.5.6
 
 * Fix for regression when people were using numbers as names in source maps. See
