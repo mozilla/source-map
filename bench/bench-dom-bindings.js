@@ -62,6 +62,7 @@ function benchOnClick(button, results, bencher) {
           </tr>
         </tbody>
       </table>
+      <pre style="overflow:hidden">${stats.xs}</pre>
     `;
   }, false);
 }
