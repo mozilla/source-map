@@ -38,6 +38,8 @@ function benchOnClick(button, results, bencher) {
 
     const buttons = [...document.querySelectorAll("button")];
     buttons.forEach(b => b.setAttribute("disabled", true));
+    results.innerHTML = "";
+    await new Promise(r => requestAnimationFrame(r));
 
     var stats = await bencher();
 

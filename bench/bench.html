@@ -40,7 +40,12 @@
             <label>
                 Input source map:
                 <select id="input-map">
-                    <option value="SCALA_JS_RUNTIME_SOURCE_MAP" selected>Scala.JS Runtime Source Map (15M)</option>
+                    <option value="SCALA_JS_RUNTIME_SOURCE_MAP" selected>
+                        Scala.JS Runtime Source Map (15M)
+                    </option>
+                    <option value="ANGULAR_MIN_SOURCE_MAP">
+                        AngularJS Minified Source Map (424K)
+                    </option>
                     <option value="SELF_SOURCE_MAP">
                         Source Map for Minified Version of mozilla/source-map (252K)
                     </option>
@@ -50,6 +55,7 @@
     </form>
 
     <script src="self-source-map.js"></script>
+    <script src="angular-min-source-map.js"></script>
     <script src="scalajs-runtime-sourcemap.js"></script>
     <script src="stats.js"></script>
     <script src="../dist/source-map.js"></script>
