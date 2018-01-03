@@ -187,13 +187,13 @@ const sourceMap = require("devtools/toolkit/sourcemap/source-map.js");
 
 ### SourceMapConsumer
 
-A SourceMapConsumer instance represents a parsed source map which we can query
+A `SourceMapConsumer` instance represents a parsed source map which we can query
 for information about the original file positions by giving it a file position
 in the generated source.
 
 #### SourceMapConsumer.initialize(options)
 
-When using `SourceMapConsumer` outside of node.js, for example on the web, it
+When using `SourceMapConsumer` outside of node.js, for example on the Web, it
 needs to know from what URL to load `lib/mappings.wasm`. You must inform it by
 calling `initialize` before constructing any `SourceMapConsumer`s.
 
@@ -204,7 +204,7 @@ The options object has the following properties:
 
 ```js
 sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "https://example.com/vendor/source-map/lib/mappings.wasm"
+  "lib/mappings.wasm": "https://example.com/source-map/lib/mappings.wasm"
 });
 ```
 
@@ -276,7 +276,6 @@ consumer.allGeneratedPositionsFor({ line: 2, source: "foo.coffee" })
 //   { line: 2,
 //     column: 20,
 //     lastColumn: Infinity } ]
-
 ```
 
 #### SourceMapConsumer.prototype.originalPositionFor(generatedPosition)
