@@ -24,11 +24,40 @@ bindRange("bench-iters", input => {
   BENCH_ITERATIONS = value;
 });
 
+const whichMap = document.getElementById("input-map");
+const multiplyBy = document.getElementById("multiply-size-by");
+
 var testSourceMap = SCALA_JS_RUNTIME_SOURCE_MAP;
-document.getElementById("input-map").addEventListener("input", e => {
+
+const updateTestSourceMap = () => {
+  const origMap = window[whichMap.value];
+  testSourceMap = JSON.parse(JSON.stringify(origMap));
+
+  const factor = parseInt(multiplyBy.value, 10);
+  if (factor === 1) {
+    return;
+  }
+
+  const mappings = new Array(factor);
+  mappings.fill(origMap.mappings);
+  testSourceMap.mappings = mappings.join(";");
+
+  for (let i = 0; i < factor; i++) {
+    testSourceMap.sources.splice(testSourceMap.sources.length, 0, ...origMap.sources);
+    testSourceMap.names.splice(testSourceMap.names.length, 0, ...origMap.names);
+  }
+};
+updateTestSourceMap();
+
+whichMap.addEventListener("input", e => {
   e.preventDefault();
-  testSourceMap = window[e.target.value];
+  updateTestSourceMap();
 });
+
+multiplyBy.addEventListener("input", e => {
+  e.preventDefault();
+  updateTestSourceMap();
+})
 
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
