@@ -16,6 +16,10 @@
   columns numbers and source and name indices up to `2^53 - 1` (aka
   `Number.MAX_SAFE_INTEGER`). It can now only handle them up to `2^32 - 1`.
 
+* **Breaking change:** The `source-map` library now uses modern ECMAScript-isms:
+  `let`, arrow functions, `async`, etc. Use Babel to compile it down to
+  ECMAScript 5 if you need to support older JavaScript environments.
+
 ## 0.5.6
 
 * Fix for regression when people were using numbers as names in source maps. See
