@@ -26,13 +26,18 @@ const yieldForTick = typeof setTimeout === "function"
 // Benchmark running an action n times.
 async function benchmark(setup, action, tearDown = () => {}) {
   __benchmarkResults = [];
+
+  console.time("setup");
   await setup();
+  console.timeEnd("setup");
 
   // Warm up the JIT.
+  console.time("warmup");
   for (let i = 0; i < WARM_UP_ITERATIONS; i++) {
     await action();
     await yieldForTick();
   }
+  console.timeEnd("warmup");
 
   const stats = new Stats("ms");
 
