@@ -57,11 +57,21 @@ whichMap.addEventListener("input", e => {
 multiplyBy.addEventListener("input", e => {
   e.preventDefault();
   updateTestSourceMap();
-})
+});
+
+var implAndBrowser = "<unknown>";
+
+const implAndBrowserInput = document.getElementById("impl-and-browser");
+const updateImplAndBrowser = () => {
+  implAndBrowser = implAndBrowserInput.value;
+};
+implAndBrowserInput.addEventListener("input", updateImplAndBrowser);
+updateImplAndBrowser();
+
 
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
-function benchOnClick(button, results, bencher) {
+function benchOnClick(button, results, benchName, bencher) {
   button.addEventListener("click", async function (e) {
     e.preventDefault();
 
@@ -73,6 +83,11 @@ function benchOnClick(button, results, bencher) {
     var stats = await bencher();
 
     buttons.forEach(b => b.removeAttribute("disabled"));
+
+    const csv = stats
+          .xs
+          .map(x => `${testSourceMap.mappings.length},"${benchName}",${x}`)
+          .join("\n");
 
     results.innerHTML = `
       <table>
@@ -93,7 +108,7 @@ function benchOnClick(button, results, bencher) {
           </tr>
         </tbody>
       </table>
-      <pre style="overflow:hidden">${stats.xs}</pre>
+      <pre style="overflow:scroll;max-height:100px; max-width:500px;outline:1px solid black">${csv}</pre>
     `;
   }, false);
 }
@@ -109,5 +124,5 @@ for (let bench of Object.keys(benchmarks)) {
   const results = document.createElement("div");
   document.body.appendChild(results);
 
-  benchOnClick(button, results, benchmarks[bench]);
+  benchOnClick(button, results, bench, benchmarks[bench]);
 }
