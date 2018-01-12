@@ -20,9 +20,10 @@ data$Build <- factor(
         "JavaScript",
         "JavaScript (gzip)",
         "WebAssembly",
-        "WebAssembly (wasm-gc)",
-        "WebAssembly (gzip)",
-        "WebAssembly (wasm-gc and gzip)"
+        "WebAssembly (gc)",
+        "WebAssembly (gc + snip)",
+        "WebAssembly (gc + snip + opt)",
+        "WebAssembly (gc + snip + opt + gzip)"
     )
 )
 
@@ -35,11 +36,10 @@ thePlot <- ggplot(data,
           legend.direction="vertical",
           legend.title = element_blank(),
           axis.text.x = element_text(angle = 45, hjust = 1)) +
-    ggtitle("Code Size") +
+    ggtitle("Code Size by Implementation and Build") +
     labs(x = "Implementation and Build",
-         y = "Size (bytes)") +
-        scale_color_manual(labels = c("JavaScript Size", "WebAssembly Size"),
-                       values = c("blue", "red"))
+         y = "Code Size (bytes)") +
+    scale_fill_discrete(labels = c("JavaScript Size", "WebAssembly Size"))
 
 svgFile <- "size.svg"
 ggsave(plot = thePlot,
