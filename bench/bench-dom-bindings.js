@@ -86,7 +86,7 @@ function benchOnClick(button, results, benchName, bencher) {
 
     const csv = stats
           .xs
-          .map(x => `${testSourceMap.mappings.length},"${benchName}",${x}`)
+          .map(x => `"${implAndBrowser}",${testSourceMap.mappings.length},"${benchName}",${x}`)
           .join("\n");
 
     results.innerHTML = `
