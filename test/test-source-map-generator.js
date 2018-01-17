@@ -242,38 +242,45 @@ exports['test that source content can be set'] = function (assert) {
 };
 
 exports['test .fromSourceMap'] = async function (assert) {
-  var map = SourceMapGenerator.fromSourceMap(await new SourceMapConsumer(util.testMap));
+  var smc = await new SourceMapConsumer(util.testMap);
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMap);
 };
 
 exports['test .fromSourceMap with sourcesContent'] = async function (assert) {
-  var map = SourceMapGenerator.fromSourceMap(
-    await new SourceMapConsumer(util.testMapWithSourcesContent));
+  var smc = await new SourceMapConsumer(util.testMapWithSourcesContent)
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
 };
 
 exports['test .fromSourceMap with single source'] = async function (assert) {
-  var map = SourceMapGenerator.fromSourceMap(
-      await new SourceMapConsumer(util.testMapSingleSource));
+  var smc = await new SourceMapConsumer(util.testMapSingleSource);
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapSingleSource);
 };
 
 exports['test .fromSourceMap with empty mappings'] = async function (assert) {
-  var map = SourceMapGenerator.fromSourceMap(
-    await new SourceMapConsumer(util.testMapEmptyMappings));
+  var smc = await new SourceMapConsumer(util.testMapEmptyMappings);
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappings);
 };
 
 exports['test .fromSourceMap with empty mappings and relative sources'] = async function (assert) {
-  var map = SourceMapGenerator.fromSourceMap(
-    await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  var smc = await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
 };
 
 exports['test .fromSourceMap with multiple sources where mappings refers only to single source'] = async function (assert) {
-    var map = SourceMapGenerator.fromSourceMap(
-        await new SourceMapConsumer(util.testMapMultiSourcesMappingRefersSingleSourceOnly));
-    util.assertEqualMaps(assert, map.toJSON(), util.testMapMultiSourcesMappingRefersSingleSourceOnly);
+  var smc = await new SourceMapConsumer(util.testMapMultiSourcesMappingRefersSingleSourceOnly);
+  var map = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapMultiSourcesMappingRefersSingleSourceOnly);
 };
 
 exports['test applySourceMap'] = async function (assert) {
@@ -326,10 +333,15 @@ exports['test applySourceMap'] = async function (assert) {
   expectedMap = expectedMap.toJSON();
 
   // apply source map "mapStep1" to "mapStep2"
-  var generator = SourceMapGenerator.fromSourceMap(await new SourceMapConsumer(mapStep2));
-  generator.applySourceMap(await new SourceMapConsumer(mapStep1));
-  var actualMap = generator.toJSON();
+  var smc = await new SourceMapConsumer(mapStep2);
+  var generator = SourceMapGenerator.fromSourceMap(smc);
+  smc.destroy();
 
+  smc = await new SourceMapConsumer(mapStep1);
+  generator.applySourceMap(smc);
+  smc.destroy();
+
+  var actualMap = generator.toJSON();
   util.assertEqualMaps(assert, actualMap, expectedMap);
 };
 
@@ -340,10 +352,13 @@ exports['test applySourceMap throws when file is missing'] = async function (ass
   var map2 = new SourceMapGenerator();
 
   let error;
+  let smc = await new SourceMapConsumer(map2.toJSON());
   try {
-    map.applySourceMap(await new SourceMapConsumer(map2.toJSON()));
+    map.applySourceMap(smc);
   } catch (e) {
     error = e;
+  } finally {
+    smc.destroy();
   }
   assert.ok(error instanceof Error);
 };
@@ -492,6 +507,9 @@ exports['test the two additional parameters of applySourceMap'] = async function
     '/bar.coffee',
     'http://www.example.com/baz.coffee'
   ]));
+
+  bundleMap.destroy();
+  minifiedMap.destroy();
 };
 
 exports['test applySourceMap name handling'] = async function (assert) {
@@ -519,12 +537,15 @@ exports['test applySourceMap name handling'] = async function (assert) {
       name: coffeeName
     });
 
-    minifiedMap.applySourceMap(await new SourceMapConsumer(coffeeMap.toJSON()));
+    let consumer = await new SourceMapConsumer(coffeeMap.toJSON());
+    minifiedMap.applySourceMap(consumer);
+    consumer.destroy();
 
-    const consumer = await new SourceMapConsumer(minifiedMap.toJSON());
+    consumer = await new SourceMapConsumer(minifiedMap.toJSON());
     consumer.eachMapping(function(mapping) {
       assert.equal(mapping.name, expectedName);
     });
+    consumer.destroy();
   };
 
   // `foo = 1` -> `var foo = 1;` -> `var a=1`
@@ -741,20 +762,34 @@ exports['test applySourceMap with unexact match'] = async function (assert) {
     source: 'original-source'
   });
 
-  map1.applySourceMap(await new SourceMapConsumer(map2.toJSON()));
+  const consumer = await new SourceMapConsumer(map2.toJSON());
+  map1.applySourceMap(consumer);
+  consumer.destroy();
 
   util.assertEqualMaps(assert, map1.toJSON(), expectedMap.toJSON());
 };
 
 exports['test applySourceMap with empty mappings'] = async function (assert) {
-  var generator =  SourceMapGenerator.fromSourceMap(await new SourceMapConsumer(util.testMapEmptyMappings));
-  generator.applySourceMap(await new SourceMapConsumer(util.testMapEmptyMappings));
+  let consumer = await new SourceMapConsumer(util.testMapEmptyMappings);
+  var generator =  SourceMapGenerator.fromSourceMap(consumer);
+  consumer.destroy();
+
+  consumer = await new SourceMapConsumer(util.testMapEmptyMappings);
+  generator.applySourceMap(consumer);
+  consumer.destroy();
+
   util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappings);
 };
 
 exports['test applySourceMap with empty mappings and relative sources'] = async function (assert) {
-  var generator =  SourceMapGenerator.fromSourceMap(await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
-  generator.applySourceMap(await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources));
+  let consumer = await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
+  var generator =  SourceMapGenerator.fromSourceMap(consumer);
+  consumer.destroy();
+
+  consumer = await new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
+  generator.applySourceMap(consumer);
+  consumer.destroy();
+
   util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
 };
 
@@ -779,6 +814,8 @@ exports['test issue #192'] = async function (assert) {
   assert.equal(n, 2,
                "Should not de-duplicate mappings that have the same " +
                "generated positions, but different original positions.");
+
+  consumer.destroy();
 };
 
 exports['test numeric names #231'] = function (assert) {
