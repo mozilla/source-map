@@ -145,6 +145,43 @@ function urlGenerate(aParsedUrl) {
 }
 exports.urlGenerate = urlGenerate;
 
+const MAX_CACHED_INPUTS = 32;
+
+/**
+ * Takes some function `f(input) -> result` and returns a memoized version of
+ * `f`.
+ *
+ * We keep at most `MAX_CACHED_INPUTS` memoized results of `f` alive. The
+ * memoization is a dumb-simple, linear least-recently-used cache.
+ */
+function lruMemoize(f) {
+  const cache = [];
+
+  return function (input) {
+    for (var i = 0; i < cache.length; i++) {
+      if (cache[i].input === input) {
+        var temp = cache[0];
+        cache[0] = cache[i];
+        cache[i] = temp;
+        return cache[0].result;
+      }
+    }
+
+    var result = f(input);
+
+    cache.unshift({
+      input,
+      result,
+    });
+
+    if (cache.length > MAX_CACHED_INPUTS) {
+      cache.pop();
+    }
+
+    return result;
+  };
+}
+
 /**
  * Normalizes a path, or the path portion of a URL:
  *
@@ -156,7 +193,7 @@ exports.urlGenerate = urlGenerate;
  *
  * @param aPath The path or url to normalize.
  */
-function normalize(aPath) {
+var normalize = lruMemoize(function normalize(aPath) {
   var path = aPath;
   var url = urlParse(aPath);
   if (url) {
@@ -216,7 +253,7 @@ function normalize(aPath) {
     return urlGenerate(url);
   }
   return path;
-}
+});
 exports.normalize = normalize;
 
 /**
