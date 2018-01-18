@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
+		module.exports = factory(require("fs"), require("path"));
 	else if(typeof define === 'function' && define.amd)
-		define([], factory);
+		define(["fs", "path"], factory);
 	else if(typeof exports === 'object')
-		exports["sourceMap"] = factory();
+		exports["sourceMap"] = factory(require("fs"), require("path"));
 	else
-		root["sourceMap"] = factory();
-})(this, function() {
+		root["sourceMap"] = factory(root["fs"], root["path"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_12__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -61,7 +61,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	exports.SourceMapGenerator = __webpack_require__(1).SourceMapGenerator;
 	exports.SourceMapConsumer = __webpack_require__(7).SourceMapConsumer;
-	exports.SourceNode = __webpack_require__(10).SourceNode;
+	exports.SourceNode = __webpack_require__(14).SourceNode;
 
 
 /***/ }),
@@ -267,7 +267,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    // Applying the SourceMap can add and remove items from the sources and
 	    // the names array.
-	    var newSources = new ArraySet();
+	    var newSources = this._mappings.toArray().length > 0
+	      ? new ArraySet()
+	      : this._sources;
 	    var newNames = new ArraySet();
 
 	    // Find mappings for the "sourceFile"
@@ -610,36 +612,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return encoded;
 	};
 
-	/**
-	 * Decodes the next base 64 VLQ value from the given string and returns the
-	 * value and the rest of the string via the out parameter.
-	 */
-	exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
-	  var strLen = aStr.length;
-	  var result = 0;
-	  var shift = 0;
-	  var continuation, digit;
-
-	  do {
-	    if (aIndex >= strLen) {
-	      throw new Error("Expected more digits in base 64 VLQ value.");
-	    }
-
-	    digit = base64.decode(aStr.charCodeAt(aIndex++));
-	    if (digit === -1) {
-	      throw new Error("Invalid base64 digit: " + aStr.charAt(aIndex - 1));
-	    }
-
-	    continuation = !!(digit & VLQ_CONTINUATION_BIT);
-	    digit &= VLQ_BASE_MASK;
-	    result = result + (digit << shift);
-	    shift += VLQ_BASE_SHIFT;
-	  } while (continuation);
-
-	  aOutParam.value = fromVLQSigned(result);
-	  aOutParam.rest = aIndex;
-	};
-
 
 /***/ }),
 /* 3 */
@@ -662,55 +634,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return intToCharMap[number];
 	  }
 	  throw new TypeError("Must be between 0 and 63: " + number);
-	};
-
-	/**
-	 * Decode a single base 64 character code digit to an integer. Returns -1 on
-	 * failure.
-	 */
-	exports.decode = function (charCode) {
-	  var bigA = 65;     // 'A'
-	  var bigZ = 90;     // 'Z'
-
-	  var littleA = 97;  // 'a'
-	  var littleZ = 122; // 'z'
-
-	  var zero = 48;     // '0'
-	  var nine = 57;     // '9'
-
-	  var plus = 43;     // '+'
-	  var slash = 47;    // '/'
-
-	  var littleOffset = 26;
-	  var numberOffset = 52;
-
-	  // 0 - 25: ABCDEFGHIJKLMNOPQRSTUVWXYZ
-	  if (bigA <= charCode && charCode <= bigZ) {
-	    return (charCode - bigA);
-	  }
-
-	  // 26 - 51: abcdefghijklmnopqrstuvwxyz
-	  if (littleA <= charCode && charCode <= littleZ) {
-	    return (charCode - littleA + littleOffset);
-	  }
-
-	  // 52 - 61: 0123456789
-	  if (zero <= charCode && charCode <= nine) {
-	    return (charCode - zero + numberOffset);
-	  }
-
-	  // 62: +
-	  if (charCode == plus) {
-	    return 62;
-	  }
-
-	  // 63: /
-	  if (charCode == slash) {
-	    return 63;
-	  }
-
-	  // Invalid base64 digit.
-	  return -1;
 	};
 
 
@@ -1436,6 +1359,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var ArraySet = __webpack_require__(5).ArraySet;
 	var base64VLQ = __webpack_require__(2);
 	var quickSort = __webpack_require__(9).quickSort;
+	var readWasm = __webpack_require__(10);
+	var wasm = __webpack_require__(13);
 
 	function SourceMapConsumer(aSourceMap, aSourceMapURL) {
 	  var sourceMap = aSourceMap;
@@ -1443,10 +1368,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    sourceMap = util.parseSourceMapInput(aSourceMap);
 	  }
 
-	  return sourceMap.sections != null
-	    ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
-	    : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
+	  return Promise.resolve().then(_ => {
+	    return sourceMap.sections != null
+	      ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
+	      : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
+	  });
 	}
+
+	SourceMapConsumer.initialize = opts => {
+	  readWasm.initialize(opts["lib/mappings.wasm"]);
+	};
 
 	SourceMapConsumer.fromSourceMap = function(aSourceMap, aSourceMapURL) {
 	  return BasicSourceMapConsumer.fromSourceMap(aSourceMap, aSourceMapURL);
@@ -1456,68 +1387,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * The version of the source mapping spec that we are consuming.
 	 */
 	SourceMapConsumer.prototype._version = 3;
-
-	// `__generatedMappings` and `__originalMappings` are arrays that hold the
-	// parsed mapping coordinates from the source map's "mappings" attribute. They
-	// are lazily instantiated, accessed via the `_generatedMappings` and
-	// `_originalMappings` getters respectively, and we only parse the mappings
-	// and create these arrays once queried for a source location. We jump through
-	// these hoops because there can be many thousands of mappings, and parsing
-	// them is expensive, so we only want to do it if we must.
-	//
-	// Each object in the arrays is of the form:
-	//
-	//     {
-	//       generatedLine: The line number in the generated code,
-	//       generatedColumn: The column number in the generated code,
-	//       source: The path to the original source file that generated this
-	//               chunk of code,
-	//       originalLine: The line number in the original source that
-	//                     corresponds to this chunk of generated code,
-	//       originalColumn: The column number in the original source that
-	//                       corresponds to this chunk of generated code,
-	//       name: The name of the original symbol which generated this chunk of
-	//             code.
-	//     }
-	//
-	// All properties except for `generatedLine` and `generatedColumn` can be
-	// `null`.
-	//
-	// `_generatedMappings` is ordered by the generated positions.
-	//
-	// `_originalMappings` is ordered by the original positions.
-
-	SourceMapConsumer.prototype.__generatedMappings = null;
-	Object.defineProperty(SourceMapConsumer.prototype, '_generatedMappings', {
-	  configurable: true,
-	  enumerable: true,
-	  get: function () {
-	    if (!this.__generatedMappings) {
-	      this._parseMappings(this._mappings, this.sourceRoot);
-	    }
-
-	    return this.__generatedMappings;
-	  }
-	});
-
-	SourceMapConsumer.prototype.__originalMappings = null;
-	Object.defineProperty(SourceMapConsumer.prototype, '_originalMappings', {
-	  configurable: true,
-	  enumerable: true,
-	  get: function () {
-	    if (!this.__originalMappings) {
-	      this._parseMappings(this._mappings, this.sourceRoot);
-	    }
-
-	    return this.__originalMappings;
-	  }
-	});
-
-	SourceMapConsumer.prototype._charIsMappingSeparator =
-	  function SourceMapConsumer_charIsMappingSeparator(aStr, index) {
-	    var c = aStr.charAt(index);
-	    return c === ";" || c === ",";
-	  };
 
 	/**
 	 * Parse the mappings in a string in to a data structure which we can easily
@@ -1553,34 +1422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	SourceMapConsumer.prototype.eachMapping =
 	  function SourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
-	    var context = aContext || null;
-	    var order = aOrder || SourceMapConsumer.GENERATED_ORDER;
-
-	    var mappings;
-	    switch (order) {
-	    case SourceMapConsumer.GENERATED_ORDER:
-	      mappings = this._generatedMappings;
-	      break;
-	    case SourceMapConsumer.ORIGINAL_ORDER:
-	      mappings = this._originalMappings;
-	      break;
-	    default:
-	      throw new Error("Unknown order of iteration.");
-	    }
-
-	    var sourceRoot = this.sourceRoot;
-	    mappings.map(function (mapping) {
-	      var source = mapping.source === null ? null : this._sources.at(mapping.source);
-	      source = util.computeSourceURL(sourceRoot, source, this._sourceMapURL);
-	      return {
-	        source: source,
-	        generatedLine: mapping.generatedLine,
-	        generatedColumn: mapping.generatedColumn,
-	        originalLine: mapping.originalLine,
-	        originalColumn: mapping.originalColumn,
-	        name: mapping.name === null ? null : this._names.at(mapping.name)
-	      };
-	    }, this).forEach(aCallback, context);
+	    throw new Error("Subclasses must implement eachMapping");
 	  };
 
 	/**
@@ -1607,72 +1449,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	SourceMapConsumer.prototype.allGeneratedPositionsFor =
 	  function SourceMapConsumer_allGeneratedPositionsFor(aArgs) {
-	    var line = util.getArg(aArgs, 'line');
+	    throw new Error("Subclasses must implement allGeneratedPositionsFor");
+	  };
 
-	    // When there is no exact match, BasicSourceMapConsumer.prototype._findMapping
-	    // returns the index of the closest mapping less than the needle. By
-	    // setting needle.originalColumn to 0, we thus find the last mapping for
-	    // the given line, provided such a mapping exists.
-	    var needle = {
-	      source: util.getArg(aArgs, 'source'),
-	      originalLine: line,
-	      originalColumn: util.getArg(aArgs, 'column', 0)
-	    };
-
-	    needle.source = this._findSourceIndex(needle.source);
-	    if (needle.source < 0) {
-	      return [];
-	    }
-
-	    var mappings = [];
-
-	    var index = this._findMapping(needle,
-	                                  this._originalMappings,
-	                                  "originalLine",
-	                                  "originalColumn",
-	                                  util.compareByOriginalPositions,
-	                                  binarySearch.LEAST_UPPER_BOUND);
-	    if (index >= 0) {
-	      var mapping = this._originalMappings[index];
-
-	      if (aArgs.column === undefined) {
-	        var originalLine = mapping.originalLine;
-
-	        // Iterate until either we run out of mappings, or we run into
-	        // a mapping for a different line than the one we found. Since
-	        // mappings are sorted, this is guaranteed to find all mappings for
-	        // the line we found.
-	        while (mapping && mapping.originalLine === originalLine) {
-	          mappings.push({
-	            line: util.getArg(mapping, 'generatedLine', null),
-	            column: util.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
-	          });
-
-	          mapping = this._originalMappings[++index];
-	        }
-	      } else {
-	        var originalColumn = mapping.originalColumn;
-
-	        // Iterate until either we run out of mappings, or we run into
-	        // a mapping for a different line than the one we were searching for.
-	        // Since mappings are sorted, this is guaranteed to find all mappings for
-	        // the line we are searching for.
-	        while (mapping &&
-	               mapping.originalLine === line &&
-	               mapping.originalColumn == originalColumn) {
-	          mappings.push({
-	            line: util.getArg(mapping, 'generatedLine', null),
-	            column: util.getArg(mapping, 'generatedColumn', null),
-	            lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
-	          });
-
-	          mapping = this._originalMappings[++index];
-	        }
-	      }
-	    }
-
-	    return mappings;
+	SourceMapConsumer.prototype.destroy =
+	  function SourceMapConsumer_destroy() {
+	    throw new Error("Subclasses must implement destroy");
 	  };
 
 	exports.SourceMapConsumer = SourceMapConsumer;
@@ -1769,6 +1551,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this._mappings = mappings;
 	  this._sourceMapURL = aSourceMapURL;
 	  this.file = file;
+
+	  this._computedColumnSpans = false;
+	  this._mappingsPtr = 0;
+	  this._wasm = null;
+
+	  return wasm().then(wasm => {
+	    this._wasm = wasm;
+	    return this;
+	  });
 	}
 
 	BasicSourceMapConsumer.prototype = Object.create(SourceMapConsumer.prototype);
@@ -1811,52 +1602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	BasicSourceMapConsumer.fromSourceMap =
 	  function SourceMapConsumer_fromSourceMap(aSourceMap, aSourceMapURL) {
-	    var smc = Object.create(BasicSourceMapConsumer.prototype);
-
-	    var names = smc._names = ArraySet.fromArray(aSourceMap._names.toArray(), true);
-	    var sources = smc._sources = ArraySet.fromArray(aSourceMap._sources.toArray(), true);
-	    smc.sourceRoot = aSourceMap._sourceRoot;
-	    smc.sourcesContent = aSourceMap._generateSourcesContent(smc._sources.toArray(),
-	                                                            smc.sourceRoot);
-	    smc.file = aSourceMap._file;
-	    smc._sourceMapURL = aSourceMapURL;
-	    smc._absoluteSources = smc._sources.toArray().map(function (s) {
-	      return util.computeSourceURL(smc.sourceRoot, s, aSourceMapURL);
-	    });
-
-	    // Because we are modifying the entries (by converting string sources and
-	    // names to indices into the sources and names ArraySets), we have to make
-	    // a copy of the entry or else bad things happen. Shared mutable state
-	    // strikes again! See github issue #191.
-
-	    var generatedMappings = aSourceMap._mappings.toArray().slice();
-	    var destGeneratedMappings = smc.__generatedMappings = [];
-	    var destOriginalMappings = smc.__originalMappings = [];
-
-	    for (var i = 0, length = generatedMappings.length; i < length; i++) {
-	      var srcMapping = generatedMappings[i];
-	      var destMapping = new Mapping;
-	      destMapping.generatedLine = srcMapping.generatedLine;
-	      destMapping.generatedColumn = srcMapping.generatedColumn;
-
-	      if (srcMapping.source) {
-	        destMapping.source = sources.indexOf(srcMapping.source);
-	        destMapping.originalLine = srcMapping.originalLine;
-	        destMapping.originalColumn = srcMapping.originalColumn;
-
-	        if (srcMapping.name) {
-	          destMapping.name = names.indexOf(srcMapping.name);
-	        }
-
-	        destOriginalMappings.push(destMapping);
-	      }
-
-	      destGeneratedMappings.push(destMapping);
-	    }
-
-	    quickSort(smc.__originalMappings, util.compareByOriginalPositions);
-
-	    return smc;
+	    return new BasicSourceMapConsumer(aSourceMap.toString());
 	  };
 
 	/**
@@ -1873,17 +1619,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	});
 
-	/**
-	 * Provide the JIT with a nice shape / hidden class.
-	 */
-	function Mapping() {
-	  this.generatedLine = 0;
-	  this.generatedColumn = 0;
-	  this.source = null;
-	  this.originalLine = null;
-	  this.originalColumn = null;
-	  this.name = null;
-	}
+	BasicSourceMapConsumer.prototype._getMappingsPtr = function () {
+	  if (this._mappingsPtr === 0) {
+	    this._parseMappings(this._mappings, this.sourceRoot);
+	  }
+
+	  return this._mappingsPtr;
+	};
 
 	/**
 	 * Parse the mappings in a string in to a data structure which we can easily
@@ -1891,131 +1633,132 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * `this.__originalMappings` properties).
 	 */
 	BasicSourceMapConsumer.prototype._parseMappings =
-	  function SourceMapConsumer_parseMappings(aStr, aSourceRoot) {
-	    var generatedLine = 1;
-	    var previousGeneratedColumn = 0;
-	    var previousOriginalLine = 0;
-	    var previousOriginalColumn = 0;
-	    var previousSource = 0;
-	    var previousName = 0;
-	    var length = aStr.length;
-	    var index = 0;
-	    var cachedSegments = {};
-	    var temp = {};
-	    var originalMappings = [];
-	    var generatedMappings = [];
-	    var mapping, str, segment, end, value;
+	  function BasicSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
+	    const size = aStr.length;
 
-	    while (index < length) {
-	      if (aStr.charAt(index) === ';') {
-	        generatedLine++;
-	        index++;
-	        previousGeneratedColumn = 0;
-	      }
-	      else if (aStr.charAt(index) === ',') {
-	        index++;
-	      }
-	      else {
-	        mapping = new Mapping();
-	        mapping.generatedLine = generatedLine;
-
-	        // Because each offset is encoded relative to the previous one,
-	        // many segments often have the same encoding. We can exploit this
-	        // fact by caching the parsed variable length fields of each segment,
-	        // allowing us to avoid a second parse if we encounter the same
-	        // segment again.
-	        for (end = index; end < length; end++) {
-	          if (this._charIsMappingSeparator(aStr, end)) {
-	            break;
-	          }
-	        }
-	        str = aStr.slice(index, end);
-
-	        segment = cachedSegments[str];
-	        if (segment) {
-	          index += str.length;
-	        } else {
-	          segment = [];
-	          while (index < end) {
-	            base64VLQ.decode(aStr, index, temp);
-	            value = temp.value;
-	            index = temp.rest;
-	            segment.push(value);
-	          }
-
-	          if (segment.length === 2) {
-	            throw new Error('Found a source, but no line and column');
-	          }
-
-	          if (segment.length === 3) {
-	            throw new Error('Found a source and line, but no column');
-	          }
-
-	          cachedSegments[str] = segment;
-	        }
-
-	        // Generated column.
-	        mapping.generatedColumn = previousGeneratedColumn + segment[0];
-	        previousGeneratedColumn = mapping.generatedColumn;
-
-	        if (segment.length > 1) {
-	          // Original source.
-	          mapping.source = previousSource + segment[1];
-	          previousSource += segment[1];
-
-	          // Original line.
-	          mapping.originalLine = previousOriginalLine + segment[2];
-	          previousOriginalLine = mapping.originalLine;
-	          // Lines are stored 0-based
-	          mapping.originalLine += 1;
-
-	          // Original column.
-	          mapping.originalColumn = previousOriginalColumn + segment[3];
-	          previousOriginalColumn = mapping.originalColumn;
-
-	          if (segment.length > 4) {
-	            // Original name.
-	            mapping.name = previousName + segment[4];
-	            previousName += segment[4];
-	          }
-	        }
-
-	        generatedMappings.push(mapping);
-	        if (typeof mapping.originalLine === 'number') {
-	          originalMappings.push(mapping);
-	        }
-	      }
+	    const mappingsBufPtr = this._wasm.exports.allocate_mappings(size);
+	    const mappingsBuf = new Uint8Array(this._wasm.exports.memory.buffer, mappingsBufPtr, size);
+	    for (var i = 0; i < size; i++) {
+	      mappingsBuf[i] = aStr.charCodeAt(i);
 	    }
 
-	    quickSort(generatedMappings, util.compareByGeneratedPositionsDeflated);
-	    this.__generatedMappings = generatedMappings;
+	    const mappingsPtr = this._wasm.exports.parse_mappings(mappingsBufPtr);
 
-	    quickSort(originalMappings, util.compareByOriginalPositions);
-	    this.__originalMappings = originalMappings;
+	    if (!mappingsPtr) {
+	      const error = this._wasm.exports.get_last_error();
+	      let msg = `Error parsing mappings (code ${error}): `;
+
+	      // XXX: keep these error codes in sync with `fitzgen/source-map-mappings`.
+	      switch (error) {
+	        case 1:
+	          msg += "the mappings contained a negative line, column, source index, or name index";
+	          break;
+	        case 2:
+	          msg += "the mappings contained a number larger than 2**32";
+	          break;
+	        case 3:
+	          msg += "reached EOF while in the middle of parsing a VLQ";
+	          break;
+	        case 4:
+	          msg += "invalid base 64 character while parsing a VLQ";
+	          break
+	        default:
+	          msg += "unknown error code";
+	          break;
+	      }
+
+	      throw new Error(msg);
+	    }
+
+	    this._mappingsPtr = mappingsPtr;
 	  };
 
-	/**
-	 * Find the mapping that best matches the hypothetical "needle" mapping that
-	 * we are searching for in the given "haystack" of mappings.
-	 */
-	BasicSourceMapConsumer.prototype._findMapping =
-	  function SourceMapConsumer_findMapping(aNeedle, aMappings, aLineName,
-	                                         aColumnName, aComparator, aBias) {
-	    // To return the position we are searching for, we must first find the
-	    // mapping for the given position and then return the opposite position it
-	    // points to. Because the mappings are sorted, we can use binary search to
-	    // find the best mapping.
+	BasicSourceMapConsumer.prototype.eachMapping =
+	  function BasicSourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
+	    var context = aContext || null;
+	    var order = aOrder || SourceMapConsumer.GENERATED_ORDER;
+	    var sourceRoot = this.sourceRoot;
 
-	    if (aNeedle[aLineName] <= 0) {
-	      throw new TypeError('Line must be greater than or equal to 1, got '
-	                          + aNeedle[aLineName]);
-	    }
-	    if (aNeedle[aColumnName] < 0) {
-	      throw new TypeError('Column must be greater than or equal to 0, got '
-	                          + aNeedle[aColumnName]);
+	    this._wasm.withMappingCallback(
+	      mapping => {
+	        if (mapping.source !== null) {
+	          mapping.source = this._sources.at(mapping.source);
+	          mapping.source = util.computeSourceURL(sourceRoot, mapping.source, this._sourceMapURL);
+
+	          if (mapping.name !== null) {
+	            mapping.name = this._names.at(mapping.name);
+	          }
+	        }
+
+	        aCallback.call(context, mapping);
+	      },
+	      () => {
+	        switch (order) {
+	        case SourceMapConsumer.GENERATED_ORDER:
+	          this._wasm.exports.by_generated_location(this._getMappingsPtr());
+	          break;
+	        case SourceMapConsumer.ORIGINAL_ORDER:
+	          this._wasm.exports.by_original_location(this._getMappingsPtr());
+	          break;
+	        default:
+	          throw new Error("Unknown order of iteration.");
+	        }
+	      }
+	    );
+	  };
+
+	BasicSourceMapConsumer.prototype.allGeneratedPositionsFor =
+	  function BasicSourceMapConsumer_allGeneratedPositionsFor(aArgs) {
+	    var source = util.getArg(aArgs, 'source');
+	    var originalLine = util.getArg(aArgs, 'line');
+	    var originalColumn = aArgs.column || 0;
+
+	    source = this._findSourceIndex(source);
+	    if (source < 0) {
+	      return [];
 	    }
 
-	    return binarySearch.search(aNeedle, aMappings, aComparator, aBias);
+	    if (originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
+	    var mappings = [];
+
+	    this._wasm.withMappingCallback(
+	      m => {
+	        let lastColumn = m.lastGeneratedColumn;
+	        if (this._computedColumnSpans && lastColumn === null) {
+	          lastColumn = Infinity;
+	        }
+	        mappings.push({
+	          line: m.generatedLine,
+	          column: m.generatedColumn,
+	          lastColumn,
+	        });
+	      }, () => {
+	        this._wasm.exports.all_generated_locations_for(
+	          this._getMappingsPtr(),
+	          source,
+	          originalLine - 1,
+	          'column' in aArgs,
+	          originalColumn
+	        );
+	      }
+	    );
+
+	    return mappings;
+	  };
+
+	BasicSourceMapConsumer.prototype.destroy =
+	  function BasicSourceMapConsumer_destroy() {
+	    if (this._mappingsPtr !== 0) {
+	      this._wasm.exports.free_mappings(this._mappingsPtr);
+	      this._mappingsPtr = 0;
+	    }
 	  };
 
 	/**
@@ -2024,25 +1767,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	BasicSourceMapConsumer.prototype.computeColumnSpans =
 	  function SourceMapConsumer_computeColumnSpans() {
-	    for (var index = 0; index < this._generatedMappings.length; ++index) {
-	      var mapping = this._generatedMappings[index];
-
-	      // Mappings do not contain a field for the last generated columnt. We
-	      // can come up with an optimistic estimate, however, by assuming that
-	      // mappings are contiguous (i.e. given two consecutive mappings, the
-	      // first mapping ends where the second one starts).
-	      if (index + 1 < this._generatedMappings.length) {
-	        var nextMapping = this._generatedMappings[index + 1];
-
-	        if (mapping.generatedLine === nextMapping.generatedLine) {
-	          mapping.lastGeneratedColumn = nextMapping.generatedColumn - 1;
-	          continue;
-	        }
-	      }
-
-	      // The last mapping for each line spans the entire line.
-	      mapping.lastGeneratedColumn = Infinity;
+	    if (this._computedColumnSpans) {
+	      return;
 	    }
+
+	    this._wasm.exports.compute_column_spans(this._getMappingsPtr());
+	    this._computedColumnSpans = true;
 	  };
 
 	/**
@@ -2076,28 +1806,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	      generatedColumn: util.getArg(aArgs, 'column')
 	    };
 
-	    var index = this._findMapping(
-	      needle,
-	      this._generatedMappings,
-	      "generatedLine",
-	      "generatedColumn",
-	      util.compareByGeneratedPositionsDeflated,
-	      util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
-	    );
+	    if (needle.generatedLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
 
-	    if (index >= 0) {
-	      var mapping = this._generatedMappings[index];
+	    if (needle.generatedColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
 
+	    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+	    if (bias == null) {
+	      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+	    }
+
+	    var mapping;
+	    this._wasm.withMappingCallback(m => mapping = m, () => {
+	      this._wasm.exports.original_location_for(
+	        this._getMappingsPtr(),
+	        needle.generatedLine - 1,
+	        needle.generatedColumn,
+	        bias
+	      );
+	    });
+
+	    if (mapping) {
 	      if (mapping.generatedLine === needle.generatedLine) {
 	        var source = util.getArg(mapping, 'source', null);
 	        if (source !== null) {
 	          source = this._sources.at(source);
 	          source = util.computeSourceURL(this.sourceRoot, source, this._sourceMapURL);
 	        }
+
 	        var name = util.getArg(mapping, 'name', null);
 	        if (name !== null) {
 	          name = this._names.at(name);
 	        }
+
 	        return {
 	          source: source,
 	          line: util.getArg(mapping, 'originalLine', null),
@@ -2221,23 +1965,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	      originalColumn: util.getArg(aArgs, 'column')
 	    };
 
-	    var index = this._findMapping(
-	      needle,
-	      this._originalMappings,
-	      "originalLine",
-	      "originalColumn",
-	      util.compareByOriginalPositions,
-	      util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND)
-	    );
+	    if (needle.originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
 
-	    if (index >= 0) {
-	      var mapping = this._originalMappings[index];
+	    if (needle.originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
 
+	    var bias = util.getArg(aArgs, 'bias', SourceMapConsumer.GREATEST_LOWER_BOUND);
+	    if (bias == null) {
+	      bias = SourceMapConsumer.GREATEST_LOWER_BOUND;
+	    }
+
+	    var mapping;
+	    this._wasm.withMappingCallback(m => mapping = m, () => {
+	      this._wasm.exports.generated_location_for(
+	        this._getMappingsPtr(),
+	        needle.source,
+	        needle.originalLine - 1,
+	        needle.originalColumn,
+	        bias
+	      );
+	    });
+
+	    if (mapping) {
 	      if (mapping.source === needle.source) {
+	        let lastColumn = mapping.lastGeneratedColumn;
+	        if (this._computedColumnSpans && lastColumn === null) {
+	          lastColumn = Infinity;
+	        }
 	        return {
 	          line: util.getArg(mapping, 'generatedLine', null),
 	          column: util.getArg(mapping, 'generatedColumn', null),
-	          lastColumn: util.getArg(mapping, 'lastGeneratedColumn', null)
+	          lastColumn,
 	        };
 	      }
 	    }
@@ -2320,7 +2081,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    line: -1,
 	    column: 0
 	  };
-	  this._sections = sections.map(function (s) {
+	  return Promise.all(sections.map(s => {
 	    if (s.url) {
 	      // The url field will require support for asynchronicity.
 	      // See https://github.com/mozilla/source-map/issues/16
@@ -2336,20 +2097,122 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    lastOffset = offset;
 
-	    return {
-	      generatedOffset: {
-	        // The offset fields are 0-based, but we use 1-based indices when
-	        // encoding/decoding from VLQ.
-	        generatedLine: offsetLine + 1,
-	        generatedColumn: offsetColumn + 1
-	      },
-	      consumer: new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL)
-	    }
+	    const consumer = new SourceMapConsumer(util.getArg(s, 'map'), aSourceMapURL);
+	    return consumer.then(consumer => {
+	      return {
+	        generatedOffset: {
+	          // The offset fields are 0-based, but we use 1-based indices when
+	          // encoding/decoding from VLQ.
+	          generatedLine: offsetLine + 1,
+	          generatedColumn: offsetColumn + 1
+	        },
+	        consumer: consumer
+	      };
+	    });
+	  })).then(sections => {
+	    this._sections = sections;
+	    return this;
 	  });
 	}
 
 	IndexedSourceMapConsumer.prototype = Object.create(SourceMapConsumer.prototype);
 	IndexedSourceMapConsumer.prototype.constructor = SourceMapConsumer;
+
+	// `__generatedMappings` and `__originalMappings` are arrays that hold the
+	// parsed mapping coordinates from the source map's "mappings" attribute. They
+	// are lazily instantiated, accessed via the `_generatedMappings` and
+	// `_originalMappings` getters respectively, and we only parse the mappings
+	// and create these arrays once queried for a source location. We jump through
+	// these hoops because there can be many thousands of mappings, and parsing
+	// them is expensive, so we only want to do it if we must.
+	//
+	// Each object in the arrays is of the form:
+	//
+	//     {
+	//       generatedLine: The line number in the generated code,
+	//       generatedColumn: The column number in the generated code,
+	//       source: The path to the original source file that generated this
+	//               chunk of code,
+	//       originalLine: The line number in the original source that
+	//                     corresponds to this chunk of generated code,
+	//       originalColumn: The column number in the original source that
+	//                       corresponds to this chunk of generated code,
+	//       name: The name of the original symbol which generated this chunk of
+	//             code.
+	//     }
+	//
+	// All properties except for `generatedLine` and `generatedColumn` can be
+	// `null`.
+	//
+	// `_generatedMappings` is ordered by the generated positions.
+	//
+	// `_originalMappings` is ordered by the original positions.
+
+	IndexedSourceMapConsumer.prototype.__generatedMappings = null;
+	Object.defineProperty(IndexedSourceMapConsumer.prototype, '_generatedMappings', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__generatedMappings) {
+	      this._sortGeneratedMappings();
+	    }
+
+	    return this.__generatedMappings;
+	  }
+	});
+
+	IndexedSourceMapConsumer.prototype.__originalMappings = null;
+	Object.defineProperty(IndexedSourceMapConsumer.prototype, '_originalMappings', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__originalMappings) {
+	      this._sortOriginalMappings();
+	    }
+
+	    return this.__originalMappings;
+	  }
+	});
+
+	IndexedSourceMapConsumer.prototype.__generatedMappingsUnsorted = null;
+	Object.defineProperty(IndexedSourceMapConsumer.prototype, '_generatedMappingsUnsorted', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__generatedMappingsUnsorted) {
+	      this._parseMappings(this._mappings, this.sourceRoot);
+	    }
+
+	    return this.__generatedMappingsUnsorted;
+	  }
+	});
+
+	IndexedSourceMapConsumer.prototype.__originalMappingsUnsorted = null;
+	Object.defineProperty(IndexedSourceMapConsumer.prototype, '_originalMappingsUnsorted', {
+	  configurable: true,
+	  enumerable: true,
+	  get: function () {
+	    if (!this.__originalMappingsUnsorted) {
+	      this._parseMappings(this._mappings, this.sourceRoot);
+	    }
+
+	    return this.__originalMappingsUnsorted;
+	  }
+	});
+
+	IndexedSourceMapConsumer.prototype._sortGeneratedMappings =
+	  function IndexedSourceMapConsumer_sortGeneratedMappings() {
+	    const mappings = this._generatedMappingsUnsorted;
+	    quickSort(mappings, util.compareByGeneratedPositionsDeflated);
+	    this.__generatedMappings = mappings;
+	  };
+
+	IndexedSourceMapConsumer.prototype._sortOriginalMappings =
+	  function IndexedSourceMapConsumer_sortOriginalMappings() {
+	    const mappings = this._originalMappingsUnsorted;
+	    quickSort(mappings, util.compareByOriginalPositions);
+	    this.__originalMappings = mappings;
+	  };
 
 	/**
 	 * The version of the source mapping spec that we are consuming.
@@ -2479,7 +2342,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * and an object is returned with the following properties:
 	 *
 	 *   - line: The line number in the generated source, or null.  The
-	 *     line number is 1-based. 
+	 *     line number is 1-based.
 	 *   - column: The column number in the generated source, or null.
 	 *     The column number is 0-based.
 	 */
@@ -2520,24 +2383,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	IndexedSourceMapConsumer.prototype._parseMappings =
 	  function IndexedSourceMapConsumer_parseMappings(aStr, aSourceRoot) {
-	    this.__generatedMappings = [];
-	    this.__originalMappings = [];
+	    const generatedMappings = this.__generatedMappingsUnsorted = [];
+	    const originalMappings = this.__originalMappingsUnsorted = [];
 	    for (var i = 0; i < this._sections.length; i++) {
 	      var section = this._sections[i];
-	      var sectionMappings = section.consumer._generatedMappings;
+
+	      var sectionMappings = [];
+	      section.consumer.eachMapping(m => sectionMappings.push(m));
+
 	      for (var j = 0; j < sectionMappings.length; j++) {
 	        var mapping = sectionMappings[j];
 
-	        var source = section.consumer._sources.at(mapping.source);
-	        source = util.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
+	        var source = util.computeSourceURL(section.consumer.sourceRoot, source, this._sourceMapURL);
 	        this._sources.add(source);
 	        source = this._sources.indexOf(source);
 
 	        var name = null;
 	        if (mapping.name) {
-	          name = section.consumer._names.at(mapping.name);
-	          this._names.add(name);
-	          name = this._names.indexOf(name);
+	          this._names.add(mapping.name);
+	          name = this._names.indexOf(mapping.name);
 	        }
 
 	        // The mappings coming from the consumer for the section have
@@ -2557,15 +2421,164 @@ return /******/ (function(modules) { // webpackBootstrap
 	          name: name
 	        };
 
-	        this.__generatedMappings.push(adjustedMapping);
+	        generatedMappings.push(adjustedMapping);
 	        if (typeof adjustedMapping.originalLine === 'number') {
-	          this.__originalMappings.push(adjustedMapping);
+	          originalMappings.push(adjustedMapping);
+	        }
+	      }
+	    }
+	  };
+
+	IndexedSourceMapConsumer.prototype.eachMapping =
+	  function IndexedSourceMapConsumer_eachMapping(aCallback, aContext, aOrder) {
+	    var context = aContext || null;
+	    var order = aOrder || SourceMapConsumer.GENERATED_ORDER;
+
+	    var mappings;
+	    switch (order) {
+	    case SourceMapConsumer.GENERATED_ORDER:
+	      mappings = this._generatedMappings;
+	      break;
+	    case SourceMapConsumer.ORIGINAL_ORDER:
+	      mappings = this._originalMappings;
+	      break;
+	    default:
+	      throw new Error("Unknown order of iteration.");
+	    }
+
+	    var sourceRoot = this.sourceRoot;
+	    mappings.map(function (mapping) {
+	      var source = null;
+	      if (mapping.source !== null) {
+	        source = this._sources.at(mapping.source);
+	        source = util.computeSourceURL(sourceRoot, source, this._sourceMapURL);
+	      }
+	      return {
+	        source: source,
+	        generatedLine: mapping.generatedLine,
+	        generatedColumn: mapping.generatedColumn,
+	        originalLine: mapping.originalLine,
+	        originalColumn: mapping.originalColumn,
+	        name: mapping.name === null ? null : this._names.at(mapping.name)
+	      };
+	    }, this).forEach(aCallback, context);
+	  };
+
+	/**
+	 * Find the mapping that best matches the hypothetical "needle" mapping that
+	 * we are searching for in the given "haystack" of mappings.
+	 */
+	IndexedSourceMapConsumer.prototype._findMapping =
+	  function IndexedSourceMapConsumer_findMapping(aNeedle, aMappings, aLineName,
+	                                                aColumnName, aComparator, aBias) {
+	    // To return the position we are searching for, we must first find the
+	    // mapping for the given position and then return the opposite position it
+	    // points to. Because the mappings are sorted, we can use binary search to
+	    // find the best mapping.
+
+	    if (aNeedle[aLineName] <= 0) {
+	      throw new TypeError('Line must be greater than or equal to 1, got '
+	                          + aNeedle[aLineName]);
+	    }
+	    if (aNeedle[aColumnName] < 0) {
+	      throw new TypeError('Column must be greater than or equal to 0, got '
+	                          + aNeedle[aColumnName]);
+	    }
+
+	    return binarySearch.search(aNeedle, aMappings, aComparator, aBias);
+	  };
+
+	IndexedSourceMapConsumer.prototype.allGeneratedPositionsFor =
+	  function IndexedSourceMapConsumer_allGeneratedPositionsFor(aArgs) {
+	    var line = util.getArg(aArgs, 'line');
+
+	    // When there is no exact match, BasicSourceMapConsumer.prototype._findMapping
+	    // returns the index of the closest mapping less than the needle. By
+	    // setting needle.originalColumn to 0, we thus find the last mapping for
+	    // the given line, provided such a mapping exists.
+	    var needle = {
+	      source: util.getArg(aArgs, 'source'),
+	      originalLine: line,
+	      originalColumn: util.getArg(aArgs, 'column', 0)
+	    };
+
+	    needle.source = this._findSourceIndex(needle.source);
+	    if (needle.source < 0) {
+	      return [];
+	    }
+
+	    if (needle.originalLine < 1) {
+	      throw new Error("Line numbers must be >= 1");
+	    }
+
+	    if (needle.originalColumn < 0) {
+	      throw new Error("Column numbers must be >= 0");
+	    }
+
+	    var mappings = [];
+
+	    var index = this._findMapping(needle,
+	                                  this._originalMappings,
+	                                  "originalLine",
+	                                  "originalColumn",
+	                                  util.compareByOriginalPositions,
+	                                  binarySearch.LEAST_UPPER_BOUND);
+	    if (index >= 0) {
+	      var mapping = this._originalMappings[index];
+
+	      if (aArgs.column === undefined) {
+	        var originalLine = mapping.originalLine;
+
+	        // Iterate until either we run out of mappings, or we run into
+	        // a mapping for a different line than the one we found. Since
+	        // mappings are sorted, this is guaranteed to find all mappings for
+	        // the line we found.
+	        while (mapping && mapping.originalLine === originalLine) {
+	          let lastColumn = mapping.lastGeneratedColumn;
+	          if (this._computedColumnSpans && lastColumn === null) {
+	            lastColumn = Infinity;
+	          }
+	          mappings.push({
+	            line: util.getArg(mapping, 'generatedLine', null),
+	            column: util.getArg(mapping, 'generatedColumn', null),
+	            lastColumn,
+	          });
+
+	          mapping = this._originalMappings[++index];
+	        }
+	      } else {
+	        var originalColumn = mapping.originalColumn;
+
+	        // Iterate until either we run out of mappings, or we run into
+	        // a mapping for a different line than the one we were searching for.
+	        // Since mappings are sorted, this is guaranteed to find all mappings for
+	        // the line we are searching for.
+	        while (mapping &&
+	               mapping.originalLine === line &&
+	               mapping.originalColumn == originalColumn) {
+	          let lastColumn = mapping.lastGeneratedColumn;
+	          if (this._computedColumnSpans && lastColumn === null) {
+	            lastColumn = Infinity;
+	          }
+	          mappings.push({
+	            line: util.getArg(mapping, 'generatedLine', null),
+	            column: util.getArg(mapping, 'generatedColumn', null),
+	            lastColumn,
+	          });
+
+	          mapping = this._originalMappings[++index];
 	        }
 	      }
 	    }
 
-	    quickSort(this.__generatedMappings, util.compareByGeneratedPositionsDeflated);
-	    quickSort(this.__originalMappings, util.compareByOriginalPositions);
+	    return mappings;
+	  };
+
+	IndexedSourceMapConsumer.prototype.destroy =
+	  function IndexedSourceMapConsumer_destroy() {
+	    for (var i = 0; i < this._sections.length; i++) {
+	      this._sections[i].consumer.destroy();
+	    }
 	  };
 
 	exports.IndexedSourceMapConsumer = IndexedSourceMapConsumer;
@@ -2810,6 +2823,178 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(__dirname) {if (typeof fetch === "function") {
+	  // Web version of reading a wasm file into an array buffer.
+
+	  let mappingsWasmUrl = null;
+
+	  module.exports = function readWasm() {
+	    if (typeof mappingsWasmUrl !== "string") {
+	      throw new Error("You must provide the URL of lib/mappings.wasm by calling " +
+	                      "SourceMapConsumer.initialize({ 'lib/mappings.wasm': ... }) " +
+	                      "before using SourceMapConsumer");
+	    }
+
+	    return fetch(mappingsWasmUrl)
+	      .then(response => response.arrayBuffer());
+	  };
+
+	  module.exports.initialize = url => mappingsWasmUrl = url;
+	} else {
+	  // Node version of reading a wasm file into an array buffer.
+	  const fs = __webpack_require__(11);
+	  const path = __webpack_require__(12);
+
+	  module.exports = function readWasm() {
+	    return new Promise((resolve, reject) => {
+	      const wasmPath = path.join(__dirname, "mappings.wasm");
+	      fs.readFile(wasmPath, null, (error, data) => {
+	        if (error) {
+	          reject(error);
+	          return;
+	        }
+
+	        resolve(data.buffer);
+	      });
+	    });
+	  };
+
+	  module.exports.initialize = _ => {
+	    console.debug("SourceMapConsumer.initialize is a no-op when running in node.js");
+	  };
+	}
+
+	/* WEBPACK VAR INJECTION */}.call(exports, "/"))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_11__;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+	module.exports = __WEBPACK_EXTERNAL_MODULE_12__;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	const readWasm = __webpack_require__(10);
+
+	/**
+	 * Provide the JIT with a nice shape / hidden class.
+	 */
+	function Mapping() {
+	  this.generatedLine = 0;
+	  this.generatedColumn = 0;
+	  this.lastGeneratedColumn = null;
+	  this.source = null;
+	  this.originalLine = null;
+	  this.originalColumn = null;
+	  this.name = null;
+	}
+
+	let cachedWasm = null;
+
+	module.exports = function wasm() {
+	  if (cachedWasm) {
+	    return cachedWasm;
+	  }
+
+	  let currentCallback = null;
+
+	  cachedWasm = readWasm().then(buffer => {
+	      return WebAssembly.instantiate(buffer, {
+	        env: {
+	          mapping_callback: function (
+	            generatedLine,
+	            generatedColumn,
+
+	            hasLastGeneratedColumn,
+	            lastGeneratedColumn,
+
+	            hasOriginal,
+	            source,
+	            originalLine,
+	            originalColumn,
+
+	            hasName,
+	            name
+	          ) {
+	            const mapping = new Mapping;
+	            // JS uses 1-based line numbers, wasm uses 0-based.
+	            mapping.generatedLine = generatedLine + 1;
+	            mapping.generatedColumn = generatedColumn;
+
+	            if (hasLastGeneratedColumn) {
+	              // JS uses inclusive last generated column, wasm uses exclusive.
+	              mapping.lastGeneratedColumn = lastGeneratedColumn - 1;
+	            }
+
+	            if (hasOriginal) {
+	              mapping.source = source;
+	              // JS uses 1-based line numbers, wasm uses 0-based.
+	              mapping.originalLine = originalLine + 1;
+	              mapping.originalColumn = originalColumn;
+
+	              if (hasName) {
+	                mapping.name = name;
+	              }
+	            }
+
+	            currentCallback(mapping);
+	          },
+
+	          start_all_generated_locations_for: function () { console.time("all_generated_locations_for"); },
+	          end_all_generated_locations_for: function () { console.timeEnd("all_generated_locations_for"); },
+
+	          start_compute_column_spans: function () { console.time("compute_column_spans"); },
+	          end_compute_column_spans: function () { console.timeEnd("compute_column_spans"); },
+
+	          start_generated_location_for: function () { console.time("generated_location_for"); },
+	          end_generated_location_for: function () { console.timeEnd("generated_location_for"); },
+
+	          start_original_location_for: function () { console.time("original_location_for"); },
+	          end_original_location_for: function () { console.timeEnd("original_location_for"); },
+
+	          start_parse_mappings: function () { console.time("parse_mappings"); },
+	          end_parse_mappings: function () { console.timeEnd("parse_mappings"); },
+
+	          start_sort_by_generated_location: function () { console.time("sort_by_generated_location"); },
+	          end_sort_by_generated_location: function () { console.timeEnd("sort_by_generated_location"); },
+
+	          start_sort_by_original_location: function () { console.time("sort_by_original_location"); },
+	          end_sort_by_original_location: function () { console.timeEnd("sort_by_original_location"); },
+	        }
+	      });
+	  }).then(wasm => {
+	    return {
+	      exports: wasm.instance.exports,
+	      withMappingCallback: (mappingCallback, f) => {
+	        currentCallback = mappingCallback;
+	        try {
+	          f();
+	        } finally {
+	          currentCallback = null;
+	        }
+	      }
+	    };
+	  }).then(null, e => {
+	    cachedWasm = null;
+	    throw e;
+	  });
+
+	  return cachedWasm;
+	};
+
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* -*- Mode: js; js-indent-level: 2; -*- */

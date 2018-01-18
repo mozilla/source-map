@@ -16,6 +16,7 @@ very appreciated.
 - [Submitting Pull Requests](#submitting-pull-requests)
 - [Running Tests](#running-tests)
 - [Writing New Tests](#writing-new-tests)
+- [Updating the `lib/mappings.wasm` WebAssembly Module](#updating-the-libmappingswasm-webassembly-module)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -50,17 +51,6 @@ Next, run
 This will create the following files:
 
 * `dist/source-map.js` - The plain browser build.
-
-* `dist/source-map.min.js` - The minified browser build.
-
-* `dist/source-map.min.js.map` - The source map for the minified browser build.
-
-* `dist/source-map.debug.js` - The debug browser build.
-
-* `dist/source-map.debug.js.map` - The source map for the debug browser build.
-
-* `dist/test/*` - These are the test files built for running as xpcshell unit
-  tests within mozilla-central.
 
 ## Submitting Pull Requests
 
@@ -121,4 +111,52 @@ can use as well:
 
 ```js
 var util = require('./util');
+```
+
+## Updating the `lib/mappings.wasm` WebAssembly Module
+
+Ensure that you have the Rust toolchain installed:
+
+```
+$ curl https://sh.rustup.rs -sSf | sh
+```
+
+The `wasm32-unknown-unknown` target is nightly-only at the time of writing. Use
+`rustup` to ensure you have it installed:
+
+```
+$ rustup toolchain install nightly
+$ rustup target add wasm32-unknown-unknown --toolchain nightly
+```
+
+Next, clone the Rust source used to create `lib/mappings.wasm`:
+
+```
+$ git clone https://github.com/fitzgen/source-map-mappings.git
+$ cd source-map-mappings/
+```
+
+Make sure the crate's tests pass:
+
+```
+$ cargo test
+```
+
+Build Rust crate as a `.wasm` file:
+
+```
+$ cd source-map-mappings-wasm-api/
+$ cargo build --release --target wasm32-unknown-unknown
+```
+
+The resulting `wasm` file will be located at
+`source-map-mappings-c-api/target/wasm32-unknown-unknown/release/source_map_mappings.wasm`.
+
+Finally, to minimize its size, run `wasm-gc` on it and output the minimified
+`.wasm` file into this library's `lib/mappings.wasm`:
+
+```
+$ cargo install --git https://github.com/alexcrichton/wasm-gc # If you don't already have it.
+$ wasm-gc target/wasm32-unknown-unknown/release/source_map_mappings.wasm \\
+    /path/to/mozilla/source-map/lib/mappings.wasm
 ```

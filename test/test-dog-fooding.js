@@ -9,7 +9,7 @@ var util = require("./util");
 var SourceMapConsumer = require('../lib/source-map-consumer').SourceMapConsumer;
 var SourceMapGenerator = require('../lib/source-map-generator').SourceMapGenerator;
 
-exports['test eating our own dog food'] = function (assert) {
+exports['test eating our own dog food'] = async function (assert) {
   var smg = new SourceMapGenerator({
     file: 'testing.js',
     sourceRoot: '/wu/tang'
@@ -45,7 +45,7 @@ exports['test eating our own dog food'] = function (assert) {
     generated: { line: 6, column: 12 }
   });
 
-  var smc = new SourceMapConsumer(smg.toString());
+  var smc = await new SourceMapConsumer(smg.toString());
 
   // Exact
   util.assertMapping(2, 2, '/wu/tang/gza.coffee', 1, 0, null, null, smc, assert);
@@ -97,4 +97,6 @@ exports['test eating our own dog food'] = function (assert) {
   util.assertMapping(6, 12, '/wu/tang/gza.coffee', 4, 9, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
   util.assertMapping(6, 12, '/wu/tang/gza.coffee', 5, 9, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
   util.assertMapping(null, null, '/wu/tang/gza.coffee', 6, 19, null, SourceMapConsumer.LEAST_UPPER_BOUND, smc, assert, null, true);
+
+  smc.destroy();
 };

@@ -2,3 +2,6 @@
 *.log
 .idea
 node_modules/*
+build/
+package-lock.json
+bench/*.svg
