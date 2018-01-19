@@ -34,6 +34,7 @@ This is a library to generate and consume the source map format
   - [SourceMapConsumer](#sourcemapconsumer)
     - [SourceMapConsumer.initialize(options)](#sourcemapconsumerinitializeoptions)
     - [new SourceMapConsumer(rawSourceMap)](#new-sourcemapconsumerrawsourcemap)
+    - [SourceMapConsumer.with](#sourcemapconsumerwith)
     - [SourceMapConsumer.prototype.destroy()](#sourcemapconsumerprototypedestroy)
     - [SourceMapConsumer.prototype.computeColumnSpans()](#sourcemapconsumerprototypecomputecolumnspans)
     - [SourceMapConsumer.prototype.originalPositionFor(generatedPosition)](#sourcemapconsumerprototypeoriginalpositionforgeneratedposition)
@@ -78,34 +79,34 @@ const rawSourceMap = {
   mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
 };
 
-const smc = await new SourceMapConsumer(rawSourceMap);
+const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
 
-console.log(smc.sources);
-// [ 'http://example.com/www/js/one.js',
-//   'http://example.com/www/js/two.js' ]
+  console.log(consumer.sources);
+  // [ 'http://example.com/www/js/one.js',
+  //   'http://example.com/www/js/two.js' ]
 
-console.log(smc.originalPositionFor({
-  line: 2,
-  column: 28
-}));
-// { source: 'http://example.com/www/js/two.js',
-//   line: 2,
-//   column: 10,
-//   name: 'n' }
+  console.log(consumer.originalPositionFor({
+    line: 2,
+    column: 28
+  }));
+  // { source: 'http://example.com/www/js/two.js',
+  //   line: 2,
+  //   column: 10,
+  //   name: 'n' }
 
-console.log(smc.generatedPositionFor({
-  source: 'http://example.com/www/js/two.js',
-  line: 2,
-  column: 10
-}));
-// { line: 2, column: 28 }
+  console.log(consumer.generatedPositionFor({
+    source: 'http://example.com/www/js/two.js',
+    line: 2,
+    column: 10
+  }));
+  // { line: 2, column: 28 }
 
-smc.eachMapping(function (m) {
-  // ...
+  consumer.eachMapping(function (m) {
+    // ...
+  });
+
+  return computeWhatever();
 });
-
-// Free the SourceMapConsumer's manually managed wasm data.
-smc.destroy();
 ```
 
 ### Generating a source map
@@ -240,6 +241,40 @@ doStuffWith(consumer);
 consumer.destroy();
 ```
 
+Alternatively, you can use `SourceMapConsumer.with` to avoid needing to remember
+to call `destroy`.
+
+#### SourceMapConsumer.with
+
+Construct a new `SourceMapConsumer` from `rawSourceMap` and `sourceMapUrl`
+(see the `SourceMapConsumer` constructor for details. Then, invoke the `async
+function f(SourceMapConsumer) -> T` with the newly constructed consumer, wait
+for `f` to complete, call `destroy` on the consumer, and return `f`'s return
+value.
+
+You must not use the consumer after `f` completes!
+
+By using `with`, you do not have to remember to manually call `destroy` on
+the consumer, since it will be called automatically once `f` completes.
+
+```js
+const xSquared = await SourceMapConsumer.with(
+  myRawSourceMap,
+  null,
+  async function (consumer) {
+    // Use `consumer` inside here and don't worry about remembering
+    // to call `destroy`.
+
+    const x = await whatever(consumer);
+    return x * x;
+  }
+);
+
+// You may not use that `consumer` anymore out here; it has
+// been destroyed. But you can use `xSquared`.
+console.log(xSquared);
+```
+
 #### SourceMapConsumer.prototype.destroy()
 
 Free this source map consumer's associated wasm data that is manually-managed.
@@ -247,6 +282,9 @@ Free this source map consumer's associated wasm data that is manually-managed.
 ```js
 consumer.destroy();
 ```
+
+Alternatively, you can use `SourceMapConsumer.with` to avoid needing to remember
+to call `destroy`.
 
 #### SourceMapConsumer.prototype.computeColumnSpans()
 
