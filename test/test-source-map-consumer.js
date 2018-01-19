@@ -1416,3 +1416,51 @@ exports['test line numbers < 0'] = async function (assert) {
   assert.ok(error != null);
   map.destroy();
 };
+
+exports['test SourceMapConsumer.with'] = async function (assert) {
+  let consumer = null;
+  const six = await SourceMapConsumer.with(util.testMap, null, async function (c) {
+    // Don't keep references to the consumer around at home, kids.
+    consumer = c;
+
+    // We should properly treat the with callback as an async function.
+    await new Promise(r => setTimeout(r, 1));
+
+    // Should not have parsed and allocated mappings yet.
+    assert.equal(c._mappingsPtr, 0);
+
+    // Force the mappings to be parsed and assert that we allocated mappings.
+    c.eachMapping(_ => {});
+    assert.ok(c._mappingsPtr != 0);
+
+    return 6;
+  });
+
+  // Yes, we can return values.
+  assert.equal(six, 6);
+
+  // At the end of `with`, we destroyed the mappings.
+  assert.equal(consumer._mappingsPtr, 0);
+};
+
+exports['test SourceMapConsumer.with and exceptions'] = async function (assert) {
+  let consumer = null;
+  let error = null;
+
+  try {
+    await SourceMapConsumer.with(util.testMap, null, async function (c) {
+      consumer = c;
+      assert.equal(c._mappingsPtr, 0);
+
+      c.eachMapping(_ => {});
+      assert.ok(c._mappingsPtr != 0);
+
+      throw 6;
+    });
+  } catch (e) {
+    error = e;
+  }
+
+  assert.equal(error, 6);
+  assert.equal(consumer._mappingsPtr, 0);
+};

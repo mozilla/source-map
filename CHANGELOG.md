@@ -2,7 +2,9 @@
 
 ## 0.7.0
 
-* `SourceMapConsumer` now uses WebAssembly, and is **much** faster!
+* `SourceMapConsumer` now uses WebAssembly, and is **much** faster! Read about
+  it here:
+  https://hacks.mozilla.org/2018/01/oxidizing-source-maps-with-rust-and-webassembly/
 
 * **Breaking change:** `new SourceMapConsumer` now returns a `Promise` object
   that resolves to the newly constructed `SourceMapConsumer` instance, rather
