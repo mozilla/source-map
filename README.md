@@ -15,7 +15,12 @@ This is a library to generate and consume the source map format
 
 ## Use on the Web
 
-    <script src="https://raw.githubusercontent.com/mozilla/source-map/master/dist/source-map.min.js" defer></script>
+    <script src="https://unpkg.com/source-map@0.7.0/dist/source-map.js"></script>
+    <script>
+        sourceMap.SourceMapConsumer.initialize({
+            "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.0/lib/mappings.wasm"
+        });
+    </script>
 
 --------------------------------------------------------------------------------
 
