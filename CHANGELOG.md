@@ -22,6 +22,9 @@
   `let`, arrow functions, `async`, etc. Use Babel to compile it down to
   ECMAScript 5 if you need to support older JavaScript environments.
 
+* **Breaking change:** Drop support for Node < 8. If you want to support older 
+versions of node, please use v0.6 or below.
+
 ## 0.5.6
 
 * Fix for regression when people were using numbers as names in source maps. See
