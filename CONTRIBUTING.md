@@ -142,21 +142,16 @@ Make sure the crate's tests pass:
 $ cargo test
 ```
 
+Ensure that you have the following wasm post-processing tools installed:
+
+- `wasm-nm`: https://github.com/fitzgen/wasm-nm
+- `wasm-gc`: https://github.com/alexcrichton/wasm-gc
+- `wasm-snip`: https://github.com/fitzgen/wasm-snip
+- `wasm-opt`: https://github.com/WebAssembly/binaryen
+
 Build Rust crate as a `.wasm` file:
 
 ```
 $ cd source-map-mappings-wasm-api/
-$ cargo build --release --target wasm32-unknown-unknown
-```
-
-The resulting `wasm` file will be located at
-`source-map-mappings-c-api/target/wasm32-unknown-unknown/release/source_map_mappings.wasm`.
-
-Finally, to minimize its size, run `wasm-gc` on it and output the minimified
-`.wasm` file into this library's `lib/mappings.wasm`:
-
-```
-$ cargo install --git https://github.com/alexcrichton/wasm-gc # If you don't already have it.
-$ wasm-gc target/wasm32-unknown-unknown/release/source_map_mappings.wasm \\
-    /path/to/mozilla/source-map/lib/mappings.wasm
+$ ./build.py -o path/to/source-map/lib/mappings.wasm
 ```
