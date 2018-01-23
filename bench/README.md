@@ -10,7 +10,7 @@ Run a local webserver from the root of the repository:
 
 ```
 $ cd source-map/
-$ python -m SimpleHTTPServer
+$ python2 -m SimpleHTTPServer # or `python3 -m http.server`
 ```
 
 Open
