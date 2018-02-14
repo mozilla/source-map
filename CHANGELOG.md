@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.7.1
+
+* Updated TypeScript typings. [#321][]
+
+[#321]: https://github.com/mozilla/source-map/pull/321
+
 ## 0.7.0
 
 * `SourceMapConsumer` now uses WebAssembly, and is **much** faster! Read about
@@ -22,7 +28,7 @@
   `let`, arrow functions, `async`, etc. Use Babel to compile it down to
   ECMAScript 5 if you need to support older JavaScript environments.
 
-* **Breaking change:** Drop support for Node < 8. If you want to support older 
+* **Breaking change:** Drop support for Node < 8. If you want to support older
 versions of node, please use v0.6 or below.
 
 ## 0.5.6
