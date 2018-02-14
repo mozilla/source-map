@@ -47,6 +47,7 @@
     "url": "http://github.com/mozilla/source-map.git"
   },
   "main": "./source-map.js",
+  "types": "./source-map.d.ts",
   "files": [
     "source-map.js",
     "source-map.d.ts",
