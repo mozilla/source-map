@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.7.2
+
+* Another 3x speed up in `SourceMapConsumer`. Read about it here:
+  http://fitzgeraldnick.com/2018/02/26/speed-without-wizardry.html
+
 ## 0.7.1
 
 * Updated TypeScript typings. [#321][]

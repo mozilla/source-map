@@ -15,10 +15,10 @@ This is a library to generate and consume the source map format
 
 ## Use on the Web
 
-    <script src="https://unpkg.com/source-map@0.7.0/dist/source-map.js"></script>
+    <script src="https://unpkg.com/source-map@0.7.2/dist/source-map.js"></script>
     <script>
         sourceMap.SourceMapConsumer.initialize({
-            "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.0/lib/mappings.wasm"
+            "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.2/lib/mappings.wasm"
         });
     </script>
 
