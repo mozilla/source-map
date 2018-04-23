@@ -2919,7 +2919,7 @@ module.exports = function wasm() {
     return cachedWasm;
   }
 
-  let currentCallback = null;
+  const callbackStack = [];
 
   cachedWasm = readWasm().then(buffer => {
       return WebAssembly.instantiate(buffer, {
@@ -2960,7 +2960,7 @@ module.exports = function wasm() {
               }
             }
 
-            currentCallback(mapping);
+            callbackStack[callbackStack.length - 1](mapping);
           },
 
           start_all_generated_locations_for: function () { console.time("all_generated_locations_for"); },
@@ -2989,11 +2989,11 @@ module.exports = function wasm() {
     return {
       exports: wasm.instance.exports,
       withMappingCallback: (mappingCallback, f) => {
-        currentCallback = mappingCallback;
+        callbackStack.push(mappingCallback)
         try {
           f();
         } finally {
-          currentCallback = null;
+          callbackStack.pop()
         }
       }
     };
