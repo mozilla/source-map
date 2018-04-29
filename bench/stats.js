@@ -2,10 +2,12 @@
 
 function Stats(unit) {
   this.unit = unit || "";
+  this.xs = [];
   this.x0 = this.x1 = this.x2 = 0;
 }
 
 Stats.prototype.take = function (x) {
+  this.xs.push(x);
   this.x0 += 1;
   this.x1 += x;
   this.x2 += x*x;

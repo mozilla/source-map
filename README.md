@@ -15,7 +15,12 @@ This is a library to generate and consume the source map format
 
 ## Use on the Web
 
-    <script src="https://raw.githubusercontent.com/mozilla/source-map/master/dist/source-map.min.js" defer></script>
+    <script src="https://unpkg.com/source-map@0.7.2/dist/source-map.js"></script>
+    <script>
+        sourceMap.SourceMapConsumer.initialize({
+            "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.2/lib/mappings.wasm"
+        });
+    </script>
 
 --------------------------------------------------------------------------------
 
@@ -32,7 +37,10 @@ This is a library to generate and consume the source map format
     - [With SourceMapGenerator (low level API)](#with-sourcemapgenerator-low-level-api)
 - [API](#api)
   - [SourceMapConsumer](#sourcemapconsumer)
+    - [SourceMapConsumer.initialize(options)](#sourcemapconsumerinitializeoptions)
     - [new SourceMapConsumer(rawSourceMap)](#new-sourcemapconsumerrawsourcemap)
+    - [SourceMapConsumer.with](#sourcemapconsumerwith)
+    - [SourceMapConsumer.prototype.destroy()](#sourcemapconsumerprototypedestroy)
     - [SourceMapConsumer.prototype.computeColumnSpans()](#sourcemapconsumerprototypecomputecolumnspans)
     - [SourceMapConsumer.prototype.originalPositionFor(generatedPosition)](#sourcemapconsumerprototypeoriginalpositionforgeneratedposition)
     - [SourceMapConsumer.prototype.generatedPositionFor(originalPosition)](#sourcemapconsumerprototypegeneratedpositionfororiginalposition)
@@ -67,7 +75,7 @@ This is a library to generate and consume the source map format
 ### Consuming a source map
 
 ```js
-var rawSourceMap = {
+const rawSourceMap = {
   version: 3,
   file: 'min.js',
   names: ['bar', 'baz', 'n'],
@@ -76,30 +84,33 @@ var rawSourceMap = {
   mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
 };
 
-var smc = new SourceMapConsumer(rawSourceMap);
+const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
 
-console.log(smc.sources);
-// [ 'http://example.com/www/js/one.js',
-//   'http://example.com/www/js/two.js' ]
+  console.log(consumer.sources);
+  // [ 'http://example.com/www/js/one.js',
+  //   'http://example.com/www/js/two.js' ]
 
-console.log(smc.originalPositionFor({
-  line: 2,
-  column: 28
-}));
-// { source: 'http://example.com/www/js/two.js',
-//   line: 2,
-//   column: 10,
-//   name: 'n' }
+  console.log(consumer.originalPositionFor({
+    line: 2,
+    column: 28
+  }));
+  // { source: 'http://example.com/www/js/two.js',
+  //   line: 2,
+  //   column: 10,
+  //   name: 'n' }
 
-console.log(smc.generatedPositionFor({
-  source: 'http://example.com/www/js/two.js',
-  line: 2,
-  column: 10
-}));
-// { line: 2, column: 28 }
+  console.log(consumer.generatedPositionFor({
+    source: 'http://example.com/www/js/two.js',
+    line: 2,
+    column: 10
+  }));
+  // { line: 2, column: 28 }
 
-smc.eachMapping(function (m) {
-  // ...
+  consumer.eachMapping(function (m) {
+    // ...
+  });
+
+  return computeWhatever();
 });
 ```
 
@@ -182,9 +193,26 @@ const sourceMap = require("devtools/toolkit/sourcemap/source-map.js");
 
 ### SourceMapConsumer
 
-A SourceMapConsumer instance represents a parsed source map which we can query
+A `SourceMapConsumer` instance represents a parsed source map which we can query
 for information about the original file positions by giving it a file position
 in the generated source.
+
+#### SourceMapConsumer.initialize(options)
+
+When using `SourceMapConsumer` outside of node.js, for example on the Web, it
+needs to know from what URL to load `lib/mappings.wasm`. You must inform it by
+calling `initialize` before constructing any `SourceMapConsumer`s.
+
+The options object has the following properties:
+
+* `"lib/mappings.wasm"`: A `String` containing the URL of the
+  `lib/mappings.wasm` file.
+
+```js
+sourceMap.SourceMapConsumer.initialize({
+  "lib/mappings.wasm": "https://example.com/source-map/lib/mappings.wasm"
+});
+```
 
 #### new SourceMapConsumer(rawSourceMap)
 
@@ -207,9 +235,61 @@ following attributes:
 
 * `file`: Optional. The generated filename this source map is associated with.
 
+The promise of the constructed souce map consumer is returned.
+
+When the `SourceMapConsumer` will no longer be used anymore, you must call its
+`destroy` method.
+
 ```js
-var consumer = new sourceMap.SourceMapConsumer(rawSourceMapJsonData);
+const consumer = await new sourceMap.SourceMapConsumer(rawSourceMapJsonData);
+doStuffWith(consumer);
+consumer.destroy();
 ```
+
+Alternatively, you can use `SourceMapConsumer.with` to avoid needing to remember
+to call `destroy`.
+
+#### SourceMapConsumer.with
+
+Construct a new `SourceMapConsumer` from `rawSourceMap` and `sourceMapUrl`
+(see the `SourceMapConsumer` constructor for details. Then, invoke the `async
+function f(SourceMapConsumer) -> T` with the newly constructed consumer, wait
+for `f` to complete, call `destroy` on the consumer, and return `f`'s return
+value.
+
+You must not use the consumer after `f` completes!
+
+By using `with`, you do not have to remember to manually call `destroy` on
+the consumer, since it will be called automatically once `f` completes.
+
+```js
+const xSquared = await SourceMapConsumer.with(
+  myRawSourceMap,
+  null,
+  async function (consumer) {
+    // Use `consumer` inside here and don't worry about remembering
+    // to call `destroy`.
+
+    const x = await whatever(consumer);
+    return x * x;
+  }
+);
+
+// You may not use that `consumer` anymore out here; it has
+// been destroyed. But you can use `xSquared`.
+console.log(xSquared);
+```
+
+#### SourceMapConsumer.prototype.destroy()
+
+Free this source map consumer's associated wasm data that is manually-managed.
+
+```js
+consumer.destroy();
+```
+
+Alternatively, you can use `SourceMapConsumer.with` to avoid needing to remember
+to call `destroy`.
 
 #### SourceMapConsumer.prototype.computeColumnSpans()
 
@@ -239,7 +319,6 @@ consumer.allGeneratedPositionsFor({ line: 2, source: "foo.coffee" })
 //   { line: 2,
 //     column: 20,
 //     lastColumn: Infinity } ]
-
 ```
 
 #### SourceMapConsumer.prototype.originalPositionFor(generatedPosition)
@@ -579,9 +658,8 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
   should be relative to.
 
 ```js
-var consumer = new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
-var node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"),
-                                              consumer);
+const consumer = await new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
+const node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"), consumer);
 ```
 
 #### SourceNode.prototype.add(chunk)
