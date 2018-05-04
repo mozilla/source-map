@@ -61,7 +61,7 @@
   "scripts": {
     "test": "npm run lint && npm run build && node test/run-tests.js",
     "build": "webpack --color",
-    "lint": "eslint lib/ test/",
+    "lint": "eslint *.js lib/ test/",
     "toc": "doctoc --title '## Table of Contents' README.md && doctoc --title '## Table of Contents' CONTRIBUTING.md"
   },
   "devDependencies": {

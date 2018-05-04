@@ -1,7 +1,5 @@
-var path = require("path");
-var webpack = require("webpack");
-
-var distDir = path.join(__dirname, "dist");
+const path = require("path");
+const distDir = path.join(__dirname, "dist");
 
 module.exports = [
   // Web build.

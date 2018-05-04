@@ -5,16 +5,16 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-var assert = require("assert");
-var fs = require("fs");
-var path = require("path");
+const assert = require("assert");
+const fs = require("fs");
+const path = require("path");
 
 async function run(tests) {
-  var total = 0;
-  var passed = 0;
+  let total = 0;
+  let passed = 0;
 
-  for (var i = 0; i < tests.length; i++) {
-    for (var k in tests[i].testCase) {
+  for (let i = 0; i < tests.length; i++) {
+    for (const k in tests[i].testCase) {
       if (/^test/.test(k)) {
         total++;
         try {
@@ -36,7 +36,7 @@ async function run(tests) {
 }
 
 function isTestFile(f) {
-  var testToRun = process.argv[2];
+  const testToRun = process.argv[2];
   return testToRun
     ? path.basename(testToRun) === f
     : /^test\-.*?\.js/.test(f);
@@ -46,7 +46,7 @@ function toRelativeModule(f) {
   return "./" + f.replace(/\.js$/, "");
 }
 
-var requires = fs.readdirSync(__dirname)
+const requires = fs.readdirSync(__dirname)
   .filter(isTestFile)
   .map(toRelativeModule);
 

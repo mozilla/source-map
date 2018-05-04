@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var util = require("../lib/util");
+const util = require("../lib/util");
 
 // This is a test mapping which maps functions from two different files
 // (one.js and two.js) to a minified generated source.
@@ -262,7 +262,7 @@ function assertMapping(generatedLine, generatedColumn, originalSource,
                        originalLine, originalColumn, name, bias, map, assert,
                        dontTestGenerated, dontTestOriginal) {
   if (!dontTestOriginal) {
-    var origMapping = map.originalPositionFor({
+    const origMapping = map.originalPositionFor({
       line: generatedLine,
       column: generatedColumn,
       bias
@@ -277,7 +277,7 @@ function assertMapping(generatedLine, generatedColumn, originalSource,
                  "Incorrect column, expected " + JSON.stringify(originalColumn)
                  + ", got " + JSON.stringify(origMapping.column));
 
-    var expectedSource;
+    let expectedSource;
 
     if (originalSource && map.sourceRoot && originalSource.indexOf(map.sourceRoot) === 0) {
       expectedSource = originalSource;
@@ -295,7 +295,7 @@ function assertMapping(generatedLine, generatedColumn, originalSource,
   }
 
   if (!dontTestGenerated) {
-    var genMapping = map.generatedPositionFor({
+    const genMapping = map.generatedPositionFor({
       source: originalSource,
       line: originalLine,
       column: originalColumn,
@@ -344,7 +344,7 @@ function assertEqualMaps(assert, actualMap, expectedMap) {
     assert.equal(actualMap.sourcesContent.length,
                  expectedMap.sourcesContent.length,
                  "sourcesContent length mismatch");
-    for (var i = 0; i < actualMap.sourcesContent.length; i++) {
+    for (let i = 0; i < actualMap.sourcesContent.length; i++) {
       assert.equal(actualMap.sourcesContent[i],
                    expectedMap.sourcesContent[i],
                    "sourcesContent[" + i + "] mismatch");

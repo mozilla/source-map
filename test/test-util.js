@@ -5,10 +5,10 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var libUtil = require("../lib/util");
+const libUtil = require("../lib/util");
 
 exports["test urls"] = function(assert) {
-  var assertUrl = function(url) {
+  const assertUrl = function(url) {
     assert.equal(url, libUtil.urlGenerate(libUtil.urlParse(url)));
   };
   assertUrl("http://");
@@ -33,12 +33,12 @@ exports["test urls"] = function(assert) {
   assert.equal(libUtil.urlParse("/a"), null);
   assert.equal(libUtil.urlParse("data:foo,bar"), null);
 
-  var parsed = libUtil.urlParse("http://x-y.com/bar");
+  let parsed = libUtil.urlParse("http://x-y.com/bar");
   assert.equal(parsed.scheme, "http");
   assert.equal(parsed.host, "x-y.com");
   assert.equal(parsed.path, "/bar");
 
-  var webpackURL = "webpack:///webpack/bootstrap 67e184f9679733298d44";
+  const webpackURL = "webpack:///webpack/bootstrap 67e184f9679733298d44";
   parsed = libUtil.urlParse(webpackURL);
   assert.equal(parsed.scheme, "webpack");
   assert.equal(parsed.host, "");

@@ -268,6 +268,9 @@ module.exports = {
     // Disallow redundant return statements
     "no-useless-return": "error",
 
+    // Use const or let instead of var
+    "no-var": "error",
+
     // Disallow whitespace before properties.
     "no-whitespace-before-property": "error",
 
@@ -276,6 +279,9 @@ module.exports = {
 
     // Require object-literal shorthand with ES6 method syntax
     "object-shorthand": ["error", "always", { "avoidQuotes": true }],
+
+    // Use const instead of let where possible
+    "prefer-const": "error",
 
     // Require double-quotes everywhere, except where quotes are escaped
     // or template literals are used.
