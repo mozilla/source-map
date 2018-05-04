@@ -8,20 +8,22 @@
 const libUtil = require("../lib/util");
 
 exports["test urls"] = function(assert) {
-  const assertUrl = function(url) {
-    assert.equal(url, libUtil.urlGenerate(libUtil.urlParse(url)));
+  const assertUrl = function(url, expect) {
+    expect = expect || url;
+    assert.equal(expect, libUtil.urlParse(url).toString());
   };
-  assertUrl("http://");
-  assertUrl("http://www.example.com");
-  assertUrl("http://user:pass@www.example.com");
-  assertUrl("http://www.example.com:80");
+  assertUrl("http://www.example.com", "http://www.example.com/");
+  assertUrl("http://user:pass@www.example.com", "http://user:pass@www.example.com/");
+  assertUrl("http://www.example.com:80", "http://www.example.com/");
   assertUrl("http://www.example.com/");
   assertUrl("http://www.example.com/foo/bar");
   assertUrl("http://www.example.com/foo/bar/");
-  assertUrl("http://user:pass@www.example.com:80/foo/bar/");
+  assertUrl("http://user:pass@www.example.com:80/foo/bar/",
+            "http://user:pass@www.example.com/foo/bar/");
 
-  assertUrl("//");
-  assertUrl("//www.example.com");
+  // From https://bugzilla.mozilla.org/show_bug.cgi?id=1451274
+  assertUrl("data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9rdWQvUHJvamVjdHMvX2NvbnRleHRlL2xvaXMtd2ViYXBwL3NyYy9zdHlsZXMvc2VsZWN0aW9uLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLHVDQUF1QztFQUN2QyxlQUFlO0NBQ2hCOztBQUVEO0VBQ0UsdUNBQXVDO0VBQ3ZDLGVBQWU7Q0FDaEIiLCJmaWxlIjoic2VsZWN0aW9uLmNzcyIsInNvdXJjZXNDb250ZW50IjpbIjo6LW1vei1zZWxlY3Rpb24ge1xuICBiYWNrZ3JvdW5kLWNvbG9yOiB2YXIoLS1jb2xvci0tYWN0aW9uKTtcbiAgY29sb3I6ICNmZmZmZmY7XG59XG5cbjo6c2VsZWN0aW9uIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogdmFyKC0tY29sb3ItLWFjdGlvbik7XG4gIGNvbG9yOiAjZmZmZmZmO1xufVxuIl0sInNvdXJjZVJvb3QiOiIifQ==");
+
   assertUrl("file:///www.example.com");
 
   assert.equal(libUtil.urlParse(""), null);
@@ -31,19 +33,19 @@ exports["test urls"] = function(assert) {
   assert.equal(libUtil.urlParse("a/b"), null);
   assert.equal(libUtil.urlParse("a//b"), null);
   assert.equal(libUtil.urlParse("/a"), null);
-  assert.equal(libUtil.urlParse("data:foo,bar"), null);
+  assertUrl("data:foo,bar");
 
   let parsed = libUtil.urlParse("http://x-y.com/bar");
-  assert.equal(parsed.scheme, "http");
+  assert.equal(parsed.protocol, "http:");
   assert.equal(parsed.host, "x-y.com");
-  assert.equal(parsed.path, "/bar");
+  assert.equal(parsed.pathname, "/bar");
 
   const webpackURL = "webpack:///webpack/bootstrap 67e184f9679733298d44";
   parsed = libUtil.urlParse(webpackURL);
-  assert.equal(parsed.scheme, "webpack");
+  assert.equal(parsed.protocol, "webpack:");
   assert.equal(parsed.host, "");
-  assert.equal(parsed.path, "/webpack/bootstrap 67e184f9679733298d44");
-  assert.equal(webpackURL, libUtil.urlGenerate(parsed));
+  assert.equal(parsed.pathname, "/webpack/bootstrap%2067e184f9679733298d44");
+  assert.equal(webpackURL, parsed.toString().replace(/%20/, " "));
 };
 
 exports["test normalize()"] = function(assert) {
@@ -73,12 +75,12 @@ exports["test normalize()"] = function(assert) {
   assert.equal(libUtil.normalize("a/././."), "a");
 
   assert.equal(libUtil.normalize("/a/b//c////d/////"), "/a/b/c/d/");
-  assert.equal(libUtil.normalize("///a/b//c////d/////"), "///a/b/c/d/");
+  assert.equal(libUtil.normalize("///a/b//c////d/////"), "/a/b/c/d/");
   assert.equal(libUtil.normalize("a/b//c////d"), "a/b/c/d");
 
   assert.equal(libUtil.normalize(".///.././../a/b//./.."), "../../a");
 
-  assert.equal(libUtil.normalize("http://www.example.com"), "http://www.example.com");
+  assert.equal(libUtil.normalize("http://www.example.com"), "http://www.example.com/");
   assert.equal(libUtil.normalize("http://www.example.com/"), "http://www.example.com/");
   assert.equal(libUtil.normalize("http://www.example.com/./..//a/b/c/.././d//"), "http://www.example.com/a/b/d/");
 };
@@ -167,8 +169,8 @@ exports["test join()"] = function(assert) {
   assert.equal(libUtil.join("http://foo.org/", "."), "http://foo.org/");
   assert.equal(libUtil.join("http://foo.org//", ""), "http://foo.org/");
   assert.equal(libUtil.join("http://foo.org//", "."), "http://foo.org/");
-  assert.equal(libUtil.join("//www.example.com", ""), "//www.example.com/");
-  assert.equal(libUtil.join("//www.example.com", "."), "//www.example.com/");
+  assert.equal(libUtil.join("//www.example.com", ""), "/www.example.com");
+  assert.equal(libUtil.join("//www.example.com", "."), "/www.example.com");
 
 
   assert.equal(libUtil.join("http://foo.org/a", "b"), "http://foo.org/a/b");
@@ -177,7 +179,6 @@ exports["test join()"] = function(assert) {
   assert.equal(libUtil.join("http://foo.org/a", "b/"), "http://foo.org/a/b/");
   assert.equal(libUtil.join("http://foo.org/a", "b//"), "http://foo.org/a/b/");
   assert.equal(libUtil.join("http://foo.org/a/", "/b"), "http://foo.org/b");
-  assert.equal(libUtil.join("http://foo.org/a//", "//b"), "http://b");
 
   assert.equal(libUtil.join("http://foo.org/a", ".."), "http://foo.org/");
   assert.equal(libUtil.join("http://foo.org/a", "../b"), "http://foo.org/b");
@@ -199,11 +200,10 @@ exports["test join()"] = function(assert) {
   assert.equal(libUtil.join("http://foo.org//", "/a"), "http://foo.org/a");
 
 
-  assert.equal(libUtil.join("http://", "www.example.com"), "http://www.example.com");
+  assert.equal(libUtil.join("http://", "www.example.com"), "http://www.example.com/");
   assert.equal(libUtil.join("file:///", "www.example.com"), "file:///www.example.com");
   assert.equal(libUtil.join("http://", "ftp://example.com"), "ftp://example.com");
 
-  assert.equal(libUtil.join("http://www.example.com", "//foo.org/bar"), "http://foo.org/bar");
   assert.equal(libUtil.join("//www.example.com", "//foo.org/bar"), "//foo.org/bar");
 };
 
