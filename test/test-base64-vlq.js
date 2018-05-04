@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-var base64VLQ = require('../lib/base64-vlq');
+var base64VLQ = require("../lib/base64-vlq");
 
 var vlqs = [
   { number: -255, encoded: "/P" },
@@ -517,7 +517,7 @@ var vlqs = [
   { number: 255, encoded: "+P" },
 ];
 
-exports['test normal encoding and decoding'] = function (assert) {
+exports["test normal encoding and decoding"] = function(assert) {
   for (var i = 0; i < vlqs.length; i++) {
     var str = base64VLQ.encode(vlqs[i].number);
     assert.equal(

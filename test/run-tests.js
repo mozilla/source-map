@@ -5,9 +5,9 @@
  * Licensed under the New BSD license. See LICENSE or:
  * http://opensource.org/licenses/BSD-3-Clause
  */
-var assert = require('assert');
-var fs = require('fs');
-var path = require('path');
+var assert = require("assert");
+var fs = require("fs");
+var path = require("path");
 
 async function run(tests) {
   var total = 0;
@@ -20,18 +20,17 @@ async function run(tests) {
         try {
           await tests[i].testCase[k](assert);
           passed++;
-        }
-        catch (e) {
-          console.log('FAILED ' + tests[i].name + ': ' + k + '!');
+        } catch (e) {
+          console.log("FAILED " + tests[i].name + ": " + k + "!");
           console.log(e.stack);
         }
       }
     }
   }
 
-  console.log('');
-  console.log(passed + ' / ' + total + ' tests passed.');
-  console.log('');
+  console.log("");
+  console.log(passed + " / " + total + " tests passed.");
+  console.log("");
 
   return total - passed;
 }
@@ -44,14 +43,14 @@ function isTestFile(f) {
 }
 
 function toRelativeModule(f) {
-  return './' + f.replace(/\.js$/, '');
+  return "./" + f.replace(/\.js$/, "");
 }
 
 var requires = fs.readdirSync(__dirname)
   .filter(isTestFile)
   .map(toRelativeModule);
 
-run(requires.map(require).map(function (mod, i) {
+run(requires.map(require).map(function(mod, i) {
   return {
     name: requires[i],
     testCase: mod
