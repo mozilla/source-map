@@ -59,13 +59,15 @@
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "test": "npm run build && node test/run-tests.js",
+    "test": "npm run lint && npm run build && node test/run-tests.js",
     "build": "webpack --color",
+    "lint": "eslint *.js lib/ test/",
     "toc": "doctoc --title '## Table of Contents' README.md && doctoc --title '## Table of Contents' CONTRIBUTING.md"
   },
   "devDependencies": {
     "doctoc": "^0.15.0",
-    "webpack": "^3.10"
+    "webpack": "^3.10",
+    "eslint": "^4.19.1"
   },
   "typings": "source-map"
 }

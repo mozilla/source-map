@@ -1,6 +1,6 @@
-const {SourceMapConsumer, SourceMapGenerator} = require('../')
+const {SourceMapConsumer, SourceMapGenerator} = require("../");
 
-const tsMap = {
+const TS_MAP = {
   version: 3,
   file: "blah.js",
   sourceRoot: "",
@@ -13,7 +13,7 @@ const tsMap = {
   ]
 };
 
-const babelMap = {
+const BABEL_MAP = {
   version: 3,
   sources: ["blah.tsx"],
   names: [
@@ -38,9 +38,9 @@ async function composeSourceMaps(
   babelMap,
   tsFileName,
 ) {
-  const tsConsumer = await new SourceMapConsumer(tsMap)
-  const babelConsumer = await new SourceMapConsumer(babelMap)
-  const map = new SourceMapGenerator()
+  const tsConsumer = await new SourceMapConsumer(tsMap);
+  const babelConsumer = await new SourceMapConsumer(babelMap);
+  const map = new SourceMapGenerator();
   babelConsumer.eachMapping(
     ({
       source,
@@ -54,7 +54,7 @@ async function composeSourceMaps(
         const original = tsConsumer.originalPositionFor({
           line: originalLine,
           column: originalColumn,
-        })
+        });
         if (original.line) {
           map.addMapping({
             generated: {
@@ -66,15 +66,15 @@ async function composeSourceMaps(
               column: original.column,
             },
             source: tsFileName,
-            name: name,
-          })
+            name,
+          });
         }
       }
     }
-  )
-  return map.toJSON()
+  );
+  return map.toJSON();
 }
 
-exports["test nested consumer usage"] = async function (assert) {
-  await composeSourceMaps(tsMap, babelMap, 'blah.tsx')
+exports["test nested consumer usage"] = async function(assert) {
+  await composeSourceMaps(TS_MAP, BABEL_MAP, "blah.tsx");
 };
