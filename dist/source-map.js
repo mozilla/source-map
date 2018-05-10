@@ -1461,7 +1461,8 @@ const INTERNAL = Symbol("smcInternal");
 class SourceMapConsumer {
   constructor(aSourceMap, aSourceMapURL) {
     // If the constructor was called by super(), just return Promise<this>.
-    // Yes, this is a hack to retain the pre-existing API.
+    // Yes, this is a hack to retain the pre-existing API of the base-class
+    // constructor also being an async factory function.
     if (aSourceMap == INTERNAL) {
       return Promise.resolve(this);
     }
@@ -2686,11 +2687,10 @@ function _factory(aSourceMap, aSourceMapURL) {
     sourceMap = util.parseSourceMapInput(aSourceMap);
   }
 
-  return Promise.resolve().then(_ => {
-    return sourceMap.sections != null
+  const consumer = sourceMap.sections != null
       ? new IndexedSourceMapConsumer(sourceMap, aSourceMapURL)
       : new BasicSourceMapConsumer(sourceMap, aSourceMapURL);
-  });
+  return Promise.resolve(consumer);
 }
 
 function _factoryBSM(aSourceMap, aSourceMapURL) {
