@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.7.3
+
+* Fix a bug where nested uses of `SourceMapConsumer` could result in a
+  `TypeError`. [#338](https://github.com/mozilla/source-map/issues/338)
+  [#330](https://github.com/mozilla/source-map/issues/330)
+  [#319](https://github.com/mozilla/source-map/issues/319)
+
 ## 0.7.2
 
 * Another 3x speed up in `SourceMapConsumer`. Read about it here:
