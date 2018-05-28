@@ -5,6 +5,7 @@ module.exports = [
   // Web build.
   {
     entry: "./source-map.js",
+    mode: "production",
     output: {
       path: distDir,
       filename: "source-map.js",
