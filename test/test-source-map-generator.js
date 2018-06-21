@@ -84,7 +84,7 @@ exports["test adding mappings (invalid)"] = function(assert) {
   // Not enough info.
   assert.throws(function() {
     map.addMapping({});
-  });
+  }, /"generated" is a required argument/);
 
   // Original file position, but no source.
   assert.throws(function() {
@@ -92,7 +92,7 @@ exports["test adding mappings (invalid)"] = function(assert) {
       generated: { line: 1, column: 1 },
       original: { line: 1, column: 1 }
     });
-  });
+  }, /Invalid mapping/);
 };
 
 exports["test adding mappings with skipValidation"] = function(assert) {
@@ -105,7 +105,7 @@ exports["test adding mappings with skipValidation"] = function(assert) {
   // Not enough info, caught by `util.getArgs`
   assert.throws(function() {
     map.addMapping({});
-  });
+  }, /"generated" is a required argument/);
 
   // Original file position, but no source. Not checked.
   assert.doesNotThrow(function() {
@@ -113,7 +113,7 @@ exports["test adding mappings with skipValidation"] = function(assert) {
       generated: { line: 1, column: 1 },
       original: { line: 1, column: 1 }
     });
-  });
+  }, /Invalid mapping/);
 };
 
 exports["test that the correct mappings are being generated"] = function(assert) {
