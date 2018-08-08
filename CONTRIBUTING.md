@@ -39,7 +39,7 @@ If you are filing an issue for a bug or other misbehavior, please provide:
 
 ## Building From Source
 
-Install Node.js and then run
+Install Node.js `8` or greater and then run
 
     $ git clone https://github.com/mozilla/source-map.git
     $ cd source-map/
@@ -64,16 +64,16 @@ force push to the remote branch to update the pull request.
 
 ## Running Tests
 
-The test suite is written for node.js. Install node.js `0.10.0` or greater and
+The test suite is written for node.js. Install node.js `8` or greater and
 then run the tests with `npm test`:
 
 ```shell
 $ npm test
-> source-map@0.5.0 test /Users/fitzgen/src/source-map
+> source-map@0.7.3 test /Users/fitzgen/src/source-map
 > node test/run-tests.js
 
 
-119 / 119 tests passed.
+137 / 137 tests passed.
 ```
 
 ## Writing New Tests
