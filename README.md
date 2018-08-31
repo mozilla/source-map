@@ -18,11 +18,6 @@ This is a library to generate and consume the source map format
 ## Use on the Web
 
     <script src="https://unpkg.com/source-map@0.7.3/dist/source-map.js"></script>
-    <script>
-        sourceMap.SourceMapConsumer.initialize({
-            "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm"
-        });
-    </script>
 
 --------------------------------------------------------------------------------
 
@@ -39,7 +34,6 @@ This is a library to generate and consume the source map format
     - [With SourceMapGenerator (low level API)](#with-sourcemapgenerator-low-level-api)
 - [API](#api)
   - [SourceMapConsumer](#sourcemapconsumer)
-    - [SourceMapConsumer.initialize(options)](#sourcemapconsumerinitializeoptions)
     - [new SourceMapConsumer(rawSourceMap)](#new-sourcemapconsumerrawsourcemap)
     - [SourceMapConsumer.with](#sourcemapconsumerwith)
     - [SourceMapConsumer.prototype.destroy()](#sourcemapconsumerprototypedestroy)
@@ -198,23 +192,6 @@ const sourceMap = require("devtools/toolkit/sourcemap/source-map.js");
 A `SourceMapConsumer` instance represents a parsed source map which we can query
 for information about the original file positions by giving it a file position
 in the generated source.
-
-#### SourceMapConsumer.initialize(options)
-
-When using `SourceMapConsumer` outside of node.js, for example on the Web, it
-needs to know from what URL to load `lib/mappings.wasm`. You must inform it by
-calling `initialize` before constructing any `SourceMapConsumer`s.
-
-The options object has the following properties:
-
-* `"lib/mappings.wasm"`: A `String` containing the URL of the
-  `lib/mappings.wasm` file, or an `ArrayBuffer` with the contents of `lib/mappings.wasm`.
-
-```js
-sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "https://example.com/source-map/lib/mappings.wasm"
-});
-```
 
 #### new SourceMapConsumer(rawSourceMap)
 

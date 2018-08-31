@@ -1,7 +1,3 @@
-sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "../lib/mappings.wasm?bust_cache=" + String(Math.random()).replace(/0\./, ""),
-});
-
 function bindRange(labelId, updater) {
   const label = document.getElementById(labelId);
   const input = label.querySelector("input");
