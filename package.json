@@ -82,7 +82,7 @@
     "nyc": "^11.7.1",
     "watch": "^1.0.2",
     "webpack": "^4.9.1",
-    "webpack-cli": "^2.1.4"
+    "webpack-cli": "^3.1"
   },
   "nyc": {
     "reporter": "html"
