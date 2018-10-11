@@ -1424,9 +1424,10 @@ exports["test non-normalized sourceRoot (from issue #227)"] = async function(ass
     sourceRoot: "./src/",
     sourcesContent: [ 'var name = "Mark"\n' ]
   });
-  assert.equal(consumer.sourceRoot, "src/", "sourceRoot was normalized");
-  // Before the fix, this threw an exception.
-  consumer.sourceContentFor(consumer.sources[0]);
+  assert.doesNotThrow(() => {
+    // Before the fix, this threw an exception.
+    consumer.sourceContentFor(consumer.sources[0]);
+  });
 
   consumer.destroy();
 };
