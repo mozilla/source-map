@@ -1368,6 +1368,22 @@ exports["test absolute sourceURL resolution with sourceMapURL"] = async function
   consumer.destroy();
 };
 
+exports["test sourceURL resolution with null sourceRoot and blob sourceMapURL"] = async function(assert) {
+  const map = {
+    version: 3,
+    sources:  ["something.js"],
+    names: [],
+    mappings: "CAAS",
+    file: "static/js/manifest.b7cf97680f7a50fa150f.js",
+    sourceRoot: null,
+  };
+  const consumer = await new SourceMapConsumer(map, "blob:http://exmaple.com/12345-12345-12345");
+
+  assert.equal(consumer.sources.length, 1);
+  assert.equal(consumer.sources[0], "something.js");
+
+  consumer.destroy();
+};
 exports["test line numbers > 2**32"] = async function(assert) {
   const map = await new SourceMapConsumer({
     version: 3,
