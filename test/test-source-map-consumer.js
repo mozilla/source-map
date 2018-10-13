@@ -1049,26 +1049,6 @@ exports["test sourceRoot + originalPositionFor"] = async function(assert) {
   map.destroy();
 };
 
-exports["test github issue #56"] = async function(assert) {
-  let map = new SourceMapGenerator({
-    sourceRoot: "http://",
-    file: "www.example.com/foo.js"
-  });
-  map.addMapping({
-    original: { line: 1, column: 1 },
-    generated: { line: 2, column: 2 },
-    source: "www.example.com/original.js"
-  });
-
-  map = await new SourceMapConsumer(map.toString());
-
-  const sources = map.sources;
-  assert.equal(sources.length, 1);
-  assert.equal(sources[0], "http://www.example.com/original.js");
-
-  map.destroy();
-};
-
 // Was github issue #43, but that's no longer valid.
 exports["test source resolution with sourceMapURL"] = async function(assert) {
   let map = new SourceMapGenerator({
@@ -1108,7 +1088,7 @@ exports["test sourceRoot prepending"] = async function(assert) {
   const sources = map.sources;
   assert.equal(sources.length, 1,
                "Should only be one source.");
-  assert.equal(sources[0], "http://example.com/foo/bar/original.js",
+  assert.equal(sources[0], "http://example.com/original.js",
                "Source include the source root.");
 
   map.destroy();
@@ -1444,7 +1424,7 @@ exports["test webpack URL resolution"] = async function(assert) {
   const consumer = await new SourceMapConsumer(map);
 
   assert.equal(consumer.sources.length, 1);
-  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap%2067e184f9679733298d44");
 
   consumer.destroy();
 };
@@ -1461,7 +1441,7 @@ exports["test webpack URL resolution with sourceMapURL"] = async function(assert
   const consumer = await new SourceMapConsumer(map, "http://www.example.com/q.js.map");
 
   assert.equal(consumer.sources.length, 1);
-  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap 67e184f9679733298d44");
+  assert.equal(consumer.sources[0], "webpack:///webpack/bootstrap%2067e184f9679733298d44");
 
   consumer.destroy();
 };
