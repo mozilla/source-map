@@ -193,23 +193,25 @@ exports["test computeSourceURL"] = function(assert) {
   assert.equal(libUtil.computeSourceURL("src/", "test.js", "http://example.com"),
                "http://example.com/src/test.js");
   assert.equal(libUtil.computeSourceURL("src", "/test.js", "http://example.com"),
-               "http://example.com/test.js");
+               "http://example.com/src/test.js");
   assert.equal(libUtil.computeSourceURL("http://mozilla.com", "src/test.js", "http://example.com"),
                "http://mozilla.com/src/test.js");
   assert.equal(libUtil.computeSourceURL("", "test.js", "http://example.com/src/test.js.map"),
                "http://example.com/src/test.js");
+  assert.equal(libUtil.computeSourceURL("", "/test.js", "http://example.com/src/test.js.map"),
+               "http://example.com/test.js");
 
   // Legacy code won't pass in the sourceMapURL.
   assert.equal(libUtil.computeSourceURL("", "src/test.js"), "src/test.js");
   assert.equal(libUtil.computeSourceURL(undefined, "src/test.js"), "src/test.js");
   assert.equal(libUtil.computeSourceURL("src", "test.js"), "src/test.js");
   assert.equal(libUtil.computeSourceURL("src/", "test.js"), "src/test.js");
-  assert.equal(libUtil.computeSourceURL("src", "/test.js"), "/test.js");
+  assert.equal(libUtil.computeSourceURL("src", "/test.js"), "src/test.js");
   assert.equal(libUtil.computeSourceURL("src", "../test.js"), "test.js");
   assert.equal(libUtil.computeSourceURL("src/dir", "../././../test.js"), "test.js");
 
   // This gives different results with the old algorithm and the new
   // spec-compliant algorithm.
   assert.equal(libUtil.computeSourceURL("http://example.com/dir", "/test.js"),
-               "http://example.com/test.js");
+               "http://example.com/dir/test.js");
 };

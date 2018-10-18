@@ -1088,7 +1088,7 @@ exports["test sourceRoot prepending"] = async function(assert) {
   const sources = map.sources;
   assert.equal(sources.length, 1,
                "Should only be one source.");
-  assert.equal(sources[0], "http://example.com/original.js",
+  assert.equal(sources[0], "http://example.com/foo/bar/original.js",
                "Source include the source root.");
 
   map.destroy();
