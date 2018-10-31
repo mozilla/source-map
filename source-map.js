@@ -5,4 +5,5 @@
  */
 exports.SourceMapGenerator = require("./lib/source-map-generator").SourceMapGenerator;
 exports.SourceMapConsumer = require("./lib/source-map-consumer").SourceMapConsumer;
+exports.SourceMapConsumerSync = require("./lib/source-map-consumer-sync").SourceMapConsumerSync;
 exports.SourceNode = require("./lib/source-node").SourceNode;
