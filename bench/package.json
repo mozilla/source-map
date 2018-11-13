@@ -1,0 +1,11 @@
+{
+  "name": "source-map-internal-benchmark",
+  "private": true,
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "webpack": "^4.9.1",
+    "webpack-cli": "^3.1"
+  }
+}
