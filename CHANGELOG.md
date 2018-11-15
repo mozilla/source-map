@@ -1,5 +1,40 @@
 # Change Log
 
+## 0.8.0-beta.0
+
+### Breaking changes
+
+* [#350](https://github.com/mozilla/source-map/pull/350) -
+  Change browser detection logic for WASM loading.
+* [#363](https://github.com/mozilla/source-map/pull/363) -
+  Change WASM loading detection to rely on `package.json#browser` field.
+* [#362](https://github.com/mozilla/source-map/pull/362) -
+  Remove the `dist/` bundle.
+* [#371](https://github.com/mozilla/source-map/pull/371) -
+  Reimplement sourcemap URL processing using the WHATWG URL API.
+
+### Nonbreaking changes:
+
+* [#339](https://github.com/mozilla/source-map/pull/339) -
+  Allow initializing the consumer `mappings.wasm` file as an `ArrayBuffer`.
+
+### Internal Improvements:
+
+* [#347](https://github.com/mozilla/source-map/pull/347) -
+  Improve tests.
+* [#352](https://github.com/mozilla/source-map/pull/352) -
+  Improve documentation.
+* [#361](https://github.com/mozilla/source-map/pull/361) -
+  Use newer Webpack CLI when bundling.
+* [#364](https://github.com/mozilla/source-map/pull/364) -
+  Convert `IndexedSourceMapConsumer` implementation to pass more through
+    to `BasicSourceMapConsumer`.
+* [#366](https://github.com/mozilla/source-map/pull/366) -
+  Normalize internal URL representation to be easier to follow.
+* [#341](https://github.com/mozilla/source-map/pull/341) -
+  Use async functions to simplify `SourceMapConsumer.with` implementation.
+
+
 ## 0.7.3
 
 * Fix a bug where nested uses of `SourceMapConsumer` could result in a
