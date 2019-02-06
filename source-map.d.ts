@@ -236,6 +236,8 @@ export interface SourceMapConsumerConstructor {
      * console.log(xSquared);
      * ```
      */
+    with<T>(rawSourceMap: RawSourceMap, sourceMapUrl: SourceMapUrl | null | undefined, callback: (consumer: BasicSourceMapConsumer) => Promise<T> | T): Promise<T>;
+    with<T>(rawSourceMap: RawIndexMap, sourceMapUrl: SourceMapUrl | null | undefined, callback: (consumer: IndexedSourceMapConsumer) => Promise<T> | T): Promise<T>;
     with<T>(rawSourceMap: RawSourceMap | RawIndexMap | string, sourceMapUrl: SourceMapUrl | null | undefined, callback: (consumer: BasicSourceMapConsumer | IndexedSourceMapConsumer) => Promise<T> | T): Promise<T>;
 }
 
