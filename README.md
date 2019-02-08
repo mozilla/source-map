@@ -426,7 +426,7 @@ and an array of objects is returned, each with the following properties:
   column number is 0-based.
 
 ```js
-consumer.allGeneratedpositionsfor({ line: 2, source: "foo.coffee" })
+consumer.allGeneratedPositionsFor({ line: 2, source: "foo.coffee" })
 // [ { line: 2,
 //     column: 1 },
 //   { line: 2,
