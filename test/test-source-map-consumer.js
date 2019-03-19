@@ -692,6 +692,52 @@ exports["test index map + generatedPositionFor"] = async function(assert) {
   map.destroy();
 };
 
+exports["test index map + originalPositionFor"] = async function(assert) {
+  const map = await new SourceMapConsumer(util.indexedTestMapWithMappingsAtSectionStart);
+
+  let pos = map.originalPositionFor({
+    line: 1,
+    column: 0
+  });
+
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "foo.js");
+  assert.equal(pos.name, "first");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 1
+  });
+
+  assert.equal(pos.line, 2);
+  assert.equal(pos.column, 1);
+  assert.equal(pos.source, "bar.js");
+  assert.equal(pos.name, "second");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 2
+  });
+
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "baz.js");
+  assert.equal(pos.name, "third");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 3
+  });
+
+  assert.equal(pos.line, 2);
+  assert.equal(pos.column, 1);
+  assert.equal(pos.source, "quux.js");
+  assert.equal(pos.name, "fourth");
+
+  map.destroy();
+};
+
 exports["test allGeneratedPositionsFor for line"] = async function(assert) {
   let map = new SourceMapGenerator({
     file: "generated.js"
