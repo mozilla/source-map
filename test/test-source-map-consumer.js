@@ -438,6 +438,22 @@ exports["test that we can set the context for `this` in eachMapping in indexed s
   map.destroy();
 };
 
+exports["test that sourceContentFor result if no sourcesContent provided"] = async function(assert) {
+  const map = await new SourceMapConsumer(util.testMap);
+  assert.equal(map.sourceContentFor("/the/root/one.js", true), null);
+  assert.equal(map.sourceContentFor("/the/root/three.js", true), null);
+
+  assert.throws(function() {
+    map.sourceContentFor("/the/root/one.js");
+  }, Error);
+
+  assert.throws(function() {
+    map.sourceContentFor("/the/root/three.js");
+  }, Error);
+
+  map.destroy();
+};
+
 exports["test that the `sourcesContent` field has the original sources"] = async function(assert) {
   const map = await new SourceMapConsumer(util.testMapWithSourcesContent);
   const sourcesContent = map.sourcesContent;
