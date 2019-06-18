@@ -94,3 +94,29 @@ exports["test multiple matches at the beginning"] = function(assert) {
   assert.equal(binarySearch.search(needle, haystack, numberCompare,
                                    binarySearch.LEAST_UPPER_BOUND), 0);
 };
+
+exports["test fuzzy match with duplicates in the data at match point"] = function(assert) {
+  const needle = 2;
+  const haystack = [1, 1, 5, 5, 5, 5, 13, 21];
+
+  assert.equal(
+    binarySearch.search(
+      needle,
+      haystack,
+      numberCompare,
+      binarySearch.LEAST_UPPER_BOUND
+    ),
+    2
+  );
+
+  assert.equal(
+    binarySearch.search(
+      needle,
+      haystack,
+      numberCompare,
+      binarySearch.GREATEST_LOWER_BOUND
+    ),
+    1
+  );
+};
+
