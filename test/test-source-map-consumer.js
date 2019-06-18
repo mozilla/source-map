@@ -690,75 +690,20 @@ exports["test index map + generatedPositionFor"] = async function(assert) {
 };
 
 exports["test index map + originalPositionFor"] = async function(assert) {
-  console.warn("=================================");
   var map = await new SourceMapConsumer(
     util.indexedTestMapWithMappingsAtSectionStart
   );
   assert.ok(map instanceof IndexedSourceMapConsumer);
-
-  map.eachMapping(function(m) {
-    console.warn("mapping:", m);
-  });
-
-  map.sources.forEach(function(s, d) {
-    console.warn("section:", d, s);
-  });
-
-  for (let l = 0; l <= 2; l++) {
-    for (let c = 0; c < 6; c++) {
-      let pos = map.originalPositionFor({
-        line: l,
-        column: c
-      });
-      console.warn("originalPositionFor:", {
-        line: l,
-        column: c,
-        rv: pos
-      });
-    }
-  }
-
-  var gen = SourceMapGenerator.fromSourceMap(map);
-  var smStr = JSON.stringify(gen.toJSON(), null, 2);
-  console.warn("generated sourcemap:", smStr);
-  map.destroy();
-
-  console.warn("-----------------------------------");
-  map = await new SourceMapConsumer(smStr);
-  assert.ok(!(map instanceof IndexedSourceMapConsumer));
-
-  map.eachMapping(function(m) {
-    console.warn("mapping:", m);
-  });
-
-  map.sources.forEach(function(s, d) {
-    console.warn("section:", d, s);
-  });
-
-  for (let l = 1; l <= 2; l++) {
-    for (let c = 0; c < 6; c++) {
-      let pos = map.originalPositionFor({
-        line: l,
-        column: c
-      });
-      console.warn("originalPositionFor:", {
-        line: l,
-        column: c,
-        rv: pos
-      });
-    }
-  }
-
 
   var pos = map.originalPositionFor({
     line: 1,
     column: 0
   });
 
-  //  assert.equal(pos.line, 1);
-  //  assert.equal(pos.column, 0);
-  //  assert.equal(pos.source, "foo.js");
-  //  assert.equal(pos.name, "first");
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "foo.js");
+  assert.equal(pos.name, "first");
 
   pos = map.originalPositionFor({
     line: 1,
@@ -775,10 +720,10 @@ exports["test index map + originalPositionFor"] = async function(assert) {
     column: 2
   });
 
-  //  assert.equal(pos.line, 1);
-  //  assert.equal(pos.column, 0);
-  //  assert.equal(pos.source, "baz.js");
-  //  assert.equal(pos.name, "third");
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "baz.js");
+  assert.equal(pos.name, "third");
 
   pos = map.originalPositionFor({
     line: 1,
