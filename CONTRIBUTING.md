@@ -3,12 +3,13 @@
 Thank you for your interest in contributing to this library! Contributions are
 very appreciated.
 
---------------------------------------------------------------------------------
+---
 
 <!-- `npm run toc` to regenerate the Table of Contents -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
 ## Table of Contents
 
 - [Filing Issues](#filing-issues)
@@ -21,21 +22,19 @@ very appreciated.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-
-
 ## Filing Issues
 
 If you are filing an issue for a bug or other misbehavior, please provide:
 
-* **A test case.** The more minimal the better, but sometimes a larger test case
+- **A test case.** The more minimal the better, but sometimes a larger test case
   cannot be helped. This should be in the form of a gist, node script,
   repository, etc.
 
-* **Steps to reproduce the bug.** The more exact and specific the better.
+- **Steps to reproduce the bug.** The more exact and specific the better.
 
-* **The result you expected.**
+- **The result you expected.**
 
-* **The actual result.**
+- **The actual result.**
 
 ## Building From Source
 
@@ -51,7 +50,7 @@ Next, run
 
 This will create the following files:
 
-* `dist/source-map.js` - The plain browser build.
+- `dist/source-map.js` - The plain browser build.
 
 ## Submitting Pull Requests
 
@@ -93,15 +92,15 @@ suite.
 The `assert` argument is a cut down version of node's assert module. You have
 access to the following assertion functions:
 
-* `doesNotThrow`
+- `doesNotThrow`
 
-* `equal`
+- `equal`
 
-* `ok`
+- `ok`
 
-* `strictEqual`
+- `strictEqual`
 
-* `throws`
+- `throws`
 
 (The reason for the restricted set of test functions is because we need the
 tests to run inside Firefox's test suite as well and Firefox has a shimmed
@@ -111,7 +110,7 @@ There are additional test utilities and helpers in `./test/util.js` which you
 can use as well:
 
 ```js
-var util = require('./util');
+var util = require("./util");
 ```
 
 ## Checking code coverage
@@ -125,17 +124,17 @@ $ open coverage/index.html
 ```
 
 This will allow you to browse to red sections of the code that need
-more attention.  Even more cool, however, is to run:
+more attention. Even more cool, however, is to run:
 
 ```shell
 $ npm run dev
 ```
 
-(On some operating systems, this may pop up a request for node to be able to open a socket.  Click "Allow" or the equivalent.)
+(On some operating systems, this may pop up a request for node to be able to open a socket. Click "Allow" or the equivalent.)
 
 This will run the coverage tools, and monitor all of the files in the
 project, re-running the coverage tools and refreshing the browser when
-any files change.  There will be a small web server running on port 4103 to enable this.  Control-C to stop.
+any files change. There will be a small web server running on port 4103 to enable this. Control-C to stop.
 
 ## Updating the `lib/mappings.wasm` WebAssembly Module
 

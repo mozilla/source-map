@@ -1,4 +1,4 @@
-const {SourceMapConsumer, SourceMapGenerator} = require("../");
+const { SourceMapConsumer, SourceMapGenerator } = require("../");
 
 const TS_MAP = {
   version: 3,
@@ -32,12 +32,7 @@ const BABEL_MAP = {
   ]
 };
 
-
-async function composeSourceMaps(
-  tsMap,
-  babelMap,
-  tsFileName,
-) {
+async function composeSourceMaps(tsMap, babelMap, tsFileName) {
   const tsConsumer = await new SourceMapConsumer(tsMap);
   const babelConsumer = await new SourceMapConsumer(babelMap);
   const map = new SourceMapGenerator();
@@ -48,25 +43,25 @@ async function composeSourceMaps(
       generatedColumn,
       originalLine,
       originalColumn,
-      name,
+      name
     }) => {
       if (originalLine) {
         const original = tsConsumer.originalPositionFor({
           line: originalLine,
-          column: originalColumn,
+          column: originalColumn
         });
         if (original.line) {
           map.addMapping({
             generated: {
               line: generatedLine,
-              column: generatedColumn,
+              column: generatedColumn
             },
             original: {
               line: original.line,
-              column: original.column,
+              column: original.column
             },
             source: tsFileName,
-            name,
+            name
           });
         }
       }

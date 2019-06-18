@@ -37,7 +37,13 @@ exports["test .at() indexing"] = function(assert) {
 };
 
 exports["test creating from an array"] = function(assert) {
-  const set = ArraySet.fromArray(["foo", "bar", "baz", "quux", "hasOwnProperty"]);
+  const set = ArraySet.fromArray([
+    "foo",
+    "bar",
+    "baz",
+    "quux",
+    "hasOwnProperty"
+  ]);
 
   assert.ok(set.has("foo"));
   assert.ok(set.has("bar"));
@@ -56,7 +62,9 @@ exports["test creating from an array"] = function(assert) {
   assert.strictEqual(set.at(3), "quux");
 };
 
-exports["test that you can add __proto__; see github issue #30"] = function(assert) {
+exports["test that you can add __proto__; see github issue #30"] = function(
+  assert
+) {
   const set = new ArraySet();
   set.add("__proto__");
   assert.ok(set.has("__proto__"));

@@ -37,25 +37,26 @@ async function run(tests) {
 
 function isTestFile(f) {
   const testToRun = process.argv[2];
-  return testToRun
-    ? path.basename(testToRun) === f
-    : /^test\-.*?\.js/.test(f);
+  return testToRun ? path.basename(testToRun) === f : /^test\-.*?\.js/.test(f);
 }
 
 function toRelativeModule(f) {
   return "./" + f.replace(/\.js$/, "");
 }
 
-const requires = fs.readdirSync(__dirname)
+const requires = fs
+  .readdirSync(__dirname)
   .filter(isTestFile)
   .map(toRelativeModule);
 
-run(requires.map(require).map(function(mod, i) {
-  return {
-    name: requires[i],
-    testCase: mod
-  };
-})).then(
+run(
+  requires.map(require).map(function(mod, i) {
+    return {
+      name: requires[i],
+      testCase: mod
+    };
+  })
+).then(
   code => process.exit(code),
   e => {
     console.error(e);

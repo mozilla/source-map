@@ -1,21 +1,21 @@
 "use strict";
 
 module.exports = {
-  "env": {
-    "node": true,
-    "es6": true
+  env: {
+    node: true,
+    es6: true
   },
 
-  "parserOptions": {
-    "ecmaVersion": 9
+  parserOptions: {
+    ecmaVersion: 9
   },
 
-  "globals": {
-    "fetch": false,
-    "WebAssembly": false
+  globals: {
+    fetch: false,
+    WebAssembly: false
   },
 
-  "rules": {
+  rules: {
     // Require spacing around =>
     "arrow-spacing": "error",
 
@@ -26,17 +26,17 @@ module.exports = {
     "block-spacing": "error",
 
     // No newline before open brace for a block
-    "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
+    "brace-style": ["error", "1tbs", { allowSingleLine: true }],
 
     // No space before always a space after a comma
-    "comma-spacing": ["error", {"after": true, "before": false}],
+    "comma-spacing": ["error", { after: true, before: false }],
 
     // Commas at the end of the line not the start
     "comma-style": "error",
 
     // Warn about cyclomatic complexity in functions.
     // XXX Get this down to 20?
-    "complexity": ["error", 25],
+    complexity: ["error", 25],
 
     // Don't require spaces around computed properties
     "computed-property-spacing": ["error", "never"],
@@ -45,7 +45,7 @@ module.exports = {
     "consistent-return": "error",
 
     // Require braces around blocks that start a new line
-    "curly": ["error", "multi-line"],
+    curly: ["error", "multi-line"],
 
     // Encourage the use of dot notation whenever possible.
     "dot-notation": "error",
@@ -57,17 +57,20 @@ module.exports = {
     "func-call-spacing": "error",
 
     // Require function* name()
-    "generator-star-spacing": ["error", {"after": true, "before": false}],
+    "generator-star-spacing": ["error", { after: true, before: false }],
 
     // Two space indent
     // "indent": ["error", 2, { "SwitchCase": 1 }],
 
     // Space after colon not before in property declarations
-    "key-spacing": ["error", {
-      "afterColon": true,
-      "beforeColon": false,
-      "mode": "minimum"
-    }],
+    "key-spacing": [
+      "error",
+      {
+        afterColon: true,
+        beforeColon: false,
+        mode: "minimum"
+      }
+    ],
 
     // Require spaces before and after keywords
     "keyword-spacing": "error",
@@ -125,7 +128,7 @@ module.exports = {
     "no-else-return": "error",
 
     // No empty statements
-    "no-empty": ["error", {"allowEmptyCatch": true}],
+    "no-empty": ["error", { allowEmptyCatch: true }],
 
     // No empty character classes in regex
     "no-empty-character-class": "error",
@@ -163,7 +166,7 @@ module.exports = {
     // Disallow the use of the __iterator__ property
     "no-iterator": "error",
 
-     // No labels
+    // No labels
     "no-labels": "error",
 
     // Disallow unnecessary nested blocks
@@ -176,12 +179,17 @@ module.exports = {
     // "no-mixed-spaces-and-tabs": "error",
 
     // No unnecessary spacing
-    "no-multi-spaces": ["error", { exceptions: {
-      "ArrayExpression": true,
-      "AssignmentExpression": true,
-      "ObjectExpression": true,
-      "VariableDeclarator": true
-    } }],
+    "no-multi-spaces": [
+      "error",
+      {
+        exceptions: {
+          ArrayExpression: true,
+          AssignmentExpression: true,
+          ObjectExpression: true,
+          VariableDeclarator: true
+        }
+      }
+    ],
 
     // No reassigning native JS objects
     "no-native-reassign": "error",
@@ -250,10 +258,13 @@ module.exports = {
     "no-unsafe-negation": "error",
 
     // No declaring variables that are never used
-    "no-unused-vars": ["error", {
-      "args": "none",
-      "vars": "local"
-    }],
+    "no-unused-vars": [
+      "error",
+      {
+        args: "none",
+        vars: "local"
+      }
+    ],
 
     // No using variables before defined
     "no-use-before-define": ["error", "nofunc"],
@@ -278,48 +289,58 @@ module.exports = {
     "no-with": "error",
 
     // Require object-literal shorthand with ES6 method syntax
-    "object-shorthand": ["error", "always", { "avoidQuotes": true }],
+    "object-shorthand": ["error", "always", { avoidQuotes: true }],
 
     // Use const instead of let where possible
     "prefer-const": "error",
 
     // Require double-quotes everywhere, except where quotes are escaped
     // or template literals are used.
-    "quotes": ["error", "double", {
-      "allowTemplateLiterals": true,
-      "avoidEscape": true
-    }],
+    quotes: [
+      "error",
+      "double",
+      {
+        allowTemplateLiterals: true,
+        avoidEscape: true
+      }
+    ],
 
     // No spacing inside rest or spread expressions
     "rest-spread-spacing": "error",
 
     // Always require semicolon at end of statement
-    "semi": ["error", "always"],
+    semi: ["error", "always"],
 
     // Require space before blocks
     "space-before-blocks": "error",
 
     // Never use spaces before function parentheses
-    "space-before-function-paren": ["error", {
-      "anonymous": "never",
-      "asyncArrow": "always",
-      "named": "never"
-    }],
+    "space-before-function-paren": [
+      "error",
+      {
+        anonymous: "never",
+        asyncArrow: "always",
+        named: "never"
+      }
+    ],
 
     // No space padding in parentheses
     "space-in-parens": ["error", "never"],
 
     // Require spaces around operators
-    "space-infix-ops": ["error", { "int32Hint": true }],
+    "space-infix-ops": ["error", { int32Hint: true }],
 
     // ++ and -- should not need spacing
-    "space-unary-ops": ["error", {
-      "nonwords": false,
-      "overrides": {
-        "typeof": false // We tend to use typeof as a function call
-      },
-      "words": true
-    }],
+    "space-unary-ops": [
+      "error",
+      {
+        nonwords: false,
+        overrides: {
+          typeof: false // We tend to use typeof as a function call
+        },
+        words: true
+      }
+    ],
 
     // Requires or disallows a whitespace (space or tab) beginning a comment
     "spaced-comment": "error",

@@ -15,13 +15,15 @@ if (!console.profile) {
 var __benchmarkResults = [];
 var benchmarkBlackbox = [].push.bind(__benchmarkResults);
 
-const now = typeof window === "object" && window.performance && window.performance.now
-      ? () => window.performance.now()
-      : () => now();
+const now =
+  typeof window === "object" && window.performance && window.performance.now
+    ? () => window.performance.now()
+    : () => now();
 
-const yieldForTick = typeof setTimeout === "function"
-      ? () => new Promise(resolve => setTimeout(resolve, 1))
-      : () => Promise.resolve();
+const yieldForTick =
+  typeof setTimeout === "function"
+    ? () => new Promise(resolve => setTimeout(resolve, 1))
+    : () => Promise.resolve();
 
 // Benchmark running an action n times.
 async function benchmark(setup, action, tearDown = () => {}) {
@@ -59,7 +61,11 @@ async function getTestMapping() {
   let smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
   let mappings = [];
-  smc.eachMapping([].push, mappings, sourceMap.SourceMapConsumer.ORIGINAL_ORDER);
+  smc.eachMapping(
+    [].push,
+    mappings,
+    sourceMap.SourceMapConsumer.ORIGINAL_ORDER
+  );
 
   let testMapping = mappings[Math.floor(mappings.length / 13)];
   smc.destroy();
@@ -70,7 +76,7 @@ var benchmarks = {
   "SourceMapGenerator#toString": () => {
     let smg;
     return benchmark(
-      async function () {
+      async function() {
         var smc = await new sourceMap.SourceMapConsumer(testSourceMap);
         smg = sourceMap.SourceMapGenerator.fromSourceMap(smc);
         smc.destroy();
@@ -84,16 +90,18 @@ var benchmarks = {
   "set.first.breakpoint": () => {
     let testMapping;
     return benchmark(
-      async function () {
+      async function() {
         testMapping = await getTestMapping();
       },
-      async function () {
+      async function() {
         let smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
-        benchmarkBlackbox(smc.allGeneratedPositionsFor({
-          source: testMapping.source,
-          line: testMapping.originalLine,
-        }).length);
+        benchmarkBlackbox(
+          smc.allGeneratedPositionsFor({
+            source: testMapping.source,
+            line: testMapping.originalLine
+          }).length
+        );
 
         smc.destroy();
       }
@@ -103,16 +111,18 @@ var benchmarks = {
   "first.pause.at.exception": () => {
     let testMapping;
     return benchmark(
-      async function () {
+      async function() {
         testMapping = await getTestMapping();
       },
-      async function () {
+      async function() {
         let smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
-        benchmarkBlackbox(smc.originalPositionFor({
-          line: testMapping.generatedLine,
-          column: testMapping.generatedColumn,
-        }));
+        benchmarkBlackbox(
+          smc.originalPositionFor({
+            line: testMapping.generatedLine,
+            column: testMapping.generatedColumn
+          })
+        );
 
         smc.destroy();
       }
@@ -123,71 +133,72 @@ var benchmarks = {
     let testMapping;
     let smc;
     return benchmark(
-      async function () {
+      async function() {
         testMapping = await getTestMapping();
         smc = await new sourceMap.SourceMapConsumer(testSourceMap);
       },
-      async function () {
-        benchmarkBlackbox(smc.allGeneratedPositionsFor({
-          source: testMapping.source,
-          line: testMapping.originalLine,
-        }));
+      async function() {
+        benchmarkBlackbox(
+          smc.allGeneratedPositionsFor({
+            source: testMapping.source,
+            line: testMapping.originalLine
+          })
+        );
       },
-      function () {
+      function() {
         smc.destroy();
       }
-    )
+    );
   },
 
   "subsequent.pausing.at.exceptions": () => {
     let testMapping;
     let smc;
     return benchmark(
-      async function () {
+      async function() {
         testMapping = await getTestMapping();
         smc = await new sourceMap.SourceMapConsumer(testSourceMap);
       },
-      async function () {
-        benchmarkBlackbox(smc.originalPositionFor({
-          line: testMapping.generatedLine,
-          column: testMapping.generatedColumn,
-        }));
+      async function() {
+        benchmarkBlackbox(
+          smc.originalPositionFor({
+            line: testMapping.generatedLine,
+            column: testMapping.generatedColumn
+          })
+        );
       },
-      function () {
+      function() {
         smc.destroy();
       }
     );
   },
 
   "parse.and.iterate": () => {
-    return benchmark(
-      noop,
-      async function () {
-        const smc = await new sourceMap.SourceMapConsumer(testSourceMap);
+    return benchmark(noop, async function() {
+      const smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
-        let maxLine = 0;
-        let maxCol = 0;
-        smc.eachMapping(m => {
-          maxLine = Math.max(maxLine, m.generatedLine);
-          maxLine = Math.max(maxLine, m.originalLine);
-          maxCol = Math.max(maxCol, m.generatedColumn);
-          maxCol = Math.max(maxCol, m.originalColumn);
-        });
-        benchmarkBlackbox(maxLine);
-        benchmarkBlackbox(maxCol);
+      let maxLine = 0;
+      let maxCol = 0;
+      smc.eachMapping(m => {
+        maxLine = Math.max(maxLine, m.generatedLine);
+        maxLine = Math.max(maxLine, m.originalLine);
+        maxCol = Math.max(maxCol, m.generatedColumn);
+        maxCol = Math.max(maxCol, m.originalColumn);
+      });
+      benchmarkBlackbox(maxLine);
+      benchmarkBlackbox(maxCol);
 
-        smc.destroy();
-      }
-    );
+      smc.destroy();
+    });
   },
 
   "iterate.already.parsed": () => {
     let smc;
     return benchmark(
-      async function () {
+      async function() {
         smc = await new sourceMap.SourceMapConsumer(testSourceMap);
       },
-      async function () {
+      async function() {
         let maxLine = 0;
         let maxCol = 0;
         smc.eachMapping(m => {
@@ -199,7 +210,7 @@ var benchmarks = {
         benchmarkBlackbox(maxLine);
         benchmarkBlackbox(maxCol);
       },
-      function () {
+      function() {
         smc.destroy();
       }
     );
