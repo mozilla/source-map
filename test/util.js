@@ -265,6 +265,29 @@ exports.indexedTestMapColumnOffset = {
     }
   ]
 };
+exports.indexedTestMapWithMappingsAtSectionStart = {
+  version: 3,
+  sections: [
+    {
+      offset: { line: 0, column: 0 },
+      map: {
+        version: 3,
+        names: ["first", "second"],
+        sources: ["foo.js", "bar.js"],
+        mappings: "AAAAA,CCCCC"
+      }
+    },
+    {
+      offset: { line: 0, column: 2 },
+      map: {
+        version: 3,
+        names: ["third", "fourth"],
+        sources: ["baz.js", "quux.js"],
+        mappings: "AAAAA,CCCCC"
+      }
+    }
+  ]
+};
 exports.testMapWithSourcesContent = {
   version: 3,
   file: "min.js",
