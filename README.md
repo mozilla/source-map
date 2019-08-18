@@ -184,13 +184,13 @@ Get a reference to the module:
 
 ```js
 // Node.js
-var sourceMap = require('source-map');
+const {SourceNode, SourceMapConsumer, SourceMapGenerator} = require('source-map');
 
 // Browser builds
-var sourceMap = window.sourceMap;
+const {SourceNode, SourceMapConsumer, SourceMapGenerator} = window.sourceMap;
 
 // Inside Firefox
-const sourceMap = require("devtools/toolkit/sourcemap/source-map.js");
+const {SourceNode, SourceMapConsumer, SourceMapGenerator} = require("devtools/toolkit/sourcemap/source-map.js");
 ```
 
 ### SourceMapConsumer
