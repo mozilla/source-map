@@ -78,6 +78,10 @@ export interface CodeWithSourceMap {
     map: SourceMapGenerator;
 }
 
+export interface SourceMapConsumerInitialisationOptions {
+    "lib/mappings.wasm": string;
+}
+
 export interface SourceMapConsumer {
     /**
      * Compute the last column for each generated mapping. The last column is
@@ -197,6 +201,14 @@ export interface SourceMapConsumerConstructor {
     new (rawSourceMap: RawSourceMap, sourceMapUrl?: SourceMapUrl): Promise<BasicSourceMapConsumer>;
     new (rawSourceMap: RawIndexMap, sourceMapUrl?: SourceMapUrl): Promise<IndexedSourceMapConsumer>;
     new (rawSourceMap: RawSourceMap | RawIndexMap | string, sourceMapUrl?: SourceMapUrl): Promise<BasicSourceMapConsumer | IndexedSourceMapConsumer>;
+
+     /**
+     * Set URL/ArrayBuffer for `lib/mappings.wasm` when using outside of Node
+     *
+     * @param opts
+     *        Options for initialisation containing the URL or ArrayBuffer for lib/mappings.wasm
+     */
+    initialize(options: SourceMapConsumerInitialisationOptions): void;
 
     /**
      * Create a BasicSourceMapConsumer from a SourceMapGenerator.
