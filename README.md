@@ -1,6 +1,6 @@
 # Source Map
 
-[![Build Status](https://travis-ci.org/mozilla/source-map.png?branch=master)](https://travis-ci.org/mozilla/source-map)
+[![Build Status](https://travis-ci.org/mozilla/source-map.svg?branch=master)](https://travis-ci.org/mozilla/source-map)
 
 [![Coverage Status](https://coveralls.io/repos/github/mozilla/source-map/badge.svg)](https://coveralls.io/github/mozilla/source-map)
 
