@@ -61,6 +61,7 @@ export interface MappingItem {
     source: string;
     generatedLine: number;
     generatedColumn: number;
+    lastGeneratedColumn: number | null;
     originalLine: number;
     originalColumn: number;
     name: string;
