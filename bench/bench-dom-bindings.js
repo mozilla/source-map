@@ -1,7 +1,5 @@
 sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm":
-    "../lib/mappings.wasm?bust_cache=" +
-    String(Math.random()).replace(/0\./, "")
+  "lib/mappings.wasm": "../lib/mappings.wasm?bust_cache=" + String(Math.random()).replace(/0\./, "")
 });
 
 function bindRange(labelId, updater) {
@@ -45,11 +43,7 @@ const updateTestSourceMap = () => {
   testSourceMap.mappings = mappings.join(";");
 
   for (let i = 0; i < factor; i++) {
-    testSourceMap.sources.splice(
-      testSourceMap.sources.length,
-      0,
-      ...origMap.sources
-    );
+    testSourceMap.sources.splice(testSourceMap.sources.length, 0, ...origMap.sources);
     testSourceMap.names.splice(testSourceMap.names.length, 0, ...origMap.names);
   }
 };
@@ -92,10 +86,7 @@ function benchOnClick(button, results, benchName, bencher) {
       buttons.forEach(b => b.removeAttribute("disabled"));
 
       const csv = stats.xs
-        .map(
-          x =>
-            `"${implAndBrowser}",${testSourceMap.mappings.length},"${benchName}",${x}`
-        )
+        .map(x => `"${implAndBrowser}",${testSourceMap.mappings.length},"${benchName}",${x}`)
         .join("\n");
 
       results.innerHTML = `

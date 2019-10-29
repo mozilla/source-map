@@ -7,14 +7,15 @@ node_js:
   - "9"
 
 install:
-- npm install
-- npm install coveralls
+  - npm install
+  - npm install coveralls
 
 script:
-- npm run coverage
+  - npm run coverage
+  - npm run lint
 
 after_success:
-- nyc report --reporter=text-lcov | coveralls
+  - nyc report --reporter=text-lcov | coveralls
 
 cache:
   directories:

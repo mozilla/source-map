@@ -21,9 +21,7 @@ const now =
     : () => now();
 
 const yieldForTick =
-  typeof setTimeout === "function"
-    ? () => new Promise(resolve => setTimeout(resolve, 1))
-    : () => Promise.resolve();
+  typeof setTimeout === "function" ? () => new Promise(resolve => setTimeout(resolve, 1)) : () => Promise.resolve();
 
 // Benchmark running an action n times.
 async function benchmark(setup, action, tearDown = () => {}) {
@@ -61,11 +59,7 @@ async function getTestMapping() {
   let smc = await new sourceMap.SourceMapConsumer(testSourceMap);
 
   let mappings = [];
-  smc.eachMapping(
-    [].push,
-    mappings,
-    sourceMap.SourceMapConsumer.ORIGINAL_ORDER
-  );
+  smc.eachMapping([].push, mappings, sourceMap.SourceMapConsumer.ORIGINAL_ORDER);
 
   let testMapping = mappings[Math.floor(mappings.length / 13)];
   smc.destroy();

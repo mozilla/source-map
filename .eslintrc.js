@@ -6,6 +6,9 @@ module.exports = {
     es6: true
   },
 
+  plugins: ["prettier"],
+  extends: ["prettier"],
+
   parserOptions: {
     ecmaVersion: 9
   },
@@ -349,6 +352,9 @@ module.exports = {
     "use-isnan": "error",
 
     // Only check typeof against valid results
-    "valid-typeof": "error"
+    "valid-typeof": "error",
+
+    "prettier/prettier": "error",
+    "max-len": ["error", { code: 120, ignoreUrls: true }]
   }
 };

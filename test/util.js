@@ -27,8 +27,7 @@ const util = require("../lib/util");
 //   ONE.foo=function(a){return baz(a);};
 //   TWO.inc=function(a){return a+1;};
 exports.testGeneratedCode =
-  " ONE.foo=function(a){return baz(a);};\n" +
-  " TWO.inc=function(a){return a+1;};";
+  " ONE.foo=function(a){return baz(a);};\n TWO.inc=function(a){return a+1;};";
 exports.testMap = {
   version: 3,
   file: "min.js",
@@ -112,7 +111,7 @@ exports.indexedTestMap = {
         version: 3,
         sources: ["one.js"],
         sourcesContent: [
-          " ONE.foo = function (bar) {\n" + "   return baz(bar);\n" + " };"
+          " ONE.foo = function (bar) {\n   return baz(bar);\n };"
         ],
         names: ["bar", "baz"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID",
@@ -128,9 +127,7 @@ exports.indexedTestMap = {
       map: {
         version: 3,
         sources: ["two.js"],
-        sourcesContent: [
-          " TWO.inc = function (n) {\n" + "   return n + 1;\n" + " };"
-        ],
+        sourcesContent: [" TWO.inc = function (n) {\n   return n + 1;\n };"],
         names: ["n"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOA",
         file: "min.js",
@@ -152,7 +149,7 @@ exports.indexedTestMapDifferentSourceRoots = {
         version: 3,
         sources: ["one.js"],
         sourcesContent: [
-          " ONE.foo = function (bar) {\n" + "   return baz(bar);\n" + " };"
+          " ONE.foo = function (bar) {\n   return baz(bar);\n };"
         ],
         names: ["bar", "baz"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID",
@@ -168,9 +165,7 @@ exports.indexedTestMapDifferentSourceRoots = {
       map: {
         version: 3,
         sources: ["two.js"],
-        sourcesContent: [
-          " TWO.inc = function (n) {\n" + "   return n + 1;\n" + " };"
-        ],
+        sourcesContent: [" TWO.inc = function (n) {\n   return n + 1;\n };"],
         names: ["n"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOA",
         file: "min.js",
@@ -192,7 +187,7 @@ exports.indexedTestMapColumnOffset = {
         version: 3,
         sources: ["one.js"],
         sourcesContent: [
-          " ONE.foo = function (bar) {\n" + "   return baz(bar);\n" + " };"
+          " ONE.foo = function (bar) {\n   return baz(bar);\n };"
         ],
         names: ["bar", "baz"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID",
@@ -210,9 +205,7 @@ exports.indexedTestMapColumnOffset = {
       map: {
         version: 3,
         sources: ["two.js"],
-        sourcesContent: [
-          " TWO.inc = function (n) {\n" + "   return n + 1;\n" + " };"
-        ],
+        sourcesContent: [" TWO.inc = function (n) {\n   return n + 1;\n };"],
         names: ["n"],
         mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOA",
         file: "min.js",
@@ -227,8 +220,8 @@ exports.testMapWithSourcesContent = {
   names: ["bar", "baz", "n"],
   sources: ["one.js", "two.js"],
   sourcesContent: [
-    " ONE.foo = function (bar) {\n" + "   return baz(bar);\n" + " };",
-    " TWO.inc = function (n) {\n" + "   return n + 1;\n" + " };"
+    " ONE.foo = function (bar) {\n   return baz(bar);\n };",
+    " TWO.inc = function (n) {\n   return n + 1;\n };"
   ],
   sourceRoot: "/the/root",
   mappings:
@@ -240,8 +233,8 @@ exports.testMapRelativeSources = {
   names: ["bar", "baz", "n"],
   sources: ["./one.js", "./two.js"],
   sourcesContent: [
-    " ONE.foo = function (bar) {\n" + "   return baz(bar);\n" + " };",
-    " TWO.inc = function (n) {\n" + "   return n + 1;\n" + " };"
+    " ONE.foo = function (bar) {\n   return baz(bar);\n };",
+    " TWO.inc = function (n) {\n   return n + 1;\n };"
   ],
   sourceRoot: "/the/root",
   mappings:

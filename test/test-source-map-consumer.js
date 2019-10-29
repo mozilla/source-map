@@ -1815,8 +1815,7 @@ exports["test issue #191"] = async function(assert) {
 
   assert.ok(
     true,
-    "Using a SourceMapGenerator again after creating a " +
-      "SourceMapConsumer from it should not throw"
+    "Using a SourceMapGenerator again after creating a SourceMapConsumer from it should not throw"
   );
 
   consumer.destroy();

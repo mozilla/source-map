@@ -881,8 +881,7 @@ exports["test issue #192"] = async function(assert) {
   assert.equal(
     n,
     2,
-    "Should not de-duplicate mappings that have the same " +
-      "generated positions, but different original positions."
+    "Should not de-duplicate mappings that have the same generated positions, but different original positions."
   );
 
   consumer.destroy();

@@ -666,6 +666,7 @@ exports["test from issue 258"] = async function(assert) {
     ";require(0);\n//# sourceMappingURL=/index.ios.map?platform=ios&dev=false&minify=true";
 
   const reactMap =
+    // eslint-disable-next-line
     '{"version":3,"file":"/index.ios.bundle?platform=ios&dev=false&minify=true","sections":[{"offset":{"line":0,"column":0},"map":{"version":3,"sources":["require-0.js"],"names":[],"mappings":"AAAA;","file":"require-0.js","sourcesContent":[";require(0);"]}}]}';
 
   const map = await new SourceMapConsumer(reactMap);

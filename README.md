@@ -84,8 +84,7 @@ const rawSourceMap = {
   names: ["bar", "baz", "n"],
   sources: ["one.js", "two.js"],
   sourceRoot: "http://example.com/www/js/",
-  mappings:
-    "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"
+  mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"
 };
 
 const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
@@ -132,19 +131,13 @@ In depth guide:
 function compile(ast) {
   switch (ast.type) {
     case "BinaryExpression":
-      return new SourceNode(
-        ast.location.line,
-        ast.location.column,
-        ast.location.source,
-        [compile(ast.left), " + ", compile(ast.right)]
-      );
+      return new SourceNode(ast.location.line, ast.location.column, ast.location.source, [
+        compile(ast.left),
+        " + ",
+        compile(ast.right)
+      ]);
     case "Literal":
-      return new SourceNode(
-        ast.location.line,
-        ast.location.column,
-        ast.location.source,
-        String(ast.value)
-      );
+      return new SourceNode(ast.location.line, ast.location.column, ast.location.source, String(ast.value));
     // ...
     default:
       throw new Error("Bad AST");
@@ -271,17 +264,13 @@ By using `with`, you do not have to remember to manually call `destroy` on
 the consumer, since it will be called automatically once `f` completes.
 
 ```js
-const xSquared = await SourceMapConsumer.with(
-  myRawSourceMap,
-  null,
-  async function(consumer) {
-    // Use `consumer` inside here and don't worry about remembering
-    // to call `destroy`.
+const xSquared = await SourceMapConsumer.with(myRawSourceMap, null, async function(consumer) {
+  // Use `consumer` inside here and don't worry about remembering
+  // to call `destroy`.
 
-    const x = await whatever(consumer);
-    return x * x;
-  }
-);
+  const x = await whatever(consumer);
+  return x * x;
+});
 
 // You may not use that `consumer` anymore out here; it has
 // been destroyed. But you can use `xSquared`.
@@ -590,10 +579,7 @@ Set the source content for an original source file.
 - `sourceContent` the content of the source file.
 
 ```js
-generator.setSourceContent(
-  "module-one.scm",
-  fs.readFileSync("path/to/module-one.scm")
-);
+generator.setSourceContent("module-one.scm", fs.readFileSync("path/to/module-one.scm"));
 ```
 
 #### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile[, sourceMapPath]])
@@ -673,13 +659,8 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
   should be relative to.
 
 ```js
-const consumer = await new SourceMapConsumer(
-  fs.readFileSync("path/to/my-file.js.map", "utf8")
-);
-const node = SourceNode.fromStringWithSourceMap(
-  fs.readFileSync("path/to/my-file.js"),
-  consumer
-);
+const consumer = await new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
+const node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"), consumer);
 ```
 
 #### SourceNode.prototype.add(chunk)
@@ -716,10 +697,7 @@ Set the source content for a source file. This will be added to the
 - `sourceContent`: The content of the source file
 
 ```js
-node.setSourceContent(
-  "module-one.scm",
-  fs.readFileSync("path/to/module-one.scm")
-);
+node.setSourceContent("module-one.scm", fs.readFileSync("path/to/module-one.scm"));
 ```
 
 #### SourceNode.prototype.walk(fn)
