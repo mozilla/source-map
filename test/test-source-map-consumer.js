@@ -95,7 +95,6 @@ exports["test that the source root is reflected in a mapping's source field"] = 
   assert.equal(mapping.source, "/the/root/one.js");
   map.destroy();
 
-
   map = await new SourceMapConsumer(util.testMapNoSourceRoot);
 
   mapping = map.originalPositionFor({
@@ -110,7 +109,6 @@ exports["test that the source root is reflected in a mapping's source field"] = 
   });
   assert.equal(mapping.source, "one.js");
   map.destroy();
-
 
   map = await new SourceMapConsumer(util.testMapEmptySourceRoot);
 
@@ -583,7 +581,6 @@ exports["test sourceRoot + generatedPositionFor"] = async function(assert) {
     source: "bang.coffee"
   });
 
-
   map = await new SourceMapConsumer(map.toString(), "http://example.com/");
 
   // Should handle without sourceRoot.
@@ -688,6 +685,55 @@ exports["test index map + generatedPositionFor"] = async function(assert) {
   assert.equal(pos.line, 1);
   assert.equal(pos.column, 71);
   assert.equal(pos.lastColumn, 77);
+
+  map.destroy();
+};
+
+exports["test index map + originalPositionFor"] = async function(assert) {
+  var map = await new SourceMapConsumer(
+    util.indexedTestMapWithMappingsAtSectionStart
+  );
+  assert.ok(map instanceof IndexedSourceMapConsumer);
+
+  var pos = map.originalPositionFor({
+    line: 1,
+    column: 0
+  });
+
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "foo.js");
+  assert.equal(pos.name, "first");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 1
+  });
+
+  assert.equal(pos.line, 2);
+  assert.equal(pos.column, 1);
+  assert.equal(pos.source, "bar.js");
+  assert.equal(pos.name, "second");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 2
+  });
+
+  assert.equal(pos.line, 1);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.source, "baz.js");
+  assert.equal(pos.name, "third");
+
+  pos = map.originalPositionFor({
+    line: 1,
+    column: 3
+  });
+
+  assert.equal(pos.line, 2);
+  assert.equal(pos.column, 1);
+  assert.equal(pos.source, "quux.js");
+  assert.equal(pos.name, "fourth");
 
   map.destroy();
 };
