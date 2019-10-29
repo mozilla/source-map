@@ -514,7 +514,7 @@ const vlqs = [
   { number: 252, encoded: "4P" },
   { number: 253, encoded: "6P" },
   { number: 254, encoded: "8P" },
-  { number: 255, encoded: "+P" },
+  { number: 255, encoded: "+P" }
 ];
 
 exports["test normal encoding and decoding"] = function(assert) {

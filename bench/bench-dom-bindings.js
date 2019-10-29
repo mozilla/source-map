@@ -1,5 +1,5 @@
 sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "../lib/mappings.wasm?bust_cache=" + String(Math.random()).replace(/0\./, ""),
+  "lib/mappings.wasm": "../lib/mappings.wasm?bust_cache=" + String(Math.random()).replace(/0\./, "")
 });
 
 function bindRange(labelId, updater) {
@@ -68,28 +68,28 @@ const updateImplAndBrowser = () => {
 implAndBrowserInput.addEventListener("input", updateImplAndBrowser);
 updateImplAndBrowser();
 
-
 // Run a benchmark when the given button is clicked and display results in the
 // given element.
 function benchOnClick(button, results, benchName, bencher) {
-  button.addEventListener("click", async function (e) {
-    e.preventDefault();
+  button.addEventListener(
+    "click",
+    async function(e) {
+      e.preventDefault();
 
-    const buttons = [...document.querySelectorAll("button")];
-    buttons.forEach(b => b.setAttribute("disabled", true));
-    results.innerHTML = "";
-    await new Promise(r => requestAnimationFrame(r));
+      const buttons = [...document.querySelectorAll("button")];
+      buttons.forEach(b => b.setAttribute("disabled", true));
+      results.innerHTML = "";
+      await new Promise(r => requestAnimationFrame(r));
 
-    var stats = await bencher();
+      var stats = await bencher();
 
-    buttons.forEach(b => b.removeAttribute("disabled"));
+      buttons.forEach(b => b.removeAttribute("disabled"));
 
-    const csv = stats
-          .xs
-          .map(x => `"${implAndBrowser}",${testSourceMap.mappings.length},"${benchName}",${x}`)
-          .join("\n");
+      const csv = stats.xs
+        .map(x => `"${implAndBrowser}",${testSourceMap.mappings.length},"${benchName}",${x}`)
+        .join("\n");
 
-    results.innerHTML = `
+      results.innerHTML = `
       <table>
         <thead>
           <tr>
@@ -110,7 +110,9 @@ function benchOnClick(button, results, benchName, bencher) {
       </table>
       <pre style="overflow:scroll;max-height:100px; max-width:500px;outline:1px solid black">${csv}</pre>
     `;
-  }, false);
+    },
+    false
+  );
 }
 
 for (let bench of Object.keys(benchmarks)) {

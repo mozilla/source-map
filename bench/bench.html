@@ -24,46 +24,46 @@
     <h1>Benchmark <code>mozilla/source-map</code></h1>
 
     <form>
-        <p>
-          <label id="warm-up-iters">
-            Warm up iterations:
-            <input type="number" value="5" min="1" max="50" step="1"/>
-          </label>
-        </p>
-        <p>
-            <label id="bench-iters">
-                Benchmark iterations:
-                <input type="number" value="100" min="1" max="1000" step="1"/>
-            </label>
-        </p>
-        <p>
-            <label>
-                Input source map:
-                <select id="input-map">
-                    <option value="SCALA_JS_RUNTIME_SOURCE_MAP" selected>
-                        Scala.JS Runtime Source Map (15M)
-                    </option>
-                    <option value="ANGULAR_MIN_SOURCE_MAP">
-                        AngularJS Minified Source Map (424K)
-                    </option>
-                    <option value="SELF_SOURCE_MAP">
-                        Source Map for Minified Version of mozilla/source-map (252K)
-                    </option>
-                </select>
-            </label>
-        </p>
-        <p>
-            <label>
-                Multiply size by:
-                <input id="multiply-size-by" type="number", value="1", min="1", max="10", step="1"/>
-            </label>
-        </p>
-        <p>
-            <label>
-                Implementation and Browser:
-                <input id="impl-and-browser" value="<unknown>" />
-            </label>
-        </p>
+      <p>
+        <label id="warm-up-iters">
+          Warm up iterations:
+          <input type="number" value="5" min="1" max="50" step="1" />
+        </label>
+      </p>
+      <p>
+        <label id="bench-iters">
+          Benchmark iterations:
+          <input type="number" value="100" min="1" max="1000" step="1" />
+        </label>
+      </p>
+      <p>
+        <label>
+          Input source map:
+          <select id="input-map">
+            <option value="SCALA_JS_RUNTIME_SOURCE_MAP" selected>
+              Scala.JS Runtime Source Map (15M)
+            </option>
+            <option value="ANGULAR_MIN_SOURCE_MAP">
+              AngularJS Minified Source Map (424K)
+            </option>
+            <option value="SELF_SOURCE_MAP">
+              Source Map for Minified Version of mozilla/source-map (252K)
+            </option>
+          </select>
+        </label>
+      </p>
+      <p>
+        <label>
+          Multiply size by:
+          <input id="multiply-size-by" type="number" , value="1" , min="1" , max="10" , step="1" />
+        </label>
+      </p>
+      <p>
+        <label>
+          Implementation and Browser:
+          <input id="impl-and-browser" value="<unknown>" />
+        </label>
+      </p>
     </form>
 
     <script src="self-source-map.js"></script>
