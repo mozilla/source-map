@@ -9,6 +9,6 @@
     "webpack-cli": "^3.1"
   },
   "devDependencies": {
-    "benny": "^3.6.15"
+    "benchmark": "^2.1.4"
   }
 }

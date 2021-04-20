@@ -1,16 +1,16 @@
 "use strict";
 
-const b = require("benny");
+const { Suite, formatNumber } = require("benchmark");
 
 const { SourceMapConsumerJS } = require("../../lib/source-map-consumer-js");
 const { SourceMapConsumer } = require("../../lib/source-map-consumer");
 const { ANGULAR_MIN_SOURCE_MAP } = require("../angular-min-source-map");
 const { SCALA_JS_RUNTIME_SOURCE_MAP } = require("../scalajs-runtime-sourcemap");
 
-exports["vlq-angular"] = () =>
-  b.suite(
-    "vlq-angular",
-    b.add("parse VLQ angular string using source-map (JS)", async () => {
+exports["vlq-angular"] = new Suite("vlq-angular")
+  .add(
+    "source-map (JS)",
+    async deferred => {
       const result = await SourceMapConsumerJS.with(
         ANGULAR_MIN_SOURCE_MAP,
         "https://example.test",
@@ -22,26 +22,31 @@ exports["vlq-angular"] = () =>
           return count;
         }
       );
-      return result;
-    }),
-    b.add(
-      "parse VLQ angular string using source-map (JS, ephemeral)",
-      async () => {
-        const result = await SourceMapConsumerJS.with(
-          ANGULAR_MIN_SOURCE_MAP,
-          "https://example.test",
-          consumer => {
-            let count = 0;
-            consumer.eachEphemeralMapping(() => {
-              ++count;
-            });
-            return count;
-          }
-        );
-        return result;
-      }
-    ),
-    b.add("parse VLQ angular string using source-map (rust/wasm)", async () => {
+      deferred.resolve(result);
+    },
+    { defer: true }
+  )
+  .add(
+    "source-map (JS, ephemeral)",
+    async deferred => {
+      const result = await SourceMapConsumerJS.with(
+        ANGULAR_MIN_SOURCE_MAP,
+        "https://example.test",
+        consumer => {
+          let count = 0;
+          consumer.eachEphemeralMapping(() => {
+            ++count;
+          });
+          return count;
+        }
+      );
+      deferred.resolve(result);
+    },
+    { defer: true }
+  )
+  .add(
+    "source-map (rust/wasm)",
+    async deferred => {
       const result = await SourceMapConsumer.with(
         ANGULAR_MIN_SOURCE_MAP,
         "https://example.test",
@@ -53,16 +58,15 @@ exports["vlq-angular"] = () =>
           return count;
         }
       );
-      return result;
-    }),
-    b.cycle(),
-    b.complete()
+      deferred.resolve(result);
+    },
+    { defer: true }
   );
 
-exports["vlq-scala"] = () =>
-  b.suite(
-    "vlq",
-    b.add("parse VLQ scala string using source-map (JS)", async () => {
+exports["vlq-scala"] = new Suite("vlq-scala")
+  .add(
+    "source-map (JS)",
+    async deferred => {
       const result = await SourceMapConsumerJS.with(
         SCALA_JS_RUNTIME_SOURCE_MAP,
         "https://example.test",
@@ -74,26 +78,31 @@ exports["vlq-scala"] = () =>
           return count;
         }
       );
-      return result;
-    }),
-    b.add(
-      "parse VLQ scala string using source-map (JS, ephemeral)",
-      async () => {
-        const result = await SourceMapConsumerJS.with(
-          SCALA_JS_RUNTIME_SOURCE_MAP,
-          "https://example.test",
-          consumer => {
-            let count = 0;
-            consumer.eachEphemeralMapping(() => {
-              ++count;
-            });
-            return count;
-          }
-        );
-        return result;
-      }
-    ),
-    b.add("parse VLQ scala string using source-map (rust/wasm)", async () => {
+      deferred.resolve(result);
+    },
+    { defer: true }
+  )
+  .add(
+    "source-map (JS, ephemeral)",
+    async deferred => {
+      const result = await SourceMapConsumerJS.with(
+        SCALA_JS_RUNTIME_SOURCE_MAP,
+        "https://example.test",
+        consumer => {
+          let count = 0;
+          consumer.eachEphemeralMapping(() => {
+            ++count;
+          });
+          return count;
+        }
+      );
+      deferred.resolve(result);
+    },
+    { defer: true }
+  )
+  .add(
+    "source-map (rust/wasm)",
+    async deferred => {
       const result = await SourceMapConsumer.with(
         SCALA_JS_RUNTIME_SOURCE_MAP,
         "https://example.test",
@@ -105,26 +114,37 @@ exports["vlq-scala"] = () =>
           return count;
         }
       );
-      return result;
-    }),
-    b.cycle(),
-    b.complete()
+      deferred.resolve(result);
+    },
+    { defer: true }
   );
 
 function autoRunScenario(m) {
   if (require.main === m) {
     (async () => {
-      function formatSummary(summary) {
-        return summary.results
-          .map(({ name, ops, margin, samples }) => {
-            return `${summary.name}#${name} x ${ops} ops/sec ±${margin}% (${samples} runs sampled)`;
-          })
-          .join("\n");
-      }
-
-      for (const scenario of Object.values(m.exports)) {
-        const outcome = await scenario();
-        console.log(formatSummary(outcome));
+      for (const suite of Object.values(m.exports)) {
+        console.log(suite.name);
+        const done = new Promise((resolve, reject) => {
+          suite.on("complete", resolve);
+          suite.on("error", reject);
+        });
+        suite.on("cycle", event => {
+          const benchmark = event.target;
+          const {
+            name,
+            hz,
+            cycles,
+            stats: { rme }
+          } = benchmark;
+          console.log(
+            ` * #${name} x ${formatNumber(hz)} ops/sec ±${formatNumber(
+              rme
+            )}% (${cycles} runs sampled)`
+          );
+        });
+        suite.run({ async: true });
+        await done;
+        console.log("Fastest is " + suite.filter("fastest").map("name"));
       }
     })();
   }
