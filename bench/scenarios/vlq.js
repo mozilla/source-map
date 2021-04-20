@@ -116,8 +116,8 @@ function autoRunScenario(m) {
     (async () => {
       function formatSummary(summary) {
         return summary.results
-          .map(result => {
-            return `${summary.name}#${result.name} x ${result.ops} ops/sec ±${result.margin}% (${result.samples} runs sampled)`;
+          .map(({ name, ops, margin, samples }) => {
+            return `${summary.name}#${name} x ${ops} ops/sec ±${margin}% (${samples} runs sampled)`;
           })
           .join("\n");
       }
