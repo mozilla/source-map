@@ -128,8 +128,23 @@ function autoRunScenario(m) {
       const wasmSource = require("../../lib/mappings.wasm");
       await SourceMapConsumer.initialize({ "lib/mappings.wasm": wasmSource });
 
-      if (typeof print === 'undefined' && typeof console !== 'undefined') {
+      if (typeof print === "undefined" && typeof console !== "undefined") {
         globalThis.print = console.log.bind(console);
+      }
+
+      // SpiderMonkey doesn't have setTimeout and benchmark may invoke it. But we don't care about actual
+      // delays for our tests, so we just tick. The only issue is that we can't break out of the Promise
+      // chain while ticking.
+      if (typeof setTimeout === "undefined") {
+        globalThis.setTimeout = fn => {
+          Promise.resolve().then(() => {
+            try {
+              fn();
+            } catch (e) {
+              print(e.stack || e.message);
+            }
+          });
+        };
       }
 
       for (const suite of Object.values(m.exports)) {
