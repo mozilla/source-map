@@ -128,8 +128,12 @@ function autoRunScenario(m) {
       const wasmSource = require("../../lib/mappings.wasm");
       await SourceMapConsumer.initialize({ "lib/mappings.wasm": wasmSource });
 
+      if (typeof print === 'undefined' && typeof console !== 'undefined') {
+        globalThis.print = console.log.bind(console);
+      }
+
       for (const suite of Object.values(m.exports)) {
-        console.log(suite.name);
+        print(suite.name);
         const done = new Promise((resolve, reject) => {
           suite.on("complete", resolve);
           suite.on("error", reject);
@@ -142,7 +146,7 @@ function autoRunScenario(m) {
             cycles,
             stats: { rme }
           } = benchmark;
-          console.log(
+          print(
             ` * #${name} x ${formatNumber(hz)} ops/sec ±${formatNumber(
               rme
             )}% (${cycles} runs sampled)`
@@ -150,7 +154,7 @@ function autoRunScenario(m) {
         });
         suite.run({ async: true });
         await done;
-        console.log("Fastest is " + suite.filter("fastest").map("name"));
+        print("Fastest is " + suite.filter("fastest").map("name"));
       }
     })();
   }
