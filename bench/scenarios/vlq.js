@@ -1,5 +1,8 @@
 "use strict";
 
+// Trying to trick benchmark's global detection.
+(0, eval)("globalThis.window = globalThis");
+
 const { Suite, formatNumber } = require("benchmark");
 
 const { SourceMapConsumerJS } = require("../../lib/source-map-consumer-js");
@@ -122,6 +125,9 @@ exports["vlq-scala"] = new Suite("vlq-scala")
 function autoRunScenario(m) {
   if (require.main === m) {
     (async () => {
+      const wasmSource = require("../../lib/mappings.wasm");
+      await SourceMapConsumer.initialize({ "lib/mappings.wasm": wasmSource });
+
       for (const suite of Object.values(m.exports)) {
         console.log(suite.name);
         const done = new Promise((resolve, reject) => {

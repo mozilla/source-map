@@ -9,6 +9,7 @@
     "webpack-cli": "^3.1"
   },
   "devDependencies": {
+    "arraybuffer-loader": "^1.0.8",
     "benchmark": "^2.1.4"
   }
 }
