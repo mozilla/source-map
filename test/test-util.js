@@ -300,3 +300,20 @@ exports["test computeSourceURL"] = function(assert) {
     "http://example.com/dir/test.js"
   );
 };
+
+exports["test isProtoString"] = async function(assert) {
+  assert.equal(libUtil.isProtoString("a.js"), false);
+  assert.equal(libUtil.isProtoString("test$__proto__"), false);
+  assert.equal(libUtil.isProtoString("$$$$$$$$$$$$$dfgdfgdf__proto__"), false);
+  assert.equal(libUtil.isProtoString("dddddd$$$$$$$$$$$$$__proto__"), false);
+  assert.equal(
+    libUtil.isProtoString("$$$$$$$$$$$$$__proto__$$$$$$$$$$$$$__proto__"),
+    false
+  );
+  assert.equal(libUtil.isProtoString("blabla"), false);
+  assert.equal(libUtil.isProtoString(""), false);
+
+  assert.equal(libUtil.isProtoString("__proto__"), true);
+  assert.equal(libUtil.isProtoString("$__proto__"), true);
+  assert.equal(libUtil.isProtoString("$$$$$$$$$$$$$__proto__"), true);
+};
