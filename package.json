@@ -92,7 +92,7 @@
   "nyc": {
     "reporter": "html"
   },
-  "typings": "source-map",
+  "typings": "source-map.d.ts",
   "dependencies": {
     "whatwg-url": "^7.0.0"
   }
