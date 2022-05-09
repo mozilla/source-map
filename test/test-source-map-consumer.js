@@ -11,9 +11,21 @@ const IndexedSourceMapConsumer = require("../lib/source-map-consumer").IndexedSo
 const BasicSourceMapConsumer = require("../lib/source-map-consumer").BasicSourceMapConsumer;
 const SourceMapGenerator = require("../lib/source-map-generator").SourceMapGenerator;
 
+exports["test wasm throws error when not initialized"] = async function(assert) {
+  const map = await new BasicSourceMapConsumer(util.testMap);
+  try {
+    map.getWasm();
+  } catch (e) {
+    assert.ok(e.message === "Wasm wasn't initialized");
+  } finally {
+    // This sleep is important so wasm will have the time to initialize before the next tests
+    await new Promise(r => setTimeout(r, 100));
+    map.destroy();
+  }
+};
+
 exports["test that we can instantiate with a string or an object"] = async function(assert) {
-  let map = await new SourceMapConsumer(util.testMap);
-  map = await new SourceMapConsumer(JSON.stringify(util.testMap));
+  const map = await new SourceMapConsumer(JSON.stringify(util.testMap));
   assert.ok(true);
   map.destroy();
 };

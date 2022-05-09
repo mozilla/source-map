@@ -47,6 +47,9 @@ exports["test eating our own dog food"] = async function(assert) {
 
   const smc = await new SourceMapConsumer(smg.toString());
 
+  // This sleep is important so wasm will have the time to initialize before the next tests
+  await new Promise(r => setTimeout(r, 100));
+
   // Exact
   util.assertMapping(2, 2, "/wu/tang/gza.coffee", 1, 0, null, null, smc, assert);
   util.assertMapping(3, 2, "/wu/tang/gza.coffee", 2, 0, null, null, smc, assert);
