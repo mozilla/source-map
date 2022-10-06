@@ -6,7 +6,6 @@ module.exports = {
     es6: true
   },
 
-  plugins: ["prettier"],
   extends: ["prettier"],
 
   parserOptions: {
@@ -19,30 +18,12 @@ module.exports = {
   },
 
   rules: {
-    // Require spacing around =>
-    "arrow-spacing": "error",
-
-    // Braces only needed for multi-line arrow function blocks
-    // "arrow-body-style": ["error", "as-needed"]
-
     // Always require spacing around a single line block
     "block-spacing": "error",
-
-    // No newline before open brace for a block
-    "brace-style": ["error", "1tbs", { allowSingleLine: true }],
-
-    // No space before always a space after a comma
-    "comma-spacing": ["error", { after: true, before: false }],
-
-    // Commas at the end of the line not the start
-    "comma-style": "error",
 
     // Warn about cyclomatic complexity in functions.
     // XXX Get this down to 20?
     complexity: ["error", 25],
-
-    // Don't require spaces around computed properties
-    "computed-property-spacing": ["error", "never"],
 
     // Functions must always return something or nothing
     "consistent-return": "error",
@@ -55,28 +36,6 @@ module.exports = {
 
     // Always require a trailing EOL
     "eol-last": "error",
-
-    // No spaces between function name and parentheses
-    "func-call-spacing": "error",
-
-    // Require function* name()
-    "generator-star-spacing": ["error", { after: true, before: false }],
-
-    // Two space indent
-    // "indent": ["error", 2, { "SwitchCase": 1 }],
-
-    // Space after colon not before in property declarations
-    "key-spacing": [
-      "error",
-      {
-        afterColon: true,
-        beforeColon: false,
-        mode: "minimum"
-      }
-    ],
-
-    // Require spaces before and after keywords
-    "keyword-spacing": "error",
 
     // Unix linebreaks
     "linebreak-style": ["error", "unix"],
@@ -151,9 +110,6 @@ module.exports = {
     // No using !! where casting to boolean is already happening
     "no-extra-boolean-cast": "error",
 
-    // No double semicolon
-    "no-extra-semi": "error",
-
     // No overwriting defined functions
     "no-func-assign": "error",
 
@@ -177,9 +133,6 @@ module.exports = {
 
     // No single if block inside an else block
     "no-lonely-if": "error",
-
-    // no-tabs disallows tabs completely.
-    // "no-mixed-spaces-and-tabs": "error",
 
     // No unnecessary spacing
     "no-multi-spaces": [
@@ -239,9 +192,6 @@ module.exports = {
     // Disallow tabs.
     "no-tabs": "error",
 
-    // No trailing whitespace
-    "no-trailing-spaces": "error",
-
     // No using undeclared variables
     "no-undef": "error",
 
@@ -285,9 +235,6 @@ module.exports = {
     // Use const or let instead of var
     "no-var": "error",
 
-    // Disallow whitespace before properties.
-    "no-whitespace-before-property": "error",
-
     // No using with
     "no-with": "error",
 
@@ -297,53 +244,8 @@ module.exports = {
     // Use const instead of let where possible
     "prefer-const": "error",
 
-    // Require double-quotes everywhere, except where quotes are escaped
-    // or template literals are used.
-    quotes: [
-      "error",
-      "double",
-      {
-        allowTemplateLiterals: true,
-        avoidEscape: true
-      }
-    ],
-
-    // No spacing inside rest or spread expressions
-    "rest-spread-spacing": "error",
-
-    // Always require semicolon at end of statement
-    semi: ["error", "always"],
-
     // Require space before blocks
     "space-before-blocks": "error",
-
-    // Never use spaces before function parentheses
-    "space-before-function-paren": [
-      "error",
-      {
-        anonymous: "never",
-        asyncArrow: "always",
-        named: "never"
-      }
-    ],
-
-    // No space padding in parentheses
-    "space-in-parens": ["error", "never"],
-
-    // Require spaces around operators
-    "space-infix-ops": ["error", { int32Hint: true }],
-
-    // ++ and -- should not need spacing
-    "space-unary-ops": [
-      "error",
-      {
-        nonwords: false,
-        overrides: {
-          typeof: false // We tend to use typeof as a function call
-        },
-        words: true
-      }
-    ],
 
     // Requires or disallows a whitespace (space or tab) beginning a comment
     "spaced-comment": "error",
@@ -354,7 +256,6 @@ module.exports = {
     // Only check typeof against valid results
     "valid-typeof": "error",
 
-    "prettier/prettier": "error",
     "max-len": ["error", { code: 120, ignoreUrls: true }]
   }
 };
