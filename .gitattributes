@@ -1,1 +1,2 @@
 bench/scalajs-runtime-sourcemap.js binary
+wasm-mappings/benches/part-of-scala-js-source-map -diff -merge
