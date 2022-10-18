@@ -1,0 +1,38 @@
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+name: WASM tests
+
+defaults:
+ run:
+  working-directory: ./wasm-mappings
+
+jobs:
+  build_and_test:
+    name: WASM mappings
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: [stable, beta, nightly]
+        job: [test, bench, wasm]
+        exclude:
+          - toolchain: stable
+            job: bench
+          - toolchain: stable
+            job: wasm
+          - toolchain: beta
+            job: bench
+          - toolchain: beta
+            job: wasm
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+          default: true
+      - run: JOB=${{ matrix.job }} ./ci/script.sh
