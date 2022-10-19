@@ -14,7 +14,7 @@ keywords = [
     "map",
     "vlq",
 ]
-license = "Apache-2.0/MIT"
+license = "BSD-3-Clause"
 name = "source-map-mappings"
 readme = "./README.md"
 repository = "https://github.com/mozilla/source-map"
