@@ -61,7 +61,7 @@
     "tag": "next"
   },
   "engines": {
-    "node": ">= 8"
+    "node": ">= 12"
   },
   "license": "BSD-3-Clause",
   "scripts": {
