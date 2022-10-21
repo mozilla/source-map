@@ -32,7 +32,4 @@ jobs:
       - run: npm install --legacy-peer-deps
       - run: npm run lint
       - run: npm run coverage
-      - run: npx nyc report --reporter=text-lcov > coverage/lcov.info
-      - uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: npx nyc report --reporter=text
