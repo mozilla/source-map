@@ -1,7 +1,5 @@
 # Source Map
 
-[![Coverage Status](https://coveralls.io/repos/github/mozilla/source-map/badge.svg)](https://coveralls.io/github/mozilla/source-map)
-
 [![NPM](https://nodei.co/npm/source-map.png?downloads=true&downloadRank=true)](https://www.npmjs.com/package/source-map)
 
 This is a library to generate and consume the source map format
