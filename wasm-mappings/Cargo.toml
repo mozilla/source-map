@@ -1,0 +1,30 @@
+[package]
+authors = [
+    "Nick Fitzgerald <fitzgen@gmail.com>",
+    "Tom Tromey <tom@tromey.com>",
+]
+categories = [
+    "development-tools::debugging",
+    "parser-implementations",
+]
+description = "Parse the `mappings` string from a source map."
+keywords = [
+    "sourcemap",
+    "source",
+    "map",
+    "vlq",
+]
+license = "BSD-3-Clause"
+name = "source-map-mappings"
+readme = "./README.md"
+repository = "https://github.com/mozilla/source-map"
+version = "0.5.0"
+
+[dependencies]
+rand = "0.4.1"
+vlq = "0.5.1"
+
+[dev-dependencies]
+quickcheck = "0.5.0"
+[profile.release]
+debug = true

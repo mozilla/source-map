@@ -3,6 +3,10 @@
 Thank you for your interest in contributing to this library! Contributions are
 very appreciated.
 
+If you want help or mentorship, reach out to us in a GitHub issue,
+or over Matrix in [source-map on mozilla.org](https://matrix.to/#/#source-map:mozilla.org)
+and introduce yourself.
+
 ---
 
 <!-- `npm run toc` to regenerate the Table of Contents -->
@@ -38,7 +42,7 @@ If you are filing an issue for a bug or other misbehavior, please provide:
 
 ## Building From Source
 
-Install Node.js `8` or greater and then run
+Install Node.js `12` or greater and then run
 
     $ git clone https://github.com/mozilla/source-map.git
     $ cd source-map/
@@ -63,7 +67,7 @@ force push to the remote branch to update the pull request.
 
 ## Running Tests
 
-The test suite is written for node.js. Install node.js `8` or greater and
+The test suite is written for node.js. Install node.js `12` or greater and
 then run the tests with `npm test`:
 
 ```shell
@@ -152,11 +156,10 @@ $ rustup toolchain install nightly
 $ rustup target add wasm32-unknown-unknown --toolchain nightly
 ```
 
-Next, clone the Rust source used to create `lib/mappings.wasm`:
+Move to wasm sources folder:
 
 ```
-$ git clone https://github.com/fitzgen/source-map-mappings.git
-$ cd source-map-mappings/
+$ cd wasm-mappings/
 ```
 
 Make sure the crate's tests pass:
@@ -172,9 +175,13 @@ Ensure that you have the following wasm post-processing tools installed:
 - `wasm-snip`: https://github.com/fitzgen/wasm-snip
 - `wasm-opt`: https://github.com/WebAssembly/binaryen
 
+(These dependencies should automatically be installed by cargo)
+
 Build Rust crate as a `.wasm` file:
 
 ```
 $ cd source-map-mappings-wasm-api/
-$ ./build.py -o path/to/source-map/lib/mappings.wasm
+$ ./build.py -o ../../lib/mappings.wasm
 ```
+
+See further information in [wasm-mappings/CONTRIBUTING.md].
