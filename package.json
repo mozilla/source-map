@@ -66,14 +66,8 @@
   "license": "BSD-3-Clause",
   "scripts": {
     "lint": "eslint --fix *.js lib/ test/",
-    "prebuild": "npm run lint",
     "test": "node test/run-tests.js",
-    "coverage": "nyc node test/run-tests.js",
-    "setup": "mkdir -p coverage && cp -n .waiting.html coverage/index.html || true",
-    "dev:live": "live-server --port=4103 --ignorePattern='(js|css|png)$' coverage",
-    "dev:watch": "watch 'npm run coverage' lib/ test/",
-    "predev": "npm run setup",
-    "dev": "npm-run-all -p --silent dev:*",
+    "coverage": "nyc --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",
     "clean": "rm -rf coverage .nyc_output",
     "toc": "doctoc --title '## Table of Contents' README.md && doctoc --title '## Table of Contents' CONTRIBUTING.md"
@@ -82,14 +76,8 @@
     "doctoc": "^1.3.1",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
-    "live-server": "^1.2.0",
-    "npm-run-all": "^4.1.2",
     "nyc": "^11.7.1",
-    "prettier": "^2.7.1",
-    "watch": "^1.0.2"
-  },
-  "nyc": {
-    "reporter": "html"
+    "prettier": "^2.7.1"
   },
   "dependencies": {
     "whatwg-url": "^7.0.0"

@@ -33,4 +33,3 @@ jobs:
       - run: npm run lint
       - run: npx prettier --check .
       - run: npm run coverage
-      - run: npx nyc report --reporter=text
