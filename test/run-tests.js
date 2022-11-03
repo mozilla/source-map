@@ -50,10 +50,10 @@ const requires = fs
   .map(toRelativeModule);
 
 run(
-  requires.map(require).map(function(mod, i) {
+  requires.map(require).map(function (mod, i) {
     return {
       name: requires[i],
-      testCase: mod
+      testCase: mod,
     };
   })
 ).then(

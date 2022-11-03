@@ -122,7 +122,9 @@ export interface SourceMapConsumer {
    *   - column: The column number in the original source, or null.
    *   - name: The original identifier, or null.
    */
-  originalPositionFor(generatedPosition: Position & { bias?: number }): NullableMappedPosition;
+  originalPositionFor(
+    generatedPosition: Position & { bias?: number }
+  ): NullableMappedPosition;
 
   /**
    * Returns the generated line and column information for the original source,
@@ -143,7 +145,9 @@ export interface SourceMapConsumer {
    *   - line: The line number in the generated source, or null.
    *   - column: The column number in the generated source, or null.
    */
-  generatedPositionFor(originalPosition: MappedPosition & { bias?: number }): NullablePosition;
+  generatedPositionFor(
+    originalPosition: MappedPosition & { bias?: number }
+  ): NullablePosition;
 
   /**
    * Returns all generated line and column information for the original source,
@@ -164,7 +168,9 @@ export interface SourceMapConsumer {
    *   - line: The line number in the generated source, or null.
    *   - column: The column number in the generated source, or null.
    */
-  allGeneratedPositionsFor(originalPosition: MappedPosition): NullablePosition[];
+  allGeneratedPositionsFor(
+    originalPosition: MappedPosition
+  ): NullablePosition[];
 
   /**
    * Return true if we have the source content for every source in the source
@@ -177,7 +183,10 @@ export interface SourceMapConsumer {
    * original source file. Returns null if no original source content is
    * available.
    */
-  sourceContentFor(source: string, returnNullOnMissing?: boolean): string | null;
+  sourceContentFor(
+    source: string,
+    returnNullOnMissing?: boolean
+  ): string | null;
 
   /**
    * Iterate over each mapping between an original source/line/column and a
@@ -195,7 +204,11 @@ export interface SourceMapConsumer {
    *        order or the original's source/line/column order, respectively. Defaults to
    *        `SourceMapConsumer.GENERATED_ORDER`.
    */
-  eachMapping(callback: (mapping: MappingItem) => void, context?: any, order?: number): void;
+  eachMapping(
+    callback: (mapping: MappingItem) => void,
+    context?: any,
+    order?: number
+  ): void;
   /**
    * Free this source map consumer's associated wasm data that is manually-managed.
    * Alternatively, you can use SourceMapConsumer.with to avoid needing to remember to call destroy.
@@ -211,11 +224,18 @@ export interface SourceMapConsumerConstructor {
   GREATEST_LOWER_BOUND: number;
   LEAST_UPPER_BOUND: number;
 
-  new (rawSourceMap: RawSourceMap, sourceMapUrl?: SourceMapUrl): Promise<BasicSourceMapConsumer>;
-  new (rawSourceMap: RawIndexMap, sourceMapUrl?: SourceMapUrl): Promise<IndexedSourceMapConsumer>;
-  new (rawSourceMap: RawSourceMap | RawIndexMap | string, sourceMapUrl?: SourceMapUrl): Promise<
-    BasicSourceMapConsumer | IndexedSourceMapConsumer
-  >;
+  new (
+    rawSourceMap: RawSourceMap,
+    sourceMapUrl?: SourceMapUrl
+  ): Promise<BasicSourceMapConsumer>;
+  new (
+    rawSourceMap: RawIndexMap,
+    sourceMapUrl?: SourceMapUrl
+  ): Promise<IndexedSourceMapConsumer>;
+  new (
+    rawSourceMap: RawSourceMap | RawIndexMap | string,
+    sourceMapUrl?: SourceMapUrl
+  ): Promise<BasicSourceMapConsumer | IndexedSourceMapConsumer>;
 
   /**
    * Create a BasicSourceMapConsumer from a SourceMapGenerator.
@@ -223,7 +243,10 @@ export interface SourceMapConsumerConstructor {
    * @param sourceMap
    *        The source map that will be consumed.
    */
-  fromSourceMap(sourceMap: SourceMapGenerator, sourceMapUrl?: SourceMapUrl): Promise<BasicSourceMapConsumer>;
+  fromSourceMap(
+    sourceMap: SourceMapGenerator,
+    sourceMapUrl?: SourceMapUrl
+  ): Promise<BasicSourceMapConsumer>;
 
   /**
    * Construct a new `SourceMapConsumer` from `rawSourceMap` and `sourceMapUrl`
@@ -258,7 +281,9 @@ export interface SourceMapConsumerConstructor {
   with<T>(
     rawSourceMap: RawSourceMap | RawIndexMap | string,
     sourceMapUrl: SourceMapUrl | null | undefined,
-    callback: (consumer: BasicSourceMapConsumer | IndexedSourceMapConsumer) => Promise<T> | T
+    callback: (
+      consumer: BasicSourceMapConsumer | IndexedSourceMapConsumer
+    ) => Promise<T> | T
   ): Promise<T>;
 }
 
@@ -307,7 +332,9 @@ export class SourceMapGenerator {
    *
    * @param sourceMapConsumer The SourceMap.
    */
-  static fromSourceMap(sourceMapConsumer: SourceMapConsumer): SourceMapGenerator;
+  static fromSourceMap(
+    sourceMapConsumer: SourceMapConsumer
+  ): SourceMapGenerator;
 
   /**
    * Add a single mapping from original source line and column to the generated
@@ -342,7 +369,11 @@ export class SourceMapGenerator {
    *        paths. If so, those relative source paths need to be rewritten
    *        relative to the SourceMapGenerator.
    */
-  applySourceMap(sourceMapConsumer: SourceMapConsumer, sourceFile?: string, sourceMapPath?: string): void;
+  applySourceMap(
+    sourceMapConsumer: SourceMapConsumer,
+    sourceFile?: string,
+    sourceMapPath?: string
+  ): void;
 
   toString(): string;
 
@@ -366,7 +397,11 @@ export class SourceNode {
     name?: string
   );
 
-  static fromStringWithSourceMap(code: string, sourceMapConsumer: SourceMapConsumer, relativePath?: string): SourceNode;
+  static fromStringWithSourceMap(
+    code: string,
+    sourceMapConsumer: SourceMapConsumer,
+    relativePath?: string
+  ): SourceNode;
 
   add(chunk: Array<string | SourceNode> | SourceNode | string): SourceNode;
 

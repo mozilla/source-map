@@ -16,11 +16,12 @@ This is a library to generate and consume the source map format
 ```html
 <script src="https://unpkg.com/source-map@0.7.3/dist/source-map.js"></script>
 <script>
-    sourceMap.SourceMapConsumer.initialize({
-        "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm"
-    });
+  sourceMap.SourceMapConsumer.initialize({
+    "lib/mappings.wasm": "https://unpkg.com/source-map@0.7.3/lib/mappings.wasm",
+  });
 </script>
 ```
+
 ---
 
 <!-- `npm run toc` to regenerate the Table of Contents -->
@@ -81,7 +82,8 @@ const rawSourceMap = {
   names: ["bar", "baz", "n"],
   sources: ["one.js", "two.js"],
   sourceRoot: "http://example.com/www/js/",
-  mappings: "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA"
+  mappings:
+    "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA",
 };
 
 const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
@@ -92,7 +94,7 @@ const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
   console.log(
     consumer.originalPositionFor({
       line: 2,
-      column: 28
+      column: 28,
     })
   );
   // { source: 'http://example.com/www/js/two.js',
@@ -104,12 +106,12 @@ const whatever = await SourceMapConsumer.with(rawSourceMap, null, consumer => {
     consumer.generatedPositionFor({
       source: "http://example.com/www/js/two.js",
       line: 2,
-      column: 10
+      column: 10,
     })
   );
   // { line: 2, column: 28 }
 
-  consumer.eachMapping(function(m) {
+  consumer.eachMapping(function (m) {
     // ...
   });
 
@@ -128,13 +130,19 @@ In depth guide:
 function compile(ast) {
   switch (ast.type) {
     case "BinaryExpression":
-      return new SourceNode(ast.location.line, ast.location.column, ast.location.source, [
-        compile(ast.left),
-        " + ",
-        compile(ast.right)
-      ]);
+      return new SourceNode(
+        ast.location.line,
+        ast.location.column,
+        ast.location.source,
+        [compile(ast.left), " + ", compile(ast.right)]
+      );
     case "Literal":
-      return new SourceNode(ast.location.line, ast.location.column, ast.location.source, String(ast.value));
+      return new SourceNode(
+        ast.location.line,
+        ast.location.column,
+        ast.location.source,
+        String(ast.value)
+      );
     // ...
     default:
       throw new Error("Bad AST");
@@ -144,7 +152,7 @@ function compile(ast) {
 var ast = parse("40 + 2", "add.js");
 console.log(
   compile(ast).toStringWithSourceMap({
-    file: "add.js"
+    file: "add.js",
   })
 );
 // { code: '40 + 2',
@@ -155,20 +163,20 @@ console.log(
 
 ```js
 var map = new SourceMapGenerator({
-  file: "source-mapped.js"
+  file: "source-mapped.js",
 });
 
 map.addMapping({
   generated: {
     line: 10,
-    column: 35
+    column: 35,
   },
   source: "foo.js",
   original: {
     line: 33,
-    column: 2
+    column: 2,
   },
-  name: "christopher"
+  name: "christopher",
 });
 
 console.log(map.toString());
@@ -209,7 +217,7 @@ The options object has the following properties:
 
 ```js
 sourceMap.SourceMapConsumer.initialize({
-  "lib/mappings.wasm": "https://example.com/source-map/lib/mappings.wasm"
+  "lib/mappings.wasm": "https://example.com/source-map/lib/mappings.wasm",
 });
 ```
 
@@ -261,13 +269,17 @@ By using `with`, you do not have to remember to manually call `destroy` on
 the consumer, since it will be called automatically once `f` completes.
 
 ```js
-const xSquared = await SourceMapConsumer.with(myRawSourceMap, null, async function(consumer) {
-  // Use `consumer` inside here and don't worry about remembering
-  // to call `destroy`.
+const xSquared = await SourceMapConsumer.with(
+  myRawSourceMap,
+  null,
+  async function (consumer) {
+    // Use `consumer` inside here and don't worry about remembering
+    // to call `destroy`.
 
-  const x = await whatever(consumer);
-  return x * x;
-});
+    const x = await whatever(consumer);
+    return x * x;
+  }
+);
 
 // You may not use that `consumer` anymore out here; it has
 // been destroyed. But you can use `xSquared`.
@@ -357,7 +369,7 @@ consumer.originalPositionFor({ line: 2, column: 10 });
 
 consumer.originalPositionFor({
   line: 99999999999999999,
-  column: 999999999999999
+  column: 999999999999999,
 });
 // { source: null,
 //   line: null,
@@ -490,7 +502,7 @@ generated line/column in this source map.
   `SourceMapConsumer.GENERATED_ORDER`.
 
 ```js
-consumer.eachMapping(function(m) {
+consumer.eachMapping(function (m) {
   console.log(m);
 });
 // ...
@@ -531,7 +543,7 @@ You may pass an object with the following properties:
 ```js
 var generator = new sourceMap.SourceMapGenerator({
   file: "my-generated-javascript-file.js",
-  sourceRoot: "http://example.com/app/js/"
+  sourceRoot: "http://example.com/app/js/",
 });
 ```
 
@@ -563,7 +575,7 @@ should have the following properties:
 generator.addMapping({
   source: "module-one.scm",
   original: { line: 128, column: 0 },
-  generated: { line: 3, column: 456 }
+  generated: { line: 3, column: 456 },
 });
 ```
 
@@ -576,7 +588,10 @@ Set the source content for an original source file.
 - `sourceContent` the content of the source file.
 
 ```js
-generator.setSourceContent("module-one.scm", fs.readFileSync("path/to/module-one.scm"));
+generator.setSourceContent(
+  "module-one.scm",
+  fs.readFileSync("path/to/module-one.scm")
+);
 ```
 
 #### SourceMapGenerator.prototype.applySourceMap(sourceMapConsumer[, sourceFile[, sourceMapPath]])
@@ -640,7 +655,7 @@ use before outputting the generated JS and source map.
 var node = new SourceNode(1, 2, "a.cpp", [
   new SourceNode(3, 4, "b.cpp", "extern int status;\n"),
   new SourceNode(5, 6, "c.cpp", "std::string* make_string(size_t n);\n"),
-  new SourceNode(7, 8, "d.cpp", "int main(int argc, char** argv) {}\n")
+  new SourceNode(7, 8, "d.cpp", "int main(int argc, char** argv) {}\n"),
 ]);
 ```
 
@@ -656,8 +671,13 @@ Creates a SourceNode from generated code and a SourceMapConsumer.
   should be relative to.
 
 ```js
-const consumer = await new SourceMapConsumer(fs.readFileSync("path/to/my-file.js.map", "utf8"));
-const node = SourceNode.fromStringWithSourceMap(fs.readFileSync("path/to/my-file.js"), consumer);
+const consumer = await new SourceMapConsumer(
+  fs.readFileSync("path/to/my-file.js.map", "utf8")
+);
+const node = SourceNode.fromStringWithSourceMap(
+  fs.readFileSync("path/to/my-file.js"),
+  consumer
+);
 ```
 
 #### SourceNode.prototype.add(chunk)
@@ -694,7 +714,10 @@ Set the source content for a source file. This will be added to the
 - `sourceContent`: The content of the source file
 
 ```js
-node.setSourceContent("module-one.scm", fs.readFileSync("path/to/module-one.scm"));
+node.setSourceContent(
+  "module-one.scm",
+  fs.readFileSync("path/to/module-one.scm")
+);
 ```
 
 #### SourceNode.prototype.walk(fn)
@@ -709,10 +732,10 @@ the its original associated source's line/column location.
 var node = new SourceNode(1, 2, "a.js", [
   new SourceNode(3, 4, "b.js", "uno"),
   "dos",
-  ["tres", new SourceNode(5, 6, "c.js", "quatro")]
+  ["tres", new SourceNode(5, 6, "c.js", "quatro")],
 ]);
 
-node.walk(function(code, loc) {
+node.walk(function (code, loc) {
   console.log("WALK:", code, loc);
 });
 // WALK: uno { source: 'b.js', line: 3, column: 4, name: null }
@@ -737,7 +760,7 @@ var c = new SourceNode(1, 2, "c.js", "generated from c");
 c.setSourceContent("c.js", "original c");
 
 var node = new SourceNode(null, null, null, [a, b, c]);
-node.walkSourceContents(function(source, contents) {
+node.walkSourceContents(function (source, contents) {
   console.log("WALK:", source, ":", contents);
 });
 // WALK: a.js : original a
@@ -784,7 +807,7 @@ concatenates all the various snippets together to one string.
 var node = new SourceNode(1, 2, "a.js", [
   new SourceNode(3, 4, "b.js", "uno"),
   "dos",
-  ["tres", new SourceNode(5, 6, "c.js", "quatro")]
+  ["tres", new SourceNode(5, 6, "c.js", "quatro")],
 ]);
 
 node.toString();
@@ -803,11 +826,10 @@ The arguments are the same as those to `new SourceMapGenerator`.
 var node = new SourceNode(1, 2, "a.js", [
   new SourceNode(3, 4, "b.js", "uno"),
   "dos",
-  ["tres", new SourceNode(5, 6, "c.js", "quatro")]
+  ["tres", new SourceNode(5, 6, "c.js", "quatro")],
 ]);
 
 node.toStringWithSourceMap({ file: "my-output-file.js" });
 // { code: 'unodostresquatro',
 //   map: [object SourceMapGenerator] }
 ```
-

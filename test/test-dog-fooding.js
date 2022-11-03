@@ -6,45 +6,45 @@
  */
 
 const util = require("./util");
-const SourceMapConsumer = require("../lib/source-map-consumer")
-  .SourceMapConsumer;
-const SourceMapGenerator = require("../lib/source-map-generator")
-  .SourceMapGenerator;
+const SourceMapConsumer =
+  require("../lib/source-map-consumer").SourceMapConsumer;
+const SourceMapGenerator =
+  require("../lib/source-map-generator").SourceMapGenerator;
 
-exports["test eating our own dog food"] = async function(assert) {
+exports["test eating our own dog food"] = async function (assert) {
   const smg = new SourceMapGenerator({
     file: "testing.js",
-    sourceRoot: "/wu/tang"
+    sourceRoot: "/wu/tang",
   });
 
   smg.addMapping({
     source: "gza.coffee",
     original: { line: 1, column: 0 },
-    generated: { line: 2, column: 2 }
+    generated: { line: 2, column: 2 },
   });
 
   smg.addMapping({
     source: "gza.coffee",
     original: { line: 2, column: 0 },
-    generated: { line: 3, column: 2 }
+    generated: { line: 3, column: 2 },
   });
 
   smg.addMapping({
     source: "gza.coffee",
     original: { line: 3, column: 0 },
-    generated: { line: 4, column: 2 }
+    generated: { line: 4, column: 2 },
   });
 
   smg.addMapping({
     source: "gza.coffee",
     original: { line: 4, column: 0 },
-    generated: { line: 5, column: 2 }
+    generated: { line: 5, column: 2 },
   });
 
   smg.addMapping({
     source: "gza.coffee",
     original: { line: 5, column: 10 },
-    generated: { line: 6, column: 12 }
+    generated: { line: 6, column: 12 },
   });
 
   const smc = await new SourceMapConsumer(smg.toString());

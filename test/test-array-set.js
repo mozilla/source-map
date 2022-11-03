@@ -15,34 +15,34 @@ function makeTestSet() {
   return set;
 }
 
-exports["test .has() membership"] = function(assert) {
+exports["test .has() membership"] = function (assert) {
   const set = makeTestSet();
   for (let i = 0; i < 100; i++) {
     assert.ok(set.has(String(i)));
   }
 };
 
-exports["test .indexOf() elements"] = function(assert) {
+exports["test .indexOf() elements"] = function (assert) {
   const set = makeTestSet();
   for (let i = 0; i < 100; i++) {
     assert.strictEqual(set.indexOf(String(i)), i);
   }
 };
 
-exports["test .at() indexing"] = function(assert) {
+exports["test .at() indexing"] = function (assert) {
   const set = makeTestSet();
   for (let i = 0; i < 100; i++) {
     assert.strictEqual(set.at(i), String(i));
   }
 };
 
-exports["test creating from an array"] = function(assert) {
+exports["test creating from an array"] = function (assert) {
   const set = ArraySet.fromArray([
     "foo",
     "bar",
     "baz",
     "quux",
-    "hasOwnProperty"
+    "hasOwnProperty",
   ]);
 
   assert.ok(set.has("foo"));
@@ -62,7 +62,7 @@ exports["test creating from an array"] = function(assert) {
   assert.strictEqual(set.at(3), "quux");
 };
 
-exports["test that you can add __proto__; see github issue #30"] = function(
+exports["test that you can add __proto__; see github issue #30"] = function (
   assert
 ) {
   const set = new ArraySet();
@@ -72,7 +72,7 @@ exports["test that you can add __proto__; see github issue #30"] = function(
   assert.strictEqual(set.indexOf("__proto__"), 0);
 };
 
-exports["test .fromArray() with duplicates"] = function(assert) {
+exports["test .fromArray() with duplicates"] = function (assert) {
   let set = ArraySet.fromArray(["foo", "foo"]);
   assert.ok(set.has("foo"));
   assert.strictEqual(set.at(0), "foo");
@@ -87,7 +87,7 @@ exports["test .fromArray() with duplicates"] = function(assert) {
   assert.strictEqual(set.toArray().length, 2);
 };
 
-exports["test .add() with duplicates"] = function(assert) {
+exports["test .add() with duplicates"] = function (assert) {
   const set = new ArraySet();
   set.add("foo");
 
@@ -105,7 +105,7 @@ exports["test .add() with duplicates"] = function(assert) {
   assert.strictEqual(set.toArray().length, 2);
 };
 
-exports["test .size()"] = function(assert) {
+exports["test .size()"] = function (assert) {
   const set = new ArraySet();
   set.add("foo");
   set.add("bar");
@@ -113,7 +113,7 @@ exports["test .size()"] = function(assert) {
   assert.strictEqual(set.size(), 3);
 };
 
-exports["test .size() with disallowed duplicates"] = function(assert) {
+exports["test .size() with disallowed duplicates"] = function (assert) {
   const set = new ArraySet();
 
   set.add("foo");
@@ -128,7 +128,7 @@ exports["test .size() with disallowed duplicates"] = function(assert) {
   assert.strictEqual(set.size(), 3);
 };
 
-exports["test .size() with allowed duplicates"] = function(assert) {
+exports["test .size() with allowed duplicates"] = function (assert) {
   const set = new ArraySet();
 
   set.add("foo");

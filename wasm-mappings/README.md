@@ -8,9 +8,9 @@ source maps library.
 
 [source-map]: https://github.com/mozilla/source-map
 
-* [Documentation](#documentation)
-* [License](#license)
-* [Contributing](#contributing)
+- [Documentation](#documentation)
+- [License](#license)
+- [Contributing](#contributing)
 
 ### Documentation
 
@@ -27,4 +27,3 @@ Licensed under [BSD-3-Clause](http://opensource.org/licenses/BSD-3-Clause).
 See
 [CONTRIBUTING.md](https://github.com/mozilla/source-map-mappings/blob/master/wasm-mappings/CONTRIBUTING.md)
 for hacking.
-

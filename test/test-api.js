@@ -7,7 +7,7 @@
 
 const sourceMap = require("../source-map");
 
-exports["test that the api is properly exposed in the top level"] = function(
+exports["test that the api is properly exposed in the top level"] = function (
   assert
 ) {
   assert.equal(typeof sourceMap.SourceMapGenerator, "function");
