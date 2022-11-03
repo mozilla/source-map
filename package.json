@@ -74,7 +74,7 @@
     "dev:watch": "watch 'npm run coverage' lib/ test/",
     "predev": "npm run setup",
     "dev": "npm-run-all -p --silent dev:*",
-    "prettier": "prettier --write *.* lib/ test/",
+    "prettier": "prettier --write .",
     "clean": "rm -rf coverage .nyc_output",
     "toc": "doctoc --title '## Table of Contents' README.md && doctoc --title '## Table of Contents' CONTRIBUTING.md"
   },

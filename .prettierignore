@@ -1,0 +1,4 @@
+.nyc_output/
+bench/
+coverage/
+node_modules/
