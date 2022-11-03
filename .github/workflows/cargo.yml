@@ -8,8 +8,8 @@ on:
 name: WASM tests
 
 defaults:
- run:
-  working-directory: ./wasm-mappings
+  run:
+    working-directory: ./wasm-mappings
 
 jobs:
   build_and_test:

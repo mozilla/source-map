@@ -6,20 +6,20 @@
  */
 
 const util = require("./util");
-const SourceMapGenerator = require("../lib/source-map-generator")
-  .SourceMapGenerator;
-const SourceMapConsumer = require("../lib/source-map-consumer")
-  .SourceMapConsumer;
+const SourceMapGenerator =
+  require("../lib/source-map-generator").SourceMapGenerator;
+const SourceMapConsumer =
+  require("../lib/source-map-consumer").SourceMapConsumer;
 const SourceNode = require("../lib/source-node").SourceNode;
 
 function forEachNewline(fn) {
-  return async function(assert) {
+  return async function (assert) {
     await fn(assert, "\n");
     await fn(assert, "\r\n");
   };
 }
 
-exports["test .add()"] = function(assert) {
+exports["test .add()"] = function (assert) {
   const node = new SourceNode(null, null, null);
 
   // Adding a string works.
@@ -32,19 +32,19 @@ exports["test .add()"] = function(assert) {
   node.add([
     "function foo() {",
     new SourceNode(null, null, null, "return 10;"),
-    "}"
+    "}",
   ]);
 
   // Adding other stuff doesn't.
-  assert.throws(function() {
+  assert.throws(function () {
     node.add({});
   }, /TypeError: Expected a SourceNode, string, or an array of SourceNodes and strings/);
-  assert.throws(function() {
-    node.add(function() {});
+  assert.throws(function () {
+    node.add(function () {});
   }, /TypeError: Expected a SourceNode, string, or an array of SourceNodes and strings/);
 };
 
-exports["test .prepend()"] = function(assert) {
+exports["test .prepend()"] = function (assert) {
   const node = new SourceNode(null, null, null);
 
   // Prepending a string works.
@@ -62,7 +62,7 @@ exports["test .prepend()"] = function(assert) {
   node.prepend([
     "function foo() {",
     new SourceNode(null, null, null, "return 10;"),
-    "}"
+    "}",
   ]);
   assert.equal(node.children[0], "function foo() {");
   assert.equal(node.children[1], "return 10;");
@@ -72,26 +72,26 @@ exports["test .prepend()"] = function(assert) {
   assert.equal(node.children.length, 5);
 
   // Prepending other stuff doesn't.
-  assert.throws(function() {
+  assert.throws(function () {
     node.prepend({});
   }, /TypeError: Expected a SourceNode, string, or an array of SourceNodes and strings/);
-  assert.throws(function() {
-    node.prepend(function() {});
+  assert.throws(function () {
+    node.prepend(function () {});
   }, /TypeError: Expected a SourceNode, string, or an array of SourceNodes and strings/);
 };
 
-exports["test .toString()"] = function(assert) {
+exports["test .toString()"] = function (assert) {
   assert.equal(
     new SourceNode(null, null, null, [
       "function foo() {",
       new SourceNode(null, null, null, "return 10;"),
-      "}"
+      "}",
     ]).toString(),
     "function foo() {return 10;}"
   );
 };
 
-exports["test .join()"] = function(assert) {
+exports["test .join()"] = function (assert) {
   assert.equal(
     new SourceNode(null, null, null, ["a", "b", "c", "d"])
       .join(", ")
@@ -100,7 +100,7 @@ exports["test .join()"] = function(assert) {
   );
 };
 
-exports["test .walk()"] = function(assert) {
+exports["test .walk()"] = function (assert) {
   const node = new SourceNode(null, null, null, [
     "(function () {\n",
     "  ",
@@ -109,7 +109,7 @@ exports["test .walk()"] = function(assert) {
     "  ",
     new SourceNode(2, 0, "b.js", ["if (foo) bar()"]),
     ";\n",
-    "}());"
+    "}());",
   ]);
   const expected = [
     { str: "(function () {\n", source: null, line: null, column: null },
@@ -119,10 +119,10 @@ exports["test .walk()"] = function(assert) {
     { str: "  ", source: null, line: null, column: null },
     { str: "if (foo) bar()", source: "b.js", line: 2, column: 0 },
     { str: ";\n", source: null, line: null, column: null },
-    { str: "}());", source: null, line: null, column: null }
+    { str: "}());", source: null, line: null, column: null },
   ];
   let i = 0;
-  node.walk(function(chunk, loc) {
+  node.walk(function (chunk, loc) {
     assert.equal(expected[i].str, chunk);
     assert.equal(expected[i].source, loc.source);
     assert.equal(expected[i].line, loc.line);
@@ -131,7 +131,7 @@ exports["test .walk()"] = function(assert) {
   });
 };
 
-exports["test .replaceRight"] = function(assert) {
+exports["test .replaceRight"] = function (assert) {
   let node;
 
   // Not nested
@@ -142,13 +142,13 @@ exports["test .replaceRight"] = function(assert) {
   // Nested
   node = new SourceNode(null, null, null, [
     new SourceNode(null, null, null, "hey sexy mama, "),
-    new SourceNode(null, null, null, "want to kill all humans?")
+    new SourceNode(null, null, null, "want to kill all humans?"),
   ]);
   node.replaceRight(/kill all humans/, "watch Futurama");
   assert.equal(node.toString(), "hey sexy mama, want to watch Futurama?");
 };
 
-exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
+exports["test .toStringWithSourceMap()"] = forEachNewline(async function (
   assert,
   nl
 ) {
@@ -161,10 +161,10 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
     "  ",
     new SourceNode(2, 0, "b.js", ["if (foo) bar()"]),
     ";" + nl,
-    "}());"
+    "}());",
   ]);
   const result = node.toStringWithSourceMap({
-    file: "foo.js"
+    file: "foo.js",
   });
 
   assert.equal(
@@ -193,7 +193,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
 
   actual = map.originalPositionFor({
     line: 1,
-    column: 4
+    column: 4,
   });
   assert.equal(actual.source, null);
   assert.equal(actual.line, null);
@@ -201,7 +201,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
 
   actual = map.originalPositionFor({
     line: 2,
-    column: 2
+    column: 2,
   });
   assert.equal(actual.source, "a.js");
   assert.equal(actual.line, 1);
@@ -210,7 +210,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
 
   actual = map.originalPositionFor({
     line: 3,
-    column: 2
+    column: 2,
   });
   assert.equal(actual.source, "b.js");
   assert.equal(actual.line, 2);
@@ -218,7 +218,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
 
   actual = map.originalPositionFor({
     line: 3,
-    column: 16
+    column: 16,
   });
   assert.equal(actual.source, null);
   assert.equal(actual.line, null);
@@ -226,7 +226,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
 
   actual = map.originalPositionFor({
     line: 4,
-    column: 2
+    column: 2,
   });
   assert.equal(actual.source, null);
   assert.equal(actual.line, null);
@@ -235,7 +235,7 @@ exports["test .toStringWithSourceMap()"] = forEachNewline(async function(
   map.destroy();
 });
 
-exports["test .fromStringWithSourceMap()"] = forEachNewline(async function(
+exports["test .fromStringWithSourceMap()"] = forEachNewline(async function (
   assert,
   nl
 ) {
@@ -245,7 +245,7 @@ exports["test .fromStringWithSourceMap()"] = forEachNewline(async function(
   map.destroy();
 
   const result = node.toStringWithSourceMap({
-    file: "min.js"
+    file: "min.js",
   });
   map = result.map;
   const code = result.code;
@@ -262,7 +262,7 @@ exports["test .fromStringWithSourceMap()"] = forEachNewline(async function(
 });
 
 exports["test .fromStringWithSourceMap() empty map"] = forEachNewline(
-  async function(assert, nl) {
+  async function (assert, nl) {
     let map = await new SourceMapConsumer(util.emptyMap);
     const node = SourceNode.fromStringWithSourceMap(
       util.testGeneratedCode.replace(/\n/g, nl),
@@ -271,7 +271,7 @@ exports["test .fromStringWithSourceMap() empty map"] = forEachNewline(
     map.destroy();
 
     const result = node.toStringWithSourceMap({
-      file: "min.js"
+      file: "min.js",
     });
     map = result.map;
     const code = result.code;
@@ -290,7 +290,7 @@ exports["test .fromStringWithSourceMap() empty map"] = forEachNewline(
 );
 
 exports["test .fromStringWithSourceMap() complex version"] = forEachNewline(
-  async function(assert, nl) {
+  async function (assert, nl) {
     let input = new SourceNode(null, null, null, [
       "(function() {" + nl,
       "  var Test = {};" + nl,
@@ -300,10 +300,10 @@ exports["test .fromStringWithSourceMap() complex version"] = forEachNewline(
       new SourceNode(2, 0, "a.js", "Test.A.x = 'xyz';"),
       nl,
       "}());" + nl,
-      "/* Generated Source */"
+      "/* Generated Source */",
     ]);
     input = input.toStringWithSourceMap({
-      file: "foo.js"
+      file: "foo.js",
     });
 
     let map = await new SourceMapConsumer(input.map.toString());
@@ -311,7 +311,7 @@ exports["test .fromStringWithSourceMap() complex version"] = forEachNewline(
     map.destroy();
 
     const result = node.toStringWithSourceMap({
-      file: "foo.js"
+      file: "foo.js",
     });
     map = result.map;
     const code = result.code;
@@ -327,7 +327,7 @@ exports["test .fromStringWithSourceMap() complex version"] = forEachNewline(
   }
 );
 
-exports["test .fromStringWithSourceMap() third argument"] = async function(
+exports["test .fromStringWithSourceMap() third argument"] = async function (
   assert
 ) {
   // Assume the following directory structure:
@@ -349,12 +349,12 @@ exports["test .fromStringWithSourceMap() third argument"] = async function(
   coffeeBundle.setSourceContent("foo.coffee", "foo coffee");
   coffeeBundle = coffeeBundle.toStringWithSourceMap({
     file: "foo.js",
-    sourceRoot: ".."
+    sourceRoot: "..",
   });
 
   const foo = new SourceNode(1, 0, "foo.js", "foo(js);");
 
-  const test = async function(relativePath, expectedSources) {
+  const test = async function (relativePath, expectedSources) {
     const app = new SourceNode();
 
     const map = await new SourceMapConsumer(coffeeBundle.map.toString());
@@ -365,11 +365,11 @@ exports["test .fromStringWithSourceMap() third argument"] = async function(
 
     app.add(foo);
     let i = 0;
-    app.walk(function(chunk, loc) {
+    app.walk(function (chunk, loc) {
       assert.equal(loc.source, expectedSources[i]);
       i++;
     });
-    app.walkSourceContents(function(sourceFile, sourceContent) {
+    app.walkSourceContents(function (sourceFile, sourceContent) {
       assert.equal(sourceFile, expectedSources[0]);
       assert.equal(sourceContent, "foo coffee");
     });
@@ -389,220 +389,217 @@ exports["test .fromStringWithSourceMap() third argument"] = async function(
   await test("./", ["../foo.coffee", "foo.js"]);
 };
 
-exports[
-  "test .toStringWithSourceMap() merging duplicate mappings"
-] = forEachNewline(function(assert, nl) {
-  let input = new SourceNode(null, null, null, [
-    new SourceNode(1, 0, "a.js", "(function"),
-    new SourceNode(1, 0, "a.js", "() {" + nl),
-    "  ",
-    new SourceNode(1, 0, "a.js", "var Test = "),
-    new SourceNode(1, 0, "b.js", "{};" + nl),
-    new SourceNode(2, 0, "b.js", "Test"),
-    new SourceNode(2, 0, "b.js", ".A", "A"),
-    new SourceNode(2, 20, "b.js", " = { value: ", "A"),
-    "1234",
-    new SourceNode(2, 40, "b.js", " };" + nl, "A"),
-    "}());" + nl,
-    "/* Generated Source */"
-  ]);
-  input = input.toStringWithSourceMap({
-    file: "foo.js"
+exports["test .toStringWithSourceMap() merging duplicate mappings"] =
+  forEachNewline(function (assert, nl) {
+    let input = new SourceNode(null, null, null, [
+      new SourceNode(1, 0, "a.js", "(function"),
+      new SourceNode(1, 0, "a.js", "() {" + nl),
+      "  ",
+      new SourceNode(1, 0, "a.js", "var Test = "),
+      new SourceNode(1, 0, "b.js", "{};" + nl),
+      new SourceNode(2, 0, "b.js", "Test"),
+      new SourceNode(2, 0, "b.js", ".A", "A"),
+      new SourceNode(2, 20, "b.js", " = { value: ", "A"),
+      "1234",
+      new SourceNode(2, 40, "b.js", " };" + nl, "A"),
+      "}());" + nl,
+      "/* Generated Source */",
+    ]);
+    input = input.toStringWithSourceMap({
+      file: "foo.js",
+    });
+
+    assert.equal(
+      input.code,
+      [
+        "(function() {",
+        "  var Test = {};",
+        "Test.A = { value: 1234 };",
+        "}());",
+        "/* Generated Source */",
+      ].join(nl)
+    );
+
+    let correctMap = new SourceMapGenerator({
+      file: "foo.js",
+    });
+    correctMap.addMapping({
+      generated: { line: 1, column: 0 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    // Here is no need for a empty mapping,
+    // because mappings ends at eol
+    correctMap.addMapping({
+      generated: { line: 2, column: 2 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 2, column: 13 },
+      source: "b.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 0 },
+      source: "b.js",
+      original: { line: 2, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 4 },
+      source: "b.js",
+      name: "A",
+      original: { line: 2, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 6 },
+      source: "b.js",
+      name: "A",
+      original: { line: 2, column: 20 },
+    });
+    // This empty mapping is required,
+    // because there is a hole in the middle of the line
+    correctMap.addMapping({
+      generated: { line: 3, column: 18 },
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 22 },
+      source: "b.js",
+      name: "A",
+      original: { line: 2, column: 40 },
+    });
+    // Here is no need for a empty mapping,
+    // because mappings ends at eol
+
+    const inputMap = input.map.toJSON();
+    correctMap = correctMap.toJSON();
+    util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  assert.equal(
-    input.code,
-    [
-      "(function() {",
-      "  var Test = {};",
-      "Test.A = { value: 1234 };",
-      "}());",
-      "/* Generated Source */"
-    ].join(nl)
-  );
+exports["test .toStringWithSourceMap() multi-line SourceNodes"] =
+  forEachNewline(function (assert, nl) {
+    let input = new SourceNode(null, null, null, [
+      new SourceNode(
+        1,
+        0,
+        "a.js",
+        "(function() {" + nl + "var nextLine = 1;" + nl + "anotherLine();" + nl
+      ),
+      new SourceNode(2, 2, "b.js", "Test.call(this, 123);" + nl),
+      new SourceNode(2, 2, "b.js", "this['stuff'] = 'v';" + nl),
+      new SourceNode(2, 2, "b.js", "anotherLine();" + nl),
+      "/*" + nl + "Generated" + nl + "Source" + nl + "*/" + nl,
+      new SourceNode(3, 4, "c.js", "anotherLine();" + nl),
+      "/*" + nl + "Generated" + nl + "Source" + nl + "*/",
+    ]);
+    input = input.toStringWithSourceMap({
+      file: "foo.js",
+    });
 
-  let correctMap = new SourceMapGenerator({
-    file: "foo.js"
-  });
-  correctMap.addMapping({
-    generated: { line: 1, column: 0 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  // Here is no need for a empty mapping,
-  // because mappings ends at eol
-  correctMap.addMapping({
-    generated: { line: 2, column: 2 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 2, column: 13 },
-    source: "b.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 0 },
-    source: "b.js",
-    original: { line: 2, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 4 },
-    source: "b.js",
-    name: "A",
-    original: { line: 2, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 6 },
-    source: "b.js",
-    name: "A",
-    original: { line: 2, column: 20 }
-  });
-  // This empty mapping is required,
-  // because there is a hole in the middle of the line
-  correctMap.addMapping({
-    generated: { line: 3, column: 18 }
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 22 },
-    source: "b.js",
-    name: "A",
-    original: { line: 2, column: 40 }
-  });
-  // Here is no need for a empty mapping,
-  // because mappings ends at eol
+    assert.equal(
+      input.code,
+      [
+        "(function() {",
+        "var nextLine = 1;",
+        "anotherLine();",
+        "Test.call(this, 123);",
+        "this['stuff'] = 'v';",
+        "anotherLine();",
+        "/*",
+        "Generated",
+        "Source",
+        "*/",
+        "anotherLine();",
+        "/*",
+        "Generated",
+        "Source",
+        "*/",
+      ].join(nl)
+    );
 
-  const inputMap = input.map.toJSON();
-  correctMap = correctMap.toJSON();
-  util.assertEqualMaps(assert, inputMap, correctMap);
-});
+    let correctMap = new SourceMapGenerator({
+      file: "foo.js",
+    });
+    correctMap.addMapping({
+      generated: { line: 1, column: 0 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 2, column: 0 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 0 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 4, column: 0 },
+      source: "b.js",
+      original: { line: 2, column: 2 },
+    });
+    correctMap.addMapping({
+      generated: { line: 5, column: 0 },
+      source: "b.js",
+      original: { line: 2, column: 2 },
+    });
+    correctMap.addMapping({
+      generated: { line: 6, column: 0 },
+      source: "b.js",
+      original: { line: 2, column: 2 },
+    });
+    correctMap.addMapping({
+      generated: { line: 11, column: 0 },
+      source: "c.js",
+      original: { line: 3, column: 4 },
+    });
 
-exports[
-  "test .toStringWithSourceMap() multi-line SourceNodes"
-] = forEachNewline(function(assert, nl) {
-  let input = new SourceNode(null, null, null, [
-    new SourceNode(
-      1,
-      0,
-      "a.js",
-      "(function() {" + nl + "var nextLine = 1;" + nl + "anotherLine();" + nl
-    ),
-    new SourceNode(2, 2, "b.js", "Test.call(this, 123);" + nl),
-    new SourceNode(2, 2, "b.js", "this['stuff'] = 'v';" + nl),
-    new SourceNode(2, 2, "b.js", "anotherLine();" + nl),
-    "/*" + nl + "Generated" + nl + "Source" + nl + "*/" + nl,
-    new SourceNode(3, 4, "c.js", "anotherLine();" + nl),
-    "/*" + nl + "Generated" + nl + "Source" + nl + "*/"
-  ]);
-  input = input.toStringWithSourceMap({
-    file: "foo.js"
+    const inputMap = input.map.toJSON();
+    correctMap = correctMap.toJSON();
+    util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  assert.equal(
-    input.code,
-    [
-      "(function() {",
-      "var nextLine = 1;",
-      "anotherLine();",
-      "Test.call(this, 123);",
-      "this['stuff'] = 'v';",
-      "anotherLine();",
-      "/*",
-      "Generated",
-      "Source",
-      "*/",
-      "anotherLine();",
-      "/*",
-      "Generated",
-      "Source",
-      "*/"
-    ].join(nl)
-  );
-
-  let correctMap = new SourceMapGenerator({
-    file: "foo.js"
-  });
-  correctMap.addMapping({
-    generated: { line: 1, column: 0 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 2, column: 0 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 0 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 4, column: 0 },
-    source: "b.js",
-    original: { line: 2, column: 2 }
-  });
-  correctMap.addMapping({
-    generated: { line: 5, column: 0 },
-    source: "b.js",
-    original: { line: 2, column: 2 }
-  });
-  correctMap.addMapping({
-    generated: { line: 6, column: 0 },
-    source: "b.js",
-    original: { line: 2, column: 2 }
-  });
-  correctMap.addMapping({
-    generated: { line: 11, column: 0 },
-    source: "c.js",
-    original: { line: 3, column: 4 }
-  });
-
-  const inputMap = input.map.toJSON();
-  correctMap = correctMap.toJSON();
-  util.assertEqualMaps(assert, inputMap, correctMap);
-});
-
-exports["test .toStringWithSourceMap() with empty string"] = function(assert) {
+exports["test .toStringWithSourceMap() with empty string"] = function (assert) {
   const node = new SourceNode(1, 0, "empty.js", "");
   const result = node.toStringWithSourceMap();
   assert.equal(result.code, "");
 };
 
-exports[
-  "test .toStringWithSourceMap() with consecutive newlines"
-] = forEachNewline(function(assert, nl) {
-  let input = new SourceNode(null, null, null, [
-    "/***/" + nl + nl,
-    new SourceNode(1, 0, "a.js", "'use strict';" + nl),
-    new SourceNode(2, 0, "a.js", "a();")
-  ]);
-  input = input.toStringWithSourceMap({
-    file: "foo.js"
+exports["test .toStringWithSourceMap() with consecutive newlines"] =
+  forEachNewline(function (assert, nl) {
+    let input = new SourceNode(null, null, null, [
+      "/***/" + nl + nl,
+      new SourceNode(1, 0, "a.js", "'use strict';" + nl),
+      new SourceNode(2, 0, "a.js", "a();"),
+    ]);
+    input = input.toStringWithSourceMap({
+      file: "foo.js",
+    });
+
+    assert.equal(input.code, ["/***/", "", "'use strict';", "a();"].join(nl));
+
+    let correctMap = new SourceMapGenerator({
+      file: "foo.js",
+    });
+    correctMap.addMapping({
+      generated: { line: 3, column: 0 },
+      source: "a.js",
+      original: { line: 1, column: 0 },
+    });
+    correctMap.addMapping({
+      generated: { line: 4, column: 0 },
+      source: "a.js",
+      original: { line: 2, column: 0 },
+    });
+
+    const inputMap = input.map.toJSON();
+    correctMap = correctMap.toJSON();
+    util.assertEqualMaps(assert, inputMap, correctMap);
   });
 
-  assert.equal(input.code, ["/***/", "", "'use strict';", "a();"].join(nl));
-
-  let correctMap = new SourceMapGenerator({
-    file: "foo.js"
-  });
-  correctMap.addMapping({
-    generated: { line: 3, column: 0 },
-    source: "a.js",
-    original: { line: 1, column: 0 }
-  });
-  correctMap.addMapping({
-    generated: { line: 4, column: 0 },
-    source: "a.js",
-    original: { line: 2, column: 0 }
-  });
-
-  const inputMap = input.map.toJSON();
-  correctMap = correctMap.toJSON();
-  util.assertEqualMaps(assert, inputMap, correctMap);
-});
-
-exports["test setSourceContent with toStringWithSourceMap"] = async function(
+exports["test setSourceContent with toStringWithSourceMap"] = async function (
   assert
 ) {
   const aNode = new SourceNode(1, 1, "a.js", "a");
@@ -613,11 +610,11 @@ exports["test setSourceContent with toStringWithSourceMap"] = async function(
     aNode,
     "  ",
     new SourceNode(1, 1, "b.js", "b"),
-    "}());"
+    "}());",
   ]);
   node.setSourceContent("b.js", "otherContent");
   let map = node.toStringWithSourceMap({
-    file: "foo.js"
+    file: "foo.js",
   }).map;
 
   assert.ok(
@@ -636,7 +633,7 @@ exports["test setSourceContent with toStringWithSourceMap"] = async function(
   map.destroy();
 };
 
-exports["test walkSourceContents"] = function(assert) {
+exports["test walkSourceContents"] = function (assert) {
   const aNode = new SourceNode(1, 1, "a.js", "a");
   aNode.setSourceContent("a.js", "someContent");
   const node = new SourceNode(null, null, null, [
@@ -645,11 +642,11 @@ exports["test walkSourceContents"] = function(assert) {
     aNode,
     "  ",
     new SourceNode(1, 1, "b.js", "b"),
-    "}());"
+    "}());",
   ]);
   node.setSourceContent("b.js", "otherContent");
   const results = [];
-  node.walkSourceContents(function(sourceFile, sourceContent) {
+  node.walkSourceContents(function (sourceFile, sourceContent) {
     results.push([sourceFile, sourceContent]);
   });
   assert.equal(results.length, 2);
@@ -659,7 +656,7 @@ exports["test walkSourceContents"] = function(assert) {
   assert.equal(results[1][1], "otherContent");
 };
 
-exports["test from issue 258"] = async function(assert) {
+exports["test from issue 258"] = async function (assert) {
   const node = new SourceNode();
 
   const reactCode =

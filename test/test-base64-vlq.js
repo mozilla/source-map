@@ -514,10 +514,10 @@ const vlqs = [
   { number: 252, encoded: "4P" },
   { number: 253, encoded: "6P" },
   { number: 254, encoded: "8P" },
-  { number: 255, encoded: "+P" }
+  { number: 255, encoded: "+P" },
 ];
 
-exports["test normal encoding and decoding"] = function(assert) {
+exports["test normal encoding and decoding"] = function (assert) {
   for (let i = 0; i < vlqs.length; i++) {
     const str = base64VLQ.encode(vlqs[i].number);
     assert.equal(

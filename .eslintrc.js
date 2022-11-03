@@ -3,18 +3,18 @@
 module.exports = {
   env: {
     node: true,
-    es6: true
+    es6: true,
   },
 
   extends: ["prettier"],
 
   parserOptions: {
-    ecmaVersion: 9
+    ecmaVersion: 9,
   },
 
   globals: {
     fetch: false,
-    WebAssembly: false
+    WebAssembly: false,
   },
 
   rules: {
@@ -142,9 +142,9 @@ module.exports = {
           ArrayExpression: true,
           AssignmentExpression: true,
           ObjectExpression: true,
-          VariableDeclarator: true
-        }
-      }
+          VariableDeclarator: true,
+        },
+      },
     ],
 
     // No reassigning native JS objects
@@ -215,8 +215,8 @@ module.exports = {
       "error",
       {
         args: "none",
-        vars: "local"
-      }
+        vars: "local",
+      },
     ],
 
     // No using variables before defined
@@ -256,6 +256,6 @@ module.exports = {
     // Only check typeof against valid results
     "valid-typeof": "error",
 
-    "max-len": ["error", { code: 120, ignoreUrls: true }]
-  }
+    "max-len": ["error", { code: 120, ignoreUrls: true }],
+  },
 };

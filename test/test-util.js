@@ -6,7 +6,7 @@
  */
 
 const libUtil = require("../lib/util");
-exports["test normalize()"] = function(assert) {
+exports["test normalize()"] = function (assert) {
   assert.equal(libUtil.normalize("/.."), "/");
   assert.equal(libUtil.normalize("/../"), "/");
   assert.equal(libUtil.normalize("/../../../.."), "/");
@@ -54,7 +54,7 @@ exports["test normalize()"] = function(assert) {
   );
 };
 
-exports["test join()"] = function(assert) {
+exports["test join()"] = function (assert) {
   assert.equal(libUtil.join("a", "b"), "a/b");
   assert.equal(libUtil.join("a/", "b"), "a/b");
   assert.equal(libUtil.join("a//", "b"), "a//b");
@@ -199,7 +199,7 @@ exports["test join()"] = function(assert) {
 };
 
 // TODO Issue #128: Define and test this function properly.
-exports["test relative()"] = function(assert) {
+exports["test relative()"] = function (assert) {
   assert.equal(libUtil.relative("/the/root", "/the/root/one.js"), "one.js");
   assert.equal(
     libUtil.relative("http://the/root", "http://the/root/one.js"),
@@ -231,7 +231,7 @@ exports["test relative()"] = function(assert) {
   assert.equal(libUtil.relative("/", "the/root/one.js"), "the/root/one.js");
 };
 
-exports["test computeSourceURL"] = function(assert) {
+exports["test computeSourceURL"] = function (assert) {
   // Tests with sourceMapURL.
   assert.equal(
     libUtil.computeSourceURL("", "src/test.js", "http://example.com"),
