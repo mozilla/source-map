@@ -32,6 +32,7 @@ jobs:
       - run: npm install --legacy-peer-deps
       - run: npm run lint
       - run: npm run toc
+      - run: git diff --stat --exit-code
       - run: npx prettier --check .
       - run: npm run coverage
       - run: npx nyc report --reporter=text
