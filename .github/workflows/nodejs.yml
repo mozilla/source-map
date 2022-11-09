@@ -31,6 +31,7 @@ jobs:
       - uses: actions/setup-node@v3
       - run: npm install --legacy-peer-deps
       - run: npm run lint
+      - run: npm run toc
       - run: npx prettier --check .
       - run: npm run coverage
       - run: npx nyc report --reporter=text

@@ -24,12 +24,10 @@ This is a library to generate and consume the source map format
 
 ---
 
-<!-- `npm run toc` to regenerate the Table of Contents -->
+## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-## Table of Contents
 
 - [Examples](#examples)
   - [Consuming a source map](#consuming-a-source-map)
