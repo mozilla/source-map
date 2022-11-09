@@ -119,26 +119,14 @@ var util = require("./util");
 
 ## Checking code coverage
 
-It's fun to find ways to test lines of code that aren't visited by
-the tests yet.
+It's fun to find ways to test lines of code that aren't visited by the tests yet.
 
 ```shell
 $ npm run coverage
 $ open coverage/index.html
 ```
 
-This will allow you to browse to red sections of the code that need
-more attention. Even more cool, however, is to run:
-
-```shell
-$ npm run dev
-```
-
-(On some operating systems, this may pop up a request for node to be able to open a socket. Click "Allow" or the equivalent.)
-
-This will run the coverage tools, and monitor all of the files in the
-project, re-running the coverage tools and refreshing the browser when
-any files change. There will be a small web server running on port 4103 to enable this. Control-C to stop.
+This will allow you to browse to red sections of the code that need more attention.
 
 ## Updating the `lib/mappings.wasm` WebAssembly Module
 
