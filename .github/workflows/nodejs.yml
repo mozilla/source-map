@@ -35,3 +35,5 @@ jobs:
       - run: git diff --stat --exit-code
       - run: npx prettier --check .
       - run: npm run coverage
+      - run: npx c8 report --reporter=lcov
+      - uses: codecov/codecov-action@v3
