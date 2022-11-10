@@ -1,0 +1,11 @@
+comment:
+  require_changes: true
+
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
