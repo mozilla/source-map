@@ -1,6 +1,9 @@
 on:
   pull_request:
     branches: [master]
+    paths:
+      - wasm-mappings/**
+      - .github/workflows/cargo.yml
   push:
     branches: [master]
   workflow_dispatch:
