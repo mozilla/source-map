@@ -7,5 +7,4 @@ package-lock.json
 bench/*.svg
 bench/dist/
 bench/node_modules
-.nyc_output/
 coverage/

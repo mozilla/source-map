@@ -67,16 +67,16 @@
   "scripts": {
     "lint": "eslint --fix *.js lib/ test/",
     "test": "node test/run-tests.js",
-    "coverage": "nyc --reporter=text --reporter=html npm test",
+    "coverage": "c8 --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",
-    "clean": "rm -rf coverage .nyc_output",
+    "clean": "rm -rf coverage",
     "toc": "doctoc --github --notitle README.md CONTRIBUTING.md"
   },
   "devDependencies": {
+    "c8": "^7.12.0",
     "doctoc": "^2.2.1",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
-    "nyc": "^11.7.1",
     "prettier": "^2.7.1"
   },
   "dependencies": {
