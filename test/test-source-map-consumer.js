@@ -2200,7 +2200,7 @@ exports["test >2GB of source maps"] = async function (
         line: 1,
         column: 1,
       })
-      if (map._mappingsPtr > 2*1024*1024*1024)
+      if (map._wasm.exports.memory.buffer.byteLength > 2*1024*1024*1024)
         break
     }
   } finally {
