@@ -2172,3 +2172,38 @@ exports["test SourceMapConsumer.with and exceptions"] = async function (
   assert.equal(error, 6);
   assert.equal(consumer._mappingsPtr, 0);
 };
+
+exports["test >2GB of source maps"] = async function (
+  assert
+) {
+
+  const maps = []
+  try {
+    const generator = new SourceMapGenerator({
+      file: "generated-foo.js",
+      sourceRoot: ".",
+    });
+
+    // ~50 KB of mappings
+    for (let j = 1; j < 10000; j++)
+      generator.addMapping({
+        original: { line: j, column: 1 },
+        generated: { line: j, column: 1 },
+        source: "foo.js"
+      });
+
+    const mapJson = generator.toJSON()
+    while (true) {
+      const map = await new SourceMapConsumer(mapJson);
+      maps.push(map)
+      map.originalPositionFor({
+        line: 1,
+        column: 1,
+      })
+      if (map._mappingsPtr > 2*1024*1024*1024)
+        break
+    }
+  } finally {
+    maps.forEach(m => m.destroy())
+  }
+}
