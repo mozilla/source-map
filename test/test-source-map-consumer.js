@@ -88,6 +88,16 @@ exports["test that the `sources` field has the original sources"] =
     map.destroy();
   };
 
+exports["test that the SourceMapConsumer supports the ignoreList"] = async function (assert) {
+    const map = await new SourceMapConsumer(util.testMapWithIgnoreList);
+    const sources = map.sources;
+    const ignoreList = map.x_google_ignoreList;
+    assert.equal(ignoreList[0], 0);
+    assert.equal(sources[ignoreList[0]], "/the/root/one.js");
+    assert.equal(ignoreList.length, 1);
+    map.destroy();
+}
+
 exports["test that the source root is reflected in a mapping's source field"] =
   async function (assert) {
     let map;

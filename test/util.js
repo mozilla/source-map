@@ -37,6 +37,18 @@ exports.testMap = {
   mappings:
     "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA",
 };
+
+exports.testMapWithIgnoreList = {
+  version: 3,
+  file: "min.js",
+  names: ["bar", "baz", "n"],
+  sources: ["one.js", "two.js"],
+  sourceRoot: "/the/root",
+  mappings:
+    "CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA",
+  x_google_ignoreList: [0],
+};
+
 exports.testMapNoSourceRoot = {
   version: 3,
   file: "min.js",
