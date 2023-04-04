@@ -240,6 +240,10 @@ following attributes:
 
 - `file`: Optional. The generated filename this source map is associated with.
 
+- `x_google_ignoreList`: Optional. An additional extension field which is an array 
+of indices refering to urls in the sources array. This is used to identify third-party
+sources, that the developer might want to avoid when debugging.
+
 The promise of the constructed souce map consumer is returned.
 
 When the `SourceMapConsumer` will no longer be used anymore, you must call its
