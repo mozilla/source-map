@@ -9,6 +9,7 @@ version = "0.5.0"
 
 [dependencies]
 source-map-mappings = { version = "0.5.0", path = ".." }
+wasm-bindgen = { version ="0.2.83" }
 
 [features]
 profiling = []

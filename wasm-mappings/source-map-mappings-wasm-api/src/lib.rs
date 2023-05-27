@@ -19,11 +19,13 @@
 //! 6. When finished with `Mappings` structure, dispose of it with
 //! `free_mappings`.
 
-// NB: every exported function must be `#[no_mangle]` and `pub extern "C"`.
-
 #![deny(missing_docs)]
 
 extern crate source_map_mappings;
+
+extern crate wasm_bindgen;
+use wasm_bindgen::prelude::*;
+
 
 use source_map_mappings::{Bias, Error, Mapping, Mappings};
 use std::mem;
@@ -125,8 +127,8 @@ static mut LAST_ERROR: Option<Error> = None;
 /// Get the last error's error code, or 0 if there was none.
 ///
 /// See `source_map_mappings::Error` for the error code definitions.
-#[no_mangle]
-pub extern "C" fn get_last_error() -> u32 {
+#[wasm_bindgen]
+pub fn get_last_error() -> u32 {
     unsafe {
         match LAST_ERROR {
             None => 0,
@@ -145,8 +147,8 @@ fn assert_pointer_is_word_aligned(p: *mut u8) {
 /// It is the JS callers responsibility to initialize the resulting buffer by
 /// copying the JS `String` holding the source map's "mappings" into it (encoded
 /// in ascii).
-#[no_mangle]
-pub extern "C" fn allocate_mappings(size: usize) -> *mut u8 {
+#[wasm_bindgen]
+pub fn allocate_mappings(size: usize) -> *mut u8 {
     // Make sure that we don't lose any bytes from size in the remainder.
     let size_in_units_of_usize = (size + mem::size_of::<usize>() - 1) / mem::size_of::<usize>();
 
@@ -191,8 +193,8 @@ where
 ///
 /// In both the success or failure cases, the caller gives up ownership of the
 /// input mappings string and must not use it again.
-#[no_mangle]
-pub extern "C" fn parse_mappings(mappings: *mut u8) -> *mut Mappings<Observer> {
+#[wasm_bindgen]
+pub fn parse_mappings(mappings: *mut u8) -> *mut Mappings<Observer> {
     assert_pointer_is_word_aligned(mappings);
     let mappings = mappings as *mut usize;
 
@@ -236,8 +238,8 @@ pub extern "C" fn parse_mappings(mappings: *mut u8) -> *mut Mappings<Observer> {
 /// Destroy the given `Mappings` structure.
 ///
 /// The caller gives up ownership of the mappings and must not use them again.
-#[no_mangle]
-pub extern "C" fn free_mappings(mappings: *mut Mappings<Observer>) {
+#[wasm_bindgen]
+pub fn free_mappings(mappings: *mut Mappings<Observer>) {
     unsafe {
         Box::from_raw(mappings);
     }
@@ -251,6 +253,7 @@ unsafe fn mappings_mut<'a>(
     mappings.as_mut().unwrap()
 }
 
+#[wasm_bindgen(raw_module = "../../lib/wasm.js")]
 extern "C" {
     fn mapping_callback(
         // These two parameters are always valid.
@@ -323,8 +326,8 @@ unsafe fn invoke_mapping_callback(mapping: &Mapping) {
 
 /// Invoke the `mapping_callback` on each mapping in the given `Mappings`
 /// structure, in order of generated location.
-#[no_mangle]
-pub extern "C" fn by_generated_location(mappings: *mut Mappings<Observer>) {
+#[wasm_bindgen]
+pub fn by_generated_location(mappings: *mut Mappings<Observer>) {
     let this_scope = ();
     let mappings = unsafe { mappings_mut(&this_scope, mappings) };
 
@@ -337,8 +340,8 @@ pub extern "C" fn by_generated_location(mappings: *mut Mappings<Observer>) {
 }
 
 /// Compute column spans for the given mappings.
-#[no_mangle]
-pub extern "C" fn compute_column_spans(mappings: *mut Mappings<Observer>) {
+#[wasm_bindgen]
+pub fn compute_column_spans(mappings: *mut Mappings<Observer>) {
     let this_scope = ();
     let mappings = unsafe { mappings_mut(&this_scope, mappings) };
 
@@ -348,8 +351,8 @@ pub extern "C" fn compute_column_spans(mappings: *mut Mappings<Observer>) {
 /// Invoke the `mapping_callback` on each mapping in the given `Mappings`
 /// structure that has original location information, in order of original
 /// location.
-#[no_mangle]
-pub extern "C" fn by_original_location(mappings: *mut Mappings<Observer>) {
+#[wasm_bindgen]
+pub fn by_original_location(mappings: *mut Mappings<Observer>) {
     let this_scope = ();
     let mappings = unsafe { mappings_mut(&this_scope, mappings) };
 
@@ -381,8 +384,8 @@ fn u32_to_bias(bias: u32) -> Bias {
 ///
 /// If a mapping is found, the `mapping_callback` is invoked with it
 /// once. Otherwise, the `mapping_callback` is not invoked at all.
-#[no_mangle]
-pub extern "C" fn original_location_for(
+#[wasm_bindgen]
+pub fn original_location_for(
     mappings: *mut Mappings<Observer>,
     generated_line: u32,
     generated_column: u32,
@@ -403,8 +406,8 @@ pub extern "C" fn original_location_for(
 ///
 /// If a mapping is found, the `mapping_callback` is invoked with it
 /// once. Otherwise, the `mapping_callback` is not invoked at all.
-#[no_mangle]
-pub extern "C" fn generated_location_for(
+#[wasm_bindgen]
+pub fn generated_location_for(
     mappings: *mut Mappings<Observer>,
     source: u32,
     original_line: u32,
@@ -431,8 +434,8 @@ pub extern "C" fn generated_location_for(
 /// `false`, then the `original_column` argument is ignored, and the
 /// `mapping_callback` is invoked on all mappings with matching source and
 /// original line.
-#[no_mangle]
-pub extern "C" fn all_generated_locations_for(
+#[wasm_bindgen]
+pub fn all_generated_locations_for(
     mappings: *mut Mappings<Observer>,
     source: u32,
     original_line: u32,
