@@ -65,7 +65,8 @@
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "lint": "eslint --fix *.js lib/ test/",
+    "fix": "npm run lint -- --fix",
+    "lint": "eslint . --ignore-path .prettierignore",
     "test": "node test/run-tests.js",
     "coverage": "c8 --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",
