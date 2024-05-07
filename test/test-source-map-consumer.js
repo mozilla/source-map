@@ -2183,3 +2183,12 @@ exports["test SourceMapConsumer.with and exceptions"] = async function (
   assert.equal(error, 6);
   assert.equal(consumer._mappingsPtr, 0);
 };
+
+exports["test a mapping at the boundary of indexed source map offset"] =
+  async function (assert) {
+    const map = await new SourceMapConsumer(
+      util.indexedTestMapAtOffsetBoundary
+    );
+    util.assertMapping(1, 0, "/the/root/one.js", 1, 0, null, null, map, assert);
+    map.destroy();
+  };
