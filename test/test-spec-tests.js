@@ -73,6 +73,31 @@ async function testMappingAction(assert, rawSourceMap, action) {
   });
 }
 
+async function testTransitiveMappingAction(assert, rawSourceMap, action) {
+  return SourceMapConsumer.with(rawSourceMap, null, async (consumer) => {
+    assert.ok(Array.isArray(action.intermediateMaps), "transitive mapping case requires intermediate maps");
+
+    let mappedPosition = consumer.originalPositionFor({
+      line: action.generatedLine + 1,
+      column: action.generatedColumn,
+    });
+
+    for (let intermediateMapPath of action.intermediateMaps) {
+      const intermediateMap = await readJSON(`./source-map-tests/resources/${intermediateMapPath}`);
+      await SourceMapConsumer.with(intermediateMap, null, (consumer) => {
+        mappedPosition = consumer.originalPositionFor({
+          line: mappedPosition.line,
+          column: mappedPosition.column,
+        });
+      });
+    }
+
+    assert.equal(mappedPosition.line, action.originalLine + 1, `original line didn't match, expected ${action.originalLine + 1} got ${mappedPosition.line}`);
+    assert.equal(mappedPosition.column, action.originalColumn, `original column didn't match, expected ${action.originalColumn} got ${mappedPosition.column}`);
+    assert.equal(mappedPosition.source, action.originalSource, `original source didn't match, expected ${action.originalSource} got ${mappedPosition.source}`);
+  });
+}
+
 for (let testCase of sourceMapSpecTests.tests) {
   if (skippedTests.includes(testCase.name))
     continue;
@@ -95,6 +120,8 @@ for (let testCase of sourceMapSpecTests.tests) {
         for (let testAction of testCase.testActions) {
           if (testAction.actionType == "checkMapping") {
             await testMappingAction(assert, json, testAction);
+          } else if (testAction.actionType == "checkMappingTransitive") {
+            await testTransitiveMappingAction(assert, json, testAction);
           }
         }
       }
