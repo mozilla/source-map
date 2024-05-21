@@ -45,21 +45,19 @@ const skippedTests = [
   "indexMapInvalidBaseMappings",
   // The spec's definition of overlap can be refined
   "indexMapInvalidOverlap",
-  // Not clear if this test makes sense, but spec isn't clear on behavior
-  "validMappingNullSources"
 ]
+
+// The source-map library converts null sources to the "null" URL in its
+// sources list, so for equality checking we accept this as null.
+function nullish(nullOrString) {
+  if (nullOrString === "null") {
+    return null;
+  }
+  return nullOrString;
+}
 
 async function testMappingAction(assert, rawSourceMap, action) {
   return SourceMapConsumer.with(rawSourceMap, null, (consumer) => {
-    let mappedPosition = consumer.generatedPositionFor({
-      source: action.originalSource,
-      line: action.originalLine + 1,
-      column: action.originalColumn
-    });
-
-    assert.equal(mappedPosition.line, action.generatedLine + 1, `generated line didn't match, expected ${action.generatedLine + 1} got ${mappedPosition.line}`);
-    assert.equal(mappedPosition.column, action.generatedColumn, `generated column didn't match, expected ${action.generatedColumn} got ${mappedPosition.column}`);
-
     mappedPosition = consumer.originalPositionFor({
       line: action.generatedLine + 1,
       column: action.generatedColumn,
@@ -67,9 +65,23 @@ async function testMappingAction(assert, rawSourceMap, action) {
 
     assert.equal(mappedPosition.line, action.originalLine + 1, `original line didn't match, expected ${action.originalLine + 1} got ${mappedPosition.line}`);
     assert.equal(mappedPosition.column, action.originalColumn, `original column didn't match, expected ${action.originalColumn} got ${mappedPosition.column}`);
-    assert.equal(mappedPosition.source, action.originalSource, `original source didn't match, expected ${action.originalSource} got ${mappedPosition.source}`);
+    assert.equal(nullish(mappedPosition.source), action.originalSource, `original source didn't match, expected ${action.originalSource} got ${mappedPosition.source}`);
     if (action.mappedName)
       assert.equal(mappedPosition.name, action.mappedName, `mapped name didn't match, expected ${action.mappedName} got ${mappedPosition.name}`);
+
+    // When the source is null, a reverse lookup may not make sense
+    // because there isn't a unique way to look it up.
+    if (action.originalSource !== null) {
+      let mappedPosition = consumer.generatedPositionFor({
+        source: action.originalSource,
+        line: action.originalLine + 1,
+        column: action.originalColumn
+      });
+
+      assert.equal(mappedPosition.line, action.generatedLine + 1, `generated line didn't match, expected ${action.generatedLine + 1} got ${mappedPosition.line}`);
+      assert.equal(mappedPosition.column, action.generatedColumn, `generated column didn't match, expected ${action.generatedColumn} got ${mappedPosition.column}`);
+    }
+
   });
 }
 
