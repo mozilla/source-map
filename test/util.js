@@ -226,6 +226,31 @@ exports.indexedTestMapColumnOffset = {
     },
   ],
 };
+// This mapping is for testing a case where the mapped position is at the
+// section offset.
+exports.indexedTestMapAtOffsetBoundary = {
+  version: 3,
+  file: "min.js",
+  sections: [
+    {
+      offset: {
+        line: 0,
+        column: 0,
+      },
+      map: {
+        version: 3,
+        sources: ["one.js"],
+        sourcesContent: [
+          "ONE.foo = function (bar) {\n   return baz(bar);\n };",
+        ],
+        names: ["bar", "baz"],
+        mappings: "AAAA",
+        file: "min.js",
+        sourceRoot: "/the/root",
+      },
+    },
+  ],
+};
 exports.testMapWithSourcesContent = {
   version: 3,
   file: "min.js",
