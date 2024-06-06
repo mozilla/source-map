@@ -45,6 +45,11 @@ const skippedTests = [
   "indexMapInvalidBaseMappings",
   // The spec's definition of overlap can be refined
   "indexMapInvalidOverlap",
+  // The library doesn't support the new ignoreList feature yet.
+  "ignoreListWrongType1",
+  "ignoreListWrongType2",
+  "ignoreListWrongType3",
+  "ignoreListOutOfBounds",
 ]
 
 // The source-map library converts null sources to the "null" URL in its
