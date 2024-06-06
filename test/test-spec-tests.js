@@ -61,14 +61,18 @@ function nullish(nullOrString) {
   return nullOrString;
 }
 
+function mapLine(line) {
+  return line + 1;
+}
+
 async function testMappingAction(assert, rawSourceMap, action) {
   return SourceMapConsumer.with(rawSourceMap, null, (consumer) => {
     mappedPosition = consumer.originalPositionFor({
-      line: action.generatedLine + 1,
+      line: mapLine(action.generatedLine),
       column: action.generatedColumn,
     });
 
-    assert.equal(mappedPosition.line, action.originalLine + 1, `original line didn't match, expected ${action.originalLine + 1} got ${mappedPosition.line}`);
+    assert.equal(mappedPosition.line, mapLine(action.originalLine), `original line didn't match, expected ${mapLine(action.originalLine)} got ${mappedPosition.line}`);
     assert.equal(mappedPosition.column, action.originalColumn, `original column didn't match, expected ${action.originalColumn} got ${mappedPosition.column}`);
     assert.equal(nullish(mappedPosition.source), action.originalSource, `original source didn't match, expected ${action.originalSource} got ${mappedPosition.source}`);
     if (action.mappedName)
@@ -79,11 +83,11 @@ async function testMappingAction(assert, rawSourceMap, action) {
     if (action.originalSource !== null) {
       let mappedPosition = consumer.generatedPositionFor({
         source: action.originalSource,
-        line: action.originalLine + 1,
+        line: mapLine(action.originalLine),
         column: action.originalColumn
       });
 
-      assert.equal(mappedPosition.line, action.generatedLine + 1, `generated line didn't match, expected ${action.generatedLine + 1} got ${mappedPosition.line}`);
+      assert.equal(mappedPosition.line, mapLine(action.generatedLine), `generated line didn't match, expected ${mapLine(action.generatedLine)} got ${mappedPosition.line}`);
       assert.equal(mappedPosition.column, action.generatedColumn, `generated column didn't match, expected ${action.generatedColumn} got ${mappedPosition.column}`);
     }
 
@@ -95,11 +99,11 @@ async function testTransitiveMappingAction(assert, rawSourceMap, action) {
     assert.ok(Array.isArray(action.intermediateMaps), "transitive mapping case requires intermediate maps");
 
     let mappedPosition = consumer.originalPositionFor({
-      line: action.generatedLine + 1,
+      line: mapLine(action.generatedLine),
       column: action.generatedColumn,
     });
 
-    for (let intermediateMapPath of action.intermediateMaps) {
+    for (const intermediateMapPath of action.intermediateMaps) {
       const intermediateMap = await readJSON(`./source-map-tests/resources/${intermediateMapPath}`);
       await SourceMapConsumer.with(intermediateMap, null, (consumer) => {
         mappedPosition = consumer.originalPositionFor({
@@ -109,19 +113,18 @@ async function testTransitiveMappingAction(assert, rawSourceMap, action) {
       });
     }
 
-    assert.equal(mappedPosition.line, action.originalLine + 1, `original line didn't match, expected ${action.originalLine + 1} got ${mappedPosition.line}`);
+    assert.equal(mappedPosition.line, mapLine(action.originalLine), `original line didn't match, expected ${mapLine(action.originalLine)} got ${mappedPosition.line}`);
     assert.equal(mappedPosition.column, action.originalColumn, `original column didn't match, expected ${action.originalColumn} got ${mappedPosition.column}`);
     assert.equal(mappedPosition.source, action.originalSource, `original source didn't match, expected ${action.originalSource} got ${mappedPosition.source}`);
   });
 }
 
-for (let testCase of sourceMapSpecTests.tests) {
+for (const testCase of sourceMapSpecTests.tests) {
   if (skippedTests.includes(testCase.name))
     continue;
   exports[`test from source map spec tests, name: ${testCase.name}`] =
     async function (assert) {
       const json = await readJSON(`./source-map-tests/resources/${testCase.sourceMapFile}`);
-      let sourceMapFailed = false;
       try {
         const map = await new SourceMapConsumer(json);
         map.eachMapping(() => {});
@@ -134,7 +137,7 @@ for (let testCase of sourceMapSpecTests.tests) {
       if (!testCase.sourceMapIsValid)
         assert.fail("Expected invalid source map but loaded successfully");
       if (testCase.testActions) {
-        for (let testAction of testCase.testActions) {
+        for (const testAction of testCase.testActions) {
           if (testAction.actionType == "checkMapping") {
             await testMappingAction(assert, json, testAction);
           } else if (testAction.actionType == "checkMappingTransitive") {
