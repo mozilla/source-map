@@ -65,7 +65,7 @@
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "lint": "eslint --fix *.js lib/ test/",
+    "lint": "eslint --fix *.js lib/ test/ --ignore-pattern 'test/source-map-tests/**'",
     "test": "git submodule update --init --recursive; node test/run-tests.js",
     "coverage": "c8 --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",
