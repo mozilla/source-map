@@ -49,8 +49,7 @@
   "main": "./source-map.js",
   "types": "./source-map.d.ts",
   "browser": {
-    "./lib/url.js": "./lib/url-browser.js",
-    "./lib/read-wasm.js": "./lib/read-wasm-browser.js"
+    "./lib/url.js": "./lib/url-browser.js"
   },
   "files": [
     "source-map.js",
