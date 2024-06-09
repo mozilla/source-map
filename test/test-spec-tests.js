@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-const fs = require("node:fs/promises");
+const fs = require("fs").promises;
 const SourceMapConsumer =
   require("../lib/source-map-consumer").SourceMapConsumer;
 
