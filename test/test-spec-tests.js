@@ -49,7 +49,14 @@ const skippedTests = [
   "ignoreListWrongType1",
   "ignoreListWrongType2",
   "ignoreListWrongType3",
-  "ignoreListOutOfBounds",
+  "ignoreListWrongType4",
+  "ignoreListOutOfBounds1",
+  "ignoreListOutOfBounds2",
+  // These 'file' checks aren't currently done
+  "fileNotAString1",
+  "fileNotAString2",
+  "indexMapFileWrongType1",
+  "indexMapFileWrongType2",
 ];
 
 // The source-map library converts null sources to the "null" URL in its
@@ -62,7 +69,7 @@ function nullish(nullOrString) {
 }
 
 function mapLine(line) {
-  return line + 1;
+  return line === null ? null : line + 1;
 }
 
 async function testMappingAction(assert, rawSourceMap, action) {
