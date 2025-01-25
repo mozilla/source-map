@@ -492,7 +492,7 @@ Iterate over each mapping between an original source/line/column and a
 generated line/column in this source map.
 
 - `callback`: The function that is called with each mapping. Mappings have the
-  form `{ source, generatedLine, generatedColumn, originalLine, originalColumn, name }`
+  form `{ source, generatedLine, generatedColumn, originalLine, originalColumn, name }`.
 
 - `context`: Optional. If specified, this object will be the value of `this`
   every time that `callback` is called.
@@ -665,9 +665,9 @@ var node = new SourceNode(1, 2, "a.cpp", [
 
 Creates a SourceNode from generated code and a SourceMapConsumer.
 
-- `code`: The generated code
+- `code`: The generated code.
 
-- `sourceMapConsumer` The SourceMap for the generated code
+- `sourceMapConsumer` The SourceMap for the generated code.
 
 - `relativePath` The optional path that relative sources in `sourceMapConsumer`
   should be relative to.
@@ -711,9 +711,9 @@ node.prepend("/** Build Id: f783haef86324gf **/\n\n");
 Set the source content for a source file. This will be added to the
 `SourceMap` in the `sourcesContent` field.
 
-- `sourceFile`: The filename of the source file
+- `sourceFile`: The filename of the source file.
 
-- `sourceContent`: The content of the source file
+- `sourceContent`: The content of the source file.
 
 ```js
 node.setSourceContent(
