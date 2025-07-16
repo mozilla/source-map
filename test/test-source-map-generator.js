@@ -779,7 +779,7 @@ exports["test setting sourcesContent to null when already null"] = function (
   });
 };
 
-exports["test applySourceMap with unexact match"] = async function (assert) {
+exports["test applySourceMap with inexact match"] = async function (assert) {
   const map1 = new SourceMapGenerator({
     file: "bundled-source",
   });
