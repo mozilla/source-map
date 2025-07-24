@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -56,9 +56,6 @@
     "source-map.d.ts",
     "lib/"
   ],
-  "publishConfig": {
-    "tag": "next"
-  },
   "engines": {
     "node": ">= 12"
   },
