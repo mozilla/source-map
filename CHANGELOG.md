@@ -1,6 +1,96 @@
 # Change Log
 
-## 0.8.0-beta.0
+## 0.7.6
+
+- Bump package to 0.7.6 and remove `publishConfig` property in package.json ([801be934007c3ed0ef66c620641b1668e92c891d](https://github.com/mozilla/source-map/commit/801be934007c3ed0ef66c620641b1668e92c891d))
+
+## 0.7.5
+
+- [#364](https://github.com/mozilla/source-map/pull/364) -
+  Pass through the implementation of more index map operations.
+- [#362](https://github.com/mozilla/source-map/pull/362) -
+  Remove the bundled dist/ directory?
+- [#363](https://github.com/mozilla/source-map/pull/363) -
+  Split up wasm loading based on compilation target.
+- [#371](https://github.com/mozilla/source-map/pull/371) -
+  Use WHATWG's URL to implement all of source-map's URL operations.
+- [#378](https://github.com/mozilla/source-map/pull/378) -
+  Fix typo
+- [#384](https://github.com/mozilla/source-map/pull/384) -
+  Add Mozilla Code of Conduct in 
+- [#402](https://github.com/mozilla/source-map/pull/402) -
+  Remove unused fromVLQSigned function
+- [#374](https://github.com/mozilla/source-map/pull/374) -
+  Add lastGeneratedColumn to typing for MappingItem
+- [#395](https://github.com/mozilla/source-map/pull/395) -
+  `addMapping()`: ensure that `originalLine` and `originalColumn` are `null` when `original` argument was undefined/`null`
+- [#394](https://github.com/mozilla/source-map/pull/394) -
+  fix crash in url util function due to undefined root value
+- [#393](https://github.com/mozilla/source-map/pull/393) -
+  minor binary-search code/comment fixes
+- [#407](https://github.com/mozilla/source-map/pull/407) -
+  use Travis CI svg badge
+- [#397](https://github.com/mozilla/source-map/pull/397) -
+  add `prettier` task for standardized code formatting => easier cross-branch/fork code comparison and merging
+- [#415](https://github.com/mozilla/source-map/pull/415) -
+  Syntax highlight README HTML sample
+- [#439](https://github.com/mozilla/source-map/pull/439) -
+  Add function to SourceMapConsumer TS interface
+- [#448](https://github.com/mozilla/source-map/pull/448) -
+  Include types file extension in package.json
+- [#464](https://github.com/mozilla/source-map/pull/464) -
+  Require Node.js 12 or later & switch CI to GitHub Actions
+- [#466](https://github.com/mozilla/source-map/pull/466) -
+  Skip updating coveralls.io coverage
+- [#465](https://github.com/mozilla/source-map/pull/465) -
+  Update WASM binary and Land WASM rust sources in this repository
+- [#463](https://github.com/mozilla/source-map/pull/463) -
+  Update ESLint & Prettier to latest
+- [#467](https://github.com/mozilla/source-map/pull/467) -
+  Adopt & enforce the mozilla-central Prettier config
+- [#468](https://github.com/mozilla/source-map/pull/468) -
+  Simplify coverage tooling
+- [#469](https://github.com/mozilla/source-map/pull/469) -
+  Update to doctoc v2 & simplify call pattern
+- [#470](https://github.com/mozilla/source-map/pull/470) -
+  Filter out unnecessary rust tasks
+- [#471](https://github.com/mozilla/source-map/pull/471) -
+  Improve coverage
+- [#472](https://github.com/mozilla/source-map/pull/472) -
+  Include package-lock.json in repo
+- [#473](https://github.com/mozilla/source-map/pull/473) -
+  fix: convert result of allocate_mappings from signed to unsigned
+- [#481](https://github.com/mozilla/source-map/pull/481) -
+  Add support for the sourcemaps ignorelist
+- [#485](https://github.com/mozilla/source-map/pull/485) -
+  Remove .DS_Store
+- [#488](https://github.com/mozilla/source-map/pull/488) -
+  Fix reference to LICENSE file
+- [#507](https://github.com/mozilla/source-map/pull/507) -
+  Fix an off-by-1 error in section lookup
+- [#505](https://github.com/mozilla/source-map/pull/505) -
+  Add source map spec tests
+- [#517](https://github.com/mozilla/source-map/pull/517) -
+  Remove whatwg-url module
+
+## 0.7.4
+
+- [#341](https://github.com/mozilla/source-map/pull/341) -
+  Make async change. Fixes mozilla#337.
+- [#339](https://github.com/mozilla/source-map/pull/339) -
+  Add option to initialize mappings wasm via ArrayBuffer
+- [#347](https://github.com/mozilla/source-map/pull/347) -
+  Add expected arguments to assert.throws calls
+- [#352](https://github.com/mozilla/source-map/pull/352) -
+  Update node version
+- [#350](https://github.com/mozilla/source-map/pull/350) -
+  Use top level context to determine node vs browser environment
+- [#361](https://github.com/mozilla/source-map/pull/361) -
+  Bump webpack-cli to v3.1
+- [#456](https://github.com/mozilla/source-map/pull/456) -
+  Regenerate dist due to running `npm test`
+
+## [DEPRECATED] 0.8.0-beta.0
 
 ### Breaking changes
 
