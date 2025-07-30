@@ -17,7 +17,7 @@
 - [#378](https://github.com/mozilla/source-map/pull/378) -
   Fix typo
 - [#384](https://github.com/mozilla/source-map/pull/384) -
-  Add Mozilla Code of Conduct in 
+  Add Mozilla Code of Conduct in
 - [#402](https://github.com/mozilla/source-map/pull/402) -
   Remove unused fromVLQSigned function
 - [#374](https://github.com/mozilla/source-map/pull/374) -
