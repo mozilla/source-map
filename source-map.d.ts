@@ -85,18 +85,6 @@ export interface SourceMappings {
 
 export interface SourceMapConsumer {
   /**
-   * When using SourceMapConsumer outside of node.js, for example on the Web, it
-   * needs to know from what URL to load lib/mappings.wasm. You must inform it
-   * by calling initialize before constructing any SourceMapConsumers.
-   *
-   * @param mappings an object with the following property:
-   *   - "lib/mappings.wasm": A String containing the URL of the
-   *     lib/mappings.wasm file, or an ArrayBuffer with the contents of
-   *     lib/mappings.wasm.
-   */
-  initialize(mappings: SourceMappings): void;
-
-  /**
    * Compute the last column for each generated mapping. The last column is
    * inclusive.
    */
@@ -236,6 +224,18 @@ export interface SourceMapConsumerConstructor {
     rawSourceMap: RawSourceMap | RawIndexMap | string,
     sourceMapUrl?: SourceMapUrl
   ): Promise<BasicSourceMapConsumer | IndexedSourceMapConsumer>;
+
+  /**
+   * When using SourceMapConsumer outside of node.js, for example on the Web, it
+   * needs to know from what URL to load lib/mappings.wasm. You must inform it
+   * by calling initialize before constructing any SourceMapConsumers.
+   *
+   * @param mappings an object with the following property:
+   *   - "lib/mappings.wasm": A String containing the URL of the
+   *     lib/mappings.wasm file, or an ArrayBuffer with the contents of
+   *     lib/mappings.wasm.
+   */
+  initialize(mappings: SourceMappings): void;
 
   /**
    * Create a BasicSourceMapConsumer from a SourceMapGenerator.
