@@ -290,25 +290,25 @@ function assertMapping(
       origMapping.name,
       name,
       "Incorrect name, expected " +
-      JSON.stringify(name) +
-      ", got " +
-      JSON.stringify(origMapping.name)
+        JSON.stringify(name) +
+        ", got " +
+        JSON.stringify(origMapping.name)
     );
     assert.equal(
       origMapping.line,
       originalLine,
       "Incorrect line, expected " +
-      JSON.stringify(originalLine) +
-      ", got " +
-      JSON.stringify(origMapping.line)
+        JSON.stringify(originalLine) +
+        ", got " +
+        JSON.stringify(origMapping.line)
     );
     assert.equal(
       origMapping.column,
       originalColumn,
       "Incorrect column, expected " +
-      JSON.stringify(originalColumn) +
-      ", got " +
-      JSON.stringify(origMapping.column)
+        JSON.stringify(originalColumn) +
+        ", got " +
+        JSON.stringify(origMapping.column)
     );
 
     let expectedSource;
@@ -331,9 +331,9 @@ function assertMapping(
       origMapping.source,
       expectedSource,
       "Incorrect source, expected " +
-      JSON.stringify(expectedSource) +
-      ", got " +
-      JSON.stringify(origMapping.source)
+        JSON.stringify(expectedSource) +
+        ", got " +
+        JSON.stringify(origMapping.source)
     );
   }
 
@@ -348,17 +348,17 @@ function assertMapping(
       genMapping.line,
       generatedLine,
       "Incorrect line, expected " +
-      JSON.stringify(generatedLine) +
-      ", got " +
-      JSON.stringify(genMapping.line)
+        JSON.stringify(generatedLine) +
+        ", got " +
+        JSON.stringify(genMapping.line)
     );
     assert.equal(
       genMapping.column,
       generatedColumn,
       "Incorrect column, expected " +
-      JSON.stringify(generatedColumn) +
-      ", got " +
-      JSON.stringify(genMapping.column)
+        JSON.stringify(generatedColumn) +
+        ", got " +
+        JSON.stringify(genMapping.column)
     );
   }
 }
@@ -371,57 +371,57 @@ function assertEqualMaps(assert, actualMap, expectedMap) {
     actualMap.names.length,
     expectedMap.names.length,
     "names length mismatch: " +
-    actualMap.names.join(", ") +
-    " != " +
-    expectedMap.names.join(", ")
+      actualMap.names.join(", ") +
+      " != " +
+      expectedMap.names.join(", ")
   );
   for (let i = 0; i < actualMap.names.length; i++) {
     assert.equal(
       actualMap.names[i],
       expectedMap.names[i],
       "names[" +
-      i +
-      "] mismatch: " +
-      actualMap.names.join(", ") +
-      " != " +
-      expectedMap.names.join(", ")
+        i +
+        "] mismatch: " +
+        actualMap.names.join(", ") +
+        " != " +
+        expectedMap.names.join(", ")
     );
   }
   assert.equal(
     actualMap.sources.length,
     expectedMap.sources.length,
     "sources length mismatch: " +
-    actualMap.sources.join(", ") +
-    " != " +
-    expectedMap.sources.join(", ")
+      actualMap.sources.join(", ") +
+      " != " +
+      expectedMap.sources.join(", ")
   );
   for (let i = 0; i < actualMap.sources.length; i++) {
     assert.equal(
       actualMap.sources[i],
       expectedMap.sources[i],
       "sources[" +
-      i +
-      "] length mismatch: " +
-      actualMap.sources.join(", ") +
-      " != " +
-      expectedMap.sources.join(", ")
+        i +
+        "] length mismatch: " +
+        actualMap.sources.join(", ") +
+        " != " +
+        expectedMap.sources.join(", ")
     );
   }
   assert.equal(
     actualMap.sourceRoot,
     expectedMap.sourceRoot,
     "sourceRoot mismatch: " +
-    actualMap.sourceRoot +
-    " != " +
-    expectedMap.sourceRoot
+      actualMap.sourceRoot +
+      " != " +
+      expectedMap.sourceRoot
   );
   assert.equal(
     actualMap.mappings,
     expectedMap.mappings,
     "mappings mismatch:\nActual:   " +
-    actualMap.mappings +
-    "\nExpected: " +
-    expectedMap.mappings
+      actualMap.mappings +
+      "\nExpected: " +
+      expectedMap.mappings
   );
   if (actualMap.sourcesContent) {
     assert.equal(

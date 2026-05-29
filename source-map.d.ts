@@ -95,7 +95,7 @@ export interface SourceMapConsumer {
    *     lib/mappings.wasm.
    */
   initialize(mappings: SourceMappings): void;
- 
+
   /**
    * Compute the last column for each generated mapping. The last column is
    * inclusive.

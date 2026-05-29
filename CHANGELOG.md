@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.8.0-beta.0
+
 ### Breaking changes
 
 - [#350](https://github.com/mozilla/source-map/pull/350) -
