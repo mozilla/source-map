@@ -1,7 +1,7 @@
 {
   "name": "source-map",
   "description": "Generates and consumes source maps",
-  "version": "0.7.6",
+  "version": "0.8.0-beta.0",
   "homepage": "https://github.com/mozilla/source-map",
   "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
   "contributors": [
@@ -49,6 +49,7 @@
   "main": "./source-map.js",
   "types": "./source-map.d.ts",
   "browser": {
+    "./lib/url.js": "./lib/url-browser.js",
     "./lib/read-wasm.js": "./lib/read-wasm-browser.js"
   },
   "files": [
@@ -56,13 +57,16 @@
     "source-map.d.ts",
     "lib/"
   ],
+  "publishConfig": {
+    "tag": "next"
+  },
   "engines": {
     "node": ">= 12"
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "lint": "eslint --fix *.js lib/ test/ --ignore-pattern 'test/source-map-tests/**'",
-    "test": "git submodule update --init --recursive; node test/run-tests.js",
+    "lint": "eslint --fix *.js lib/ test/",
+    "test": "node test/run-tests.js",
     "coverage": "c8 --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",
     "clean": "rm -rf coverage",
@@ -75,5 +79,7 @@
     "eslint-config-prettier": "^8.5.0",
     "prettier": "^2.7.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "whatwg-url": "^7.0.0"
+  }
 }
