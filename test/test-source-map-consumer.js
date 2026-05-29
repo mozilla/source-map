@@ -709,7 +709,7 @@ exports["test eachMapping"] = async function (assert) {
 
     assert.ok(
       mapping.source === "/the/root/one.js" ||
-      mapping.source === "/the/root/two.js"
+        mapping.source === "/the/root/two.js"
     );
 
     if (mapping.generatedLine === previousLine) {
@@ -738,8 +738,8 @@ exports["test eachMapping"] = async function (assert) {
   map.eachMapping(function (mapping) {
     assert.ok(
       mapping.source === null ||
-      (typeof mapping.originalColumn === "number" &&
-        typeof mapping.originalLine === "number")
+        (typeof mapping.originalColumn === "number" &&
+          typeof mapping.originalLine === "number")
     );
   });
   map.destroy();
@@ -2146,7 +2146,7 @@ exports["test SourceMapConsumer.with"] = async function (assert) {
       assert.equal(c._mappingsPtr, 0);
 
       // Force the mappings to be parsed and assert that we allocated mappings.
-      c.eachMapping(_ => { });
+      c.eachMapping(_ => {});
       assert.ok(c._mappingsPtr != 0);
 
       return 6;
@@ -2171,7 +2171,7 @@ exports["test SourceMapConsumer.with and exceptions"] = async function (
       consumer = c;
       assert.equal(c._mappingsPtr, 0);
 
-      c.eachMapping(_ => { });
+      c.eachMapping(_ => {});
       assert.ok(c._mappingsPtr != 0);
 
       throw 6;
