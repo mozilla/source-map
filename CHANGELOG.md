@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.8.0
+
+- [#528] https://github.com/mozilla/source-map/pull/528
+  Adding security policy
+- [#525] https://github.com/mozilla/source-map/pull/525
+  Use Object.create for sourceContents
+- [#520] https://github.com/mozilla/source-map/pull/520
+  Fixes types for SourceMapConsumer.initialize
+
 ## 0.7.6
 
 - Bump package to 0.7.6 and remove `publishConfig` property in package.json ([801be934007c3ed0ef66c620641b1668e92c891d](https://github.com/mozilla/source-map/commit/801be934007c3ed0ef66c620641b1668e92c891d))
