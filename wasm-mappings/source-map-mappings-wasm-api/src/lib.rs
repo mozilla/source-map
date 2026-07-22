@@ -251,6 +251,7 @@ unsafe fn mappings_mut<'a>(
     mappings.as_mut().unwrap()
 }
 
+#[link(wasm_import_module = "env")]
 extern "C" {
     fn mapping_callback(
         // These two parameters are always valid.
