@@ -274,7 +274,7 @@ impl<O: Observer> Mappings<O> {
     /// Iterate over all mappings that contain original location information,
     /// sorted by their original location information.
     #[inline]
-    pub fn by_original_location(&mut self) -> ByOriginalLocation<O::SortByOriginalLocation> {
+    pub fn by_original_location(&mut self) -> ByOriginalLocation<'_, O::SortByOriginalLocation> {
         ByOriginalLocation {
             buckets: self.source_buckets().iter_mut(),
             this_bucket: [].iter(),
@@ -389,7 +389,7 @@ impl<O: Observer> Mappings<O> {
         source: u32,
         original_line: u32,
         original_column: Option<u32>,
-    ) -> AllGeneratedLocationsFor {
+    ) -> AllGeneratedLocationsFor<'_> {
         let _observer = O::AllGeneratedLocationsFor::default();
 
         let query_column = original_column.unwrap_or(0);
