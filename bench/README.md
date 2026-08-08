@@ -4,7 +4,7 @@ This directory contains helpers for benchmarking the `mozilla/source-map`
 library.
 
 Ensure that you have built the library, as these benchmarks rely on
-`dist/source-map.js`. See the main README.md for detais on building.
+`dist/source-map.js`. See the main README.md for details on building.
 
 Run a local webserver from the root of the repository:
 

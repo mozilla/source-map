@@ -98,7 +98,7 @@ module.exports = {
     // Disallow empty destructuring
     "no-empty-pattern": "error",
 
-    // Disallow eval and setInteral/setTimeout with strings
+    // Disallow eval and setInterval/setTimeout with strings
     "no-eval": "error",
 
     // No assigning to exception variable
@@ -113,7 +113,7 @@ module.exports = {
     // No overwriting defined functions
     "no-func-assign": "error",
 
-    // Disallow eval and setInteral/setTimeout with strings
+    // Disallow eval and setInterval/setTimeout with strings
     "no-implied-eval": "error",
 
     // No invalid regular expressions
@@ -156,7 +156,7 @@ module.exports = {
     // Use {} instead of new Object()
     "no-new-object": "error",
 
-    // Dissallow use of new wrappers
+    // Disallow use of new wrappers
     "no-new-wrappers": "error",
 
     // No Math() or JSON()
