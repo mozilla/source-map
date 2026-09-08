@@ -229,6 +229,9 @@ export interface SourceMapConsumerConstructor {
    * When using SourceMapConsumer outside of node.js, for example on the Web, it
    * needs to know from what URL to load lib/mappings.wasm. You must inform it
    * by calling initialize before constructing any SourceMapConsumers.
+   * In node.js, initialization is optional and accepts ArrayBuffer contents
+   * instead of loading the bundled lib/mappings.wasm file. URLs are not supported
+   * in node.js.
    *
    * @param mappings an object with the following property:
    *   - "lib/mappings.wasm": A String containing the URL of the
