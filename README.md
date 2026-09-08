@@ -219,6 +219,12 @@ sourceMap.SourceMapConsumer.initialize({
 });
 ```
 
+In node.js, initialization is optional: the module loads its bundled
+`lib/mappings.wasm` file by default. When a bundler relocates the module, you can
+instead provide an `ArrayBuffer` containing the WASM bytes. Call `initialize`
+before constructing any `SourceMapConsumer`s. URL initialization is only supported
+outside of node.js.
+
 #### new SourceMapConsumer(rawSourceMap)
 
 The only parameter is the raw source map (either as a string which can be
