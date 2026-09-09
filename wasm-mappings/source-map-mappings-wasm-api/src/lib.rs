@@ -43,6 +43,7 @@ mod observer {
             impl Default for $name {
                 #[inline]
                 fn default() -> $name {
+                    #[cfg_attr(target_arch = "wasm32", link(wasm_import_module = "env"))]
                     extern "C" {
                         fn $ctor();
                     }
@@ -56,6 +57,7 @@ mod observer {
             impl Drop for $name {
                 #[inline]
                 fn drop(&mut self) {
+                    #[cfg_attr(target_arch = "wasm32", link(wasm_import_module = "env"))]
                     extern "C" {
                         fn $dtor();
                     }
@@ -251,6 +253,7 @@ unsafe fn mappings_mut<'a>(
     mappings.as_mut().unwrap()
 }
 
+#[cfg_attr(target_arch = "wasm32", link(wasm_import_module = "env"))]
 extern "C" {
     fn mapping_callback(
         // These two parameters are always valid.
