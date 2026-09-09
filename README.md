@@ -244,6 +244,12 @@ following attributes:
   of indices refering to urls in the sources array. This is used to identify third-party
   sources, that the developer might want to avoid when debugging. [Read more](https://developer.chrome.com/articles/x-google-ignore-list/)
 
+A `BasicSourceMapConsumer` also exposes the standard `ignoreList` field described
+in the [source map specification](https://tc39.es/ecma426/#sec-source-map-format).
+It falls back to `x_google_ignoreList` only when `ignoreList` is absent, or `null`
+when neither is present. An explicit empty array takes precedence over the
+legacy field. The `x_google_ignoreList` property retains the legacy field's value.
+
 The promise of the constructed souce map consumer is returned.
 
 When the `SourceMapConsumer` will no longer be used anymore, you must call its
