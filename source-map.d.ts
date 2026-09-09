@@ -20,6 +20,8 @@ export interface RawSourceMap {
   sourcesContent?: string[];
   mappings: string;
   file: string;
+  ignoreList?: number[];
+  x_google_ignoreList?: number[];
 }
 
 export interface RawIndexMap extends StartOfSourceMap {
@@ -294,6 +296,8 @@ export interface BasicSourceMapConsumer extends SourceMapConsumer {
   sourceRoot: string;
   sources: string[];
   sourcesContent: string[];
+  ignoreList: number[] | null;
+  x_google_ignoreList: number[] | null;
 }
 
 export interface BasicSourceMapConsumerConstructor {
