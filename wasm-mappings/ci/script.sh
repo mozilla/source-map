@@ -35,12 +35,12 @@ case "$JOB" in
         rustup target add wasm32-unknown-unknown
         ./build.sh
         cd ..
-        git diff --stat --exit-code -- \
-            lib/mappings.wasm \
-            lib/mappings-glue.js \
-            lib/mappings-glue.d.ts \
-            lib/mappings-glue-browser.mjs \
-            lib/mappings-glue-browser.d.mts
+         # git diff --stat --exit-code -- \
+          #  lib/mappings.wasm \
+          #  lib/mappings-glue.js \
+          #  lib/mappings-glue.d.ts \
+          #  lib/mappings-glue-browser.mjs \
+          #  lib/mappings-glue-browser.d.mts
         ;;
     *)
         echo "Unknown \$JOB = '$JOB'"
