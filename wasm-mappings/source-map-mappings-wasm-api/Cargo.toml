@@ -1,6 +1,7 @@
 [package]
 authors = ["Nick Fitzgerald <fitzgen@gmail.com>", "Tom Tromey <tom@tromey.com>"]
 description = "Exported WebAssembly API for the `source-map-mappings` crate."
+edition = "2024"
 license = "BSD-3-Clause"
 name = "source-map-mappings-wasm-api"
 readme = "../README.md"

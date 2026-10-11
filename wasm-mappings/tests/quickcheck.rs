@@ -7,7 +7,6 @@ use quickcheck::{Arbitrary, Gen};
 use source_map_mappings::{Bias, Error};
 use std::cmp::Ordering;
 use std::fmt;
-use std::i64;
 use std::iter;
 use std::marker::PhantomData;
 
@@ -23,8 +22,11 @@ impl<R> Arbitrary for Vlq<R>
 where
     R: VlqRange,
 {
-    fn arbitrary<G: Gen>(g: &mut G) -> Self {
-        Vlq(g.gen_range(R::low(), R::high()), PhantomData)
+    fn arbitrary(g: &mut Gen) -> Self {
+        // Uniform-ish over [low, high), like the old `Gen::gen_range`.
+        let span = (R::high() as i128) - (R::low() as i128);
+        let offset = (u64::arbitrary(g) as i128) % span;
+        Vlq((R::low() as i128 + offset) as i64, PhantomData)
     }
 
     fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
@@ -64,8 +66,8 @@ impl<R> Arbitrary for Mapping<R>
 where
     R: VlqRange,
 {
-    fn arbitrary<G: Gen>(g: &mut G) -> Self {
-        match g.gen_range(0, 3) {
+    fn arbitrary(g: &mut Gen) -> Self {
+        match *g.choose(&[0, 1, 2]).unwrap() {
             0 => Mapping::Generated {
                 generated_column: Vlq::<R>::arbitrary(g),
             },
@@ -203,7 +205,7 @@ impl<R> Arbitrary for GeneratedLine<R>
 where
     R: VlqRange,
 {
-    fn arbitrary<G: Gen>(g: &mut G) -> Self {
+    fn arbitrary(g: &mut Gen) -> Self {
         GeneratedLine(Vec::arbitrary(g))
     }
 
@@ -233,7 +235,7 @@ impl<R> Arbitrary for Mappings<R>
 where
     R: VlqRange,
 {
-    fn arbitrary<G: Gen>(g: &mut G) -> Self {
+    fn arbitrary(g: &mut Gen) -> Self {
         Mappings(Vec::arbitrary(g))
     }
 
