@@ -7,7 +7,7 @@ use std::fmt;
 /// A function that can compare two `T`s.
 pub trait ComparatorFunction<T>: fmt::Debug {
     /// Compare the given values.
-    fn compare(&T, &T) -> Ordering;
+    fn compare(a: &T, b: &T) -> Ordering;
 }
 
 impl<T, F> ComparatorFunction<Option<T>> for F

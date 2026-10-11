@@ -27,7 +27,7 @@ where
         Vlq(g.gen_range(R::low(), R::high()), PhantomData)
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         Box::new(self.0.shrink().map(|x| Vlq(x, PhantomData)))
     }
 }
@@ -86,7 +86,7 @@ where
         }
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         match *self {
             Mapping::Generated { generated_column } => Box::new(
                 generated_column
@@ -207,7 +207,7 @@ where
         GeneratedLine(Vec::arbitrary(g))
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         Box::new(self.0.shrink().map(|v| GeneratedLine(v)))
     }
 }
@@ -237,7 +237,7 @@ where
         Mappings(Vec::arbitrary(g))
     }
 
-    fn shrink(&self) -> Box<Iterator<Item = Self>> {
+    fn shrink(&self) -> Box<dyn Iterator<Item = Self>> {
         Box::new(self.0.shrink().map(|v| Mappings(v)))
     }
 }

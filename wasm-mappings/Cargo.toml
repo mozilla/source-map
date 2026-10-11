@@ -8,6 +8,7 @@ categories = [
     "parser-implementations",
 ]
 description = "Parse the `mappings` string from a source map."
+edition = "2024"
 keywords = [
     "sourcemap",
     "source",
