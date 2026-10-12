@@ -40,7 +40,7 @@ If you are filing an issue for a bug or other misbehavior, please provide:
 
 ## Building From Source
 
-Install Node.js `12` or greater and then run
+Install Node.js `18` or greater and then run
 
     $ git clone https://github.com/mozilla/source-map.git
     $ cd source-map/
@@ -65,7 +65,7 @@ force push to the remote branch to update the pull request.
 
 ## Running Tests
 
-The test suite is written for node.js. Install node.js `12` or greater and
+The test suite is written for node.js. Install node.js `18` or greater and
 then run the tests with `npm test`:
 
 ```shell
