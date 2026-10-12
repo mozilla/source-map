@@ -2,7 +2,7 @@
 #
 # Build `lib/mappings.wasm` and its wasm-bindgen glue.
 #
-# Requires `wasm-pack` (https://rustwasm.github.io/wasm-pack/), which vendors
+# Requires `wasm-pack` (https://wasm-bindgen.github.io/wasm-pack/), which vendors
 # its own `wasm-bindgen`, and binaryen's `wasm-opt` at exactly
 # $WASM_OPT_VERSION on PATH. wasm-pack prefers a `wasm-opt` from PATH and only
 # downloads its own (an older binaryen) when there is none, and different

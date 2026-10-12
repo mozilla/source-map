@@ -46,13 +46,11 @@ Install Node.js `18` or greater and then run
     $ cd source-map/
     $ npm install
 
-Next, run
-
-    $ npm run build
-
-This will create the following files:
-
-- `dist/source-map.js` - The plain browser build.
+There is no build step for the JavaScript: the package is used directly from
+`source-map.js` and `lib/`. The only generated files are `lib/mappings.wasm` and
+its glue, which are committed; see
+[Updating the `lib/mappings.wasm` WebAssembly Module](#updating-the-libmappingswasm-webassembly-module)
+if you need to change them.
 
 ## Submitting Pull Requests
 
@@ -70,11 +68,12 @@ then run the tests with `npm test`:
 
 ```shell
 $ npm test
-> source-map@0.7.3 test /Users/fitzgen/src/source-map
-> node test/run-tests.js
+
+> source-map@0.8.0 test
+> git submodule update --init --recursive; node test/run-tests.js
 
 
-137 / 137 tests passed.
+190 / 190 tests passed.
 ```
 
 ## Writing New Tests
@@ -141,11 +140,11 @@ Note: The pin exists because CI rebuilds the
 committed artifacts and fails if they differ byte-for-byte, which only works
 if everyone builds with the same compiler.
 
-Install [`wasm-pack`](https://rustwasm.github.io/wasm-pack/), which vendors
-its own `wasm-bindgen`:
+Install [`wasm-pack`](https://wasm-bindgen.github.io/wasm-pack/) version
+0.15.0, the version CI uses, which vendors its own `wasm-bindgen`:
 
 ```
-$ cargo install wasm-pack
+$ cargo install wasm-pack --version 0.15.0 --locked
 ```
 
 You also need `wasm-opt` from [binaryen](https://github.com/WebAssembly/binaryen)

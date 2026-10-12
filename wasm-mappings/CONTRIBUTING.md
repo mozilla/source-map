@@ -15,15 +15,21 @@ directory:
 $ ./build.sh
 ```
 
-That runs [`wasm-pack`](https://rustwasm.github.io/wasm-pack/) twice -- once
+That runs [`wasm-pack`](https://wasm-bindgen.github.io/wasm-pack/) twice -- once
 for the `nodejs` target and once for `web` -- and installs the results into
 `../lib/`. Both targets produce an identical `.wasm`; only the JS glue
 differs, and the script fails if they ever diverge.
 
-`wasm-pack` is the only tool you need to install: it vendors its own
-`wasm-bindgen` and `wasm-opt`. The toolchain version is pinned in
-`rust-toolchain.toml`, including the `wasm32-unknown-unknown` target, so
-`rustup` will fetch whatever is missing.
+You need two tools besides Rust:
+
+- `wasm-pack` 0.15.0 (`cargo install wasm-pack --version 0.15.0 --locked`),
+  which vendors its own `wasm-bindgen`.
+- `wasm-opt` from [binaryen](https://github.com/WebAssembly/binaryen) version
+  132 on your `PATH`. `build.sh` refuses to run with any other version, because
+  without one wasm-pack downloads an older binaryen whose output differs.
+
+The Rust toolchain version is pinned in `rust-toolchain.toml`, including the
+`wasm32-unknown-unknown` target, so `rustup` will fetch whatever is missing.
 
 Set `PROFILING=1` to enable the `profiling` cargo feature.
 
