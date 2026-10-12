@@ -47,6 +47,18 @@ fi
 cd "$CRATE_DIR"
 rm -rf pkg-node pkg-web
 
+# Panic locations embed absolute source paths in the binary, which differ
+# between machines (checkout location, $CARGO_HOME, and whether rustup's
+# `rust-src` component is installed) and would make the output depend on where
+# it was built. Remap them to fixed prefixes. `trim-paths` would do this, but
+# it is not stable yet. Run from $CRATE_DIR so rustc is the pinned toolchain.
+REPO_ROOT_ABS="$(cd "$REPO_ROOT" && pwd -P)"
+RUST_SRC="$(rustc --print sysroot)/lib/rustlib/src/rust"
+RUSTC_COMMIT="$(rustc -vV | sed -n 's/^commit-hash: //p')"
+CARGO_REGISTRY="${CARGO_HOME:-$HOME/.cargo}/registry/src"
+SEP="$(printf '\037')"
+export CARGO_ENCODED_RUSTFLAGS="--remap-path-prefix=$REPO_ROOT_ABS=/source-map${SEP}--remap-path-prefix=$RUST_SRC=/rustc/$RUSTC_COMMIT${SEP}--remap-path-prefix=$CARGO_REGISTRY=/cargo/registry/src"
+
 # shellcheck disable=SC2086
 wasm-pack build --release --target nodejs \
     --out-dir pkg-node --out-name mappings --no-pack -- $CARGO_ARGS
