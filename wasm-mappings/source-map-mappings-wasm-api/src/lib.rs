@@ -22,6 +22,7 @@ mod observer {
     use wasm_bindgen::prelude::*;
 
     #[wasm_bindgen]
+    #[link(wasm_import_module = "env")]
     extern "C" {
         #[wasm_bindgen(js_namespace = console)]
         fn time(label: &str);
@@ -82,6 +83,7 @@ mod observer {
 use observer::Observer;
 
 #[wasm_bindgen]
+#[link(wasm_import_module = "env")]
 extern "C" {
     /// A JS function invoked once per mapping.
     pub type MappingCallback;
