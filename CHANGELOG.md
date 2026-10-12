@@ -1,5 +1,11 @@
 # Change Log
 
+## Unreleased
+
+- Require Node.js 18 or later. `lib/mappings.wasm` is now built with
+  wasm-pack and uses WebAssembly multi-value and reference types, which
+  older Node.js versions do not support.
+
 ## 0.8.0
 
 - [#528] https://github.com/mozilla/source-map/pull/528

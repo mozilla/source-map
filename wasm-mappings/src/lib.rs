@@ -1,6 +1,5 @@
 #![deny(missing_debug_implementations)]
 
-extern crate rand;
 extern crate vlq;
 
 pub mod comparators;
@@ -10,7 +9,6 @@ use std::cmp;
 use std::marker::PhantomData;
 use std::mem;
 use std::slice;
-use std::u32;
 
 /// Errors that can occur during parsing.
 #[derive(Copy, Clone, Debug)]
@@ -131,7 +129,7 @@ where
                 items
             }
         };
-        mem::replace(self, LazilySorted::Sorted(items, PhantomData, PhantomData));
+        *self = LazilySorted::Sorted(items, PhantomData, PhantomData);
         unwrap(self.sorted())
     }
 
@@ -170,7 +168,7 @@ where
 {
     by_generated: Vec<Mapping>,
     computed_column_spans: bool,
-    observer: O,
+    observer: PhantomData<O>,
 
     // The `by_original` field maps source index to mappings within that
     // original source. This lets us essentially do bucket sort on a per-source
@@ -274,7 +272,7 @@ impl<O: Observer> Mappings<O> {
     /// Iterate over all mappings that contain original location information,
     /// sorted by their original location information.
     #[inline]
-    pub fn by_original_location(&mut self) -> ByOriginalLocation<O::SortByOriginalLocation> {
+    pub fn by_original_location(&mut self) -> ByOriginalLocation<'_, O::SortByOriginalLocation> {
         ByOriginalLocation {
             buckets: self.source_buckets().iter_mut(),
             this_bucket: [].iter(),
@@ -389,7 +387,7 @@ impl<O: Observer> Mappings<O> {
         source: u32,
         original_line: u32,
         original_column: Option<u32>,
-    ) -> AllGeneratedLocationsFor {
+    ) -> AllGeneratedLocationsFor<'_> {
         let _observer = O::AllGeneratedLocationsFor::default();
 
         let query_column = original_column.unwrap_or(0);
@@ -452,7 +450,7 @@ impl<O: Observer> Default for Mappings<O> {
             by_generated: vec![],
             by_original: None,
             computed_column_spans: false,
-            observer: Default::default(),
+            observer: PhantomData,
         }
     }
 }

@@ -8,6 +8,7 @@ categories = [
     "parser-implementations",
 ]
 description = "Parse the `mappings` string from a source map."
+edition = "2024"
 keywords = [
     "sourcemap",
     "source",
@@ -21,10 +22,10 @@ repository = "https://github.com/mozilla/source-map"
 version = "0.5.0"
 
 [dependencies]
-rand = "0.4.1"
 vlq = "0.5.1"
 
 [dev-dependencies]
-quickcheck = "0.5.0"
+quickcheck = { version = "1.1", default-features = false }
+
 [profile.release]
-debug = true
+debug = false

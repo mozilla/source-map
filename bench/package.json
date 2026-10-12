@@ -5,7 +5,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "webpack": "^4.9.1",
-    "webpack-cli": "^3.1"
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0"
   }
 }

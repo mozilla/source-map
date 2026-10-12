@@ -38,4 +38,43 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           override: true
           default: true
+      # `override: true` sets a directory override on the repo root, but the
+      # nearer wasm-mappings/rust-toolchain.toml takes precedence over it, so
+      # select the matrix toolchain explicitly.
       - run: JOB=${{ matrix.job }} ./ci/script.sh
+        env:
+          RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
+
+  dist:
+    name: WASM binary is reproducible
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # No toolchain override here on purpose: the build must use the version
+      # pinned in wasm-mappings/rust-toolchain.toml for the byte comparison
+      # to be meaningful.
+      # wasm-pack vendors its own wasm-bindgen; wasm-opt must be the binaryen
+      # version build.sh pins, since wasm-pack's fallback download is older
+      # and produces different bytes.
+      - name: Install wasm-pack
+        env:
+          WASM_PACK_VERSION: v0.15.0
+          WASM_PACK_SHA256: c09f971ecaed9a2efc80fdcea7a00ef6b53c7fadc8c57d1f61b53a6aa66b668a
+        run: |
+          name="wasm-pack-${WASM_PACK_VERSION}-x86_64-unknown-linux-musl"
+          curl -sSfL -o "$RUNNER_TEMP/wasm-pack.tar.gz" \
+            "https://github.com/rustwasm/wasm-pack/releases/download/${WASM_PACK_VERSION}/${name}.tar.gz"
+          echo "${WASM_PACK_SHA256}  $RUNNER_TEMP/wasm-pack.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/wasm-pack.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/${name}" >> "$GITHUB_PATH"
+      - name: Install binaryen
+        env:
+          BINARYEN_VERSION: "132"
+          BINARYEN_SHA256: 195ddc94f9bc89f45abdabb0b9eea86023d727ba90eac8b35b80f2544fc30572
+        run: |
+          curl -sSfL -o "$RUNNER_TEMP/binaryen.tar.gz" \
+            "https://github.com/WebAssembly/binaryen/releases/download/version_${BINARYEN_VERSION}/binaryen-version_${BINARYEN_VERSION}-x86_64-linux.tar.gz"
+          echo "${BINARYEN_SHA256}  $RUNNER_TEMP/binaryen.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/binaryen.tar.gz" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/binaryen-version_${BINARYEN_VERSION}/bin" >> "$GITHUB_PATH"
+      - run: JOB=wasm-dist ./ci/script.sh

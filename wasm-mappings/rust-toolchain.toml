@@ -1,0 +1,12 @@
+# Pinned so that `lib/mappings.wasm` is byte-reproducible: the `wasm-dist` CI
+# job rebuilds the committed binary and fails if it differs, which only works
+# if everyone builds with the same rustc. Bump deliberately, and commit the
+# regenerated `lib/mappings.wasm` in the same change.
+#
+# Note: the `cargo.yml` test matrix overrides this by setting RUSTUP_TOOLCHAIN
+# (a `rustup override set` on the repo root would not win over this file), so
+# stable/beta/nightly coverage is unaffected. `JOB=bench ./ci/script.sh`
+# defaults to nightly for the same reason.
+[toolchain]
+channel = "1.98.1"
+targets = ["wasm32-unknown-unknown"]

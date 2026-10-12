@@ -57,11 +57,11 @@
     "lib/"
   ],
   "engines": {
-    "node": ">= 12"
+    "node": ">= 18"
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "lint": "eslint --fix *.js lib/ test/ --ignore-pattern 'test/source-map-tests/**'",
+    "lint": "eslint --fix *.js lib/ test/ --ignore-pattern 'test/source-map-tests/**' --ignore-pattern 'lib/mappings-glue*'",
     "test": "git submodule update --init --recursive; node test/run-tests.js",
     "coverage": "c8 --reporter=text --reporter=html npm test",
     "prettier": "prettier --write .",

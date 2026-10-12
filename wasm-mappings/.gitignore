@@ -1,4 +1,5 @@
 
 /target/
 **/*.rs.bk
-Cargo.lock
+source-map-mappings-wasm-api/pkg-node/
+source-map-mappings-wasm-api/pkg-web/

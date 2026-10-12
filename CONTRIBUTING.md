@@ -40,19 +40,17 @@ If you are filing an issue for a bug or other misbehavior, please provide:
 
 ## Building From Source
 
-Install Node.js `12` or greater and then run
+Install Node.js `18` or greater and then run
 
     $ git clone https://github.com/mozilla/source-map.git
     $ cd source-map/
     $ npm install
 
-Next, run
-
-    $ npm run build
-
-This will create the following files:
-
-- `dist/source-map.js` - The plain browser build.
+There is no build step for the JavaScript: the package is used directly from
+`source-map.js` and `lib/`. The only generated files are `lib/mappings.wasm` and
+its glue, which are committed; see
+[Updating the `lib/mappings.wasm` WebAssembly Module](#updating-the-libmappingswasm-webassembly-module)
+if you need to change them.
 
 ## Submitting Pull Requests
 
@@ -65,16 +63,17 @@ force push to the remote branch to update the pull request.
 
 ## Running Tests
 
-The test suite is written for node.js. Install node.js `12` or greater and
+The test suite is written for node.js. Install node.js `18` or greater and
 then run the tests with `npm test`:
 
 ```shell
 $ npm test
-> source-map@0.7.3 test /Users/fitzgen/src/source-map
-> node test/run-tests.js
+
+> source-map@0.8.0 test
+> git submodule update --init --recursive; node test/run-tests.js
 
 
-137 / 137 tests passed.
+190 / 190 tests passed.
 ```
 
 ## Writing New Tests
@@ -134,40 +133,59 @@ Ensure that you have the Rust toolchain installed:
 $ curl https://sh.rustup.rs -sSf | sh
 ```
 
-The `wasm32-unknown-unknown` target is nightly-only at the time of writing. Use
-`rustup` to ensure you have it installed:
+The exact toolchain version is pinned in `wasm-mappings/rust-toolchain.toml`
+and `rustup` will install it on demand, including the
+`wasm32-unknown-unknown` target.
+Note: The pin exists because CI rebuilds the
+committed artifacts and fails if they differ byte-for-byte, which only works
+if everyone builds with the same compiler.
+
+Install [`wasm-pack`](https://wasm-bindgen.github.io/wasm-pack/) version
+0.15.0, the version CI uses, which vendors its own `wasm-bindgen`:
 
 ```
-$ rustup toolchain install nightly
-$ rustup target add wasm32-unknown-unknown --toolchain nightly
+$ cargo install wasm-pack --version 0.15.0 --locked
 ```
 
-Move to wasm sources folder:
-
-```
-$ cd wasm-mappings/
-```
+You also need `wasm-opt` from [binaryen](https://github.com/WebAssembly/binaryen)
+**version 132** on your `PATH` (for example `brew install binaryen`, or a
+[release download](https://github.com/WebAssembly/binaryen/releases/tag/version_132)).
+`build.sh` refuses to run with any other version: without one on `PATH`,
+wasm-pack falls back to downloading an older binaryen, whose output does not
+match the committed `lib/mappings.wasm`.
 
 Make sure the crate's tests pass:
 
 ```
+$ cd wasm-mappings/
 $ cargo test
 ```
 
-Ensure that you have the following wasm post-processing tools installed:
-
-- `wasm-nm`: https://github.com/fitzgen/wasm-nm
-- `wasm-gc`: https://github.com/alexcrichton/wasm-gc
-- `wasm-snip`: https://github.com/fitzgen/wasm-snip
-- `wasm-opt`: https://github.com/WebAssembly/binaryen
-
-(These dependencies should automatically be installed by cargo)
-
-Build Rust crate as a `.wasm` file:
+Then rebuild the shipped artifacts:
 
 ```
-$ cd source-map-mappings-wasm-api/
-$ ./build.py -o ../../lib/mappings.wasm
+$ ./build.sh
 ```
 
-See further information in [wasm-mappings/CONTRIBUTING.md].
+This writes five files into `lib/`:
+
+| File                          | Purpose                                      |
+| ----------------------------- | -------------------------------------------- |
+| `mappings.wasm`               | the WebAssembly module itself                |
+| `mappings-glue.js`            | `wasm-bindgen` glue for Node (CommonJS)      |
+| `mappings-glue.d.ts`          | types for the above node glue file           |
+| `mappings-glue-browser.mjs`   | `wasm-bindgen` glue for browsers (ES module) |
+| `mappings-glue-browser.d.mts` | types for the above browser glue file        |
+
+All five are generated and committed; do not edit them by hand. `package.json`'s
+`browser` field swaps `lib/read-wasm.js` for `lib/read-wasm-browser.js`, which
+is what selects between the Node and browser glue.
+
+Set `PROFILING=1` to enable the crate's `profiling` feature, which wraps each
+query in a `console.time` / `console.timeEnd` pair:
+
+```
+$ PROFILING=1 ./build.sh
+```
+
+See further information in [wasm-mappings/CONTRIBUTING.md](wasm-mappings/CONTRIBUTING.md).

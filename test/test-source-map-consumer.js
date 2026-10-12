@@ -2143,11 +2143,11 @@ exports["test SourceMapConsumer.with"] = async function (assert) {
       await new Promise(r => setTimeout(r, 1));
 
       // Should not have parsed and allocated mappings yet.
-      assert.equal(c._mappingsPtr, 0);
+      assert.equal(c._wasmMappings, null);
 
       // Force the mappings to be parsed and assert that we allocated mappings.
       c.eachMapping(_ => {});
-      assert.ok(c._mappingsPtr != 0);
+      assert.ok(c._wasmMappings != null);
 
       return 6;
     }
@@ -2157,7 +2157,7 @@ exports["test SourceMapConsumer.with"] = async function (assert) {
   assert.equal(six, 6);
 
   // At the end of `with`, we destroyed the mappings.
-  assert.equal(consumer._mappingsPtr, 0);
+  assert.equal(consumer._wasmMappings, null);
 };
 
 exports["test SourceMapConsumer.with and exceptions"] = async function (
@@ -2169,10 +2169,10 @@ exports["test SourceMapConsumer.with and exceptions"] = async function (
   try {
     await SourceMapConsumer.with(util.testMap, null, async function (c) {
       consumer = c;
-      assert.equal(c._mappingsPtr, 0);
+      assert.equal(c._wasmMappings, null);
 
       c.eachMapping(_ => {});
-      assert.ok(c._mappingsPtr != 0);
+      assert.ok(c._wasmMappings != null);
 
       throw 6;
     });
@@ -2181,7 +2181,7 @@ exports["test SourceMapConsumer.with and exceptions"] = async function (
   }
 
   assert.equal(error, 6);
-  assert.equal(consumer._mappingsPtr, 0);
+  assert.equal(consumer._wasmMappings, null);
 };
 
 exports["test a mapping at the boundary of indexed source map offset"] =
