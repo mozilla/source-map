@@ -35,8 +35,8 @@ case "$JOB" in
         rustup target add wasm32-unknown-unknown
         ./build.sh
         cd ..
-         # git diff --stat --exit-code -- \
-          #  lib/mappings.wasm \
+         git diff --stat --exit-code -- \
+            lib/mappings.wasm
           #  lib/mappings-glue.js \
           #  lib/mappings-glue.d.ts \
           #  lib/mappings-glue-browser.mjs \
