@@ -1091,6 +1091,33 @@ exports[
   consumer.destroy();
 };
 
+exports[
+  "test resolved sources are accepted by sourceContentFor and generatedPositionFor"
+] = async function (assert) {
+  const map = {
+    version: 3,
+    sources: ["one.js"],
+    names: [],
+    mappings: "AAAA",
+    sourcesContent: ["var one = 1;"],
+  };
+  const consumer = await new SourceMapConsumer(map, "maps/app.map");
+
+  assert.equal(consumer.sources[0], "maps/one.js");
+  assert.ok(consumer.hasContentsOfAllSources());
+  assert.equal(consumer.sourceContentFor(consumer.sources[0]), "var one = 1;");
+  assert.equal(
+    consumer.generatedPositionFor({
+      source: consumer.sources[0],
+      line: 1,
+      column: 0,
+    }).line,
+    1
+  );
+
+  consumer.destroy();
+};
+
 exports["test sourceRoot + generatedPositionFor"] = async function (assert) {
   let map = new SourceMapGenerator({
     sourceRoot: "foo/bar",
