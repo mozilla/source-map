@@ -2192,3 +2192,41 @@ exports["test a mapping at the boundary of indexed source map offset"] =
     util.assertMapping(1, 0, "/the/root/one.js", 1, 0, null, null, map, assert);
     map.destroy();
   };
+
+exports[
+  "test computeColumnSpans with an indexed map whose sections do not start on line 1"
+] = async function (assert) {
+  const section = source => ({
+    version: 3,
+    sources: [source],
+    names: [],
+    mappings: "AAAA",
+  });
+  const map = await new SourceMapConsumer({
+    version: 3,
+    sections: [
+      { offset: { line: 0, column: 0 }, map: section("a.js") },
+      { offset: { line: 2, column: 0 }, map: section("b.js") },
+      { offset: { line: 2, column: 10 }, map: section("c.js") },
+    ],
+  });
+  map.computeColumnSpans();
+
+  // "b.js" ends where "c.js" begins on generated line 3.
+  assert.deepEqual(
+    map.generatedPositionFor({ source: "b.js", line: 1, column: 0 }),
+    { line: 3, column: 0, lastColumn: 9 }
+  );
+  assert.deepEqual(map.allGeneratedPositionsFor({ source: "b.js", line: 1 }), [
+    { line: 3, column: 0, lastColumn: 9 },
+  ]);
+
+  const lastColumns = {};
+  map.eachMapping(m => {
+    lastColumns[m.source] = m.lastGeneratedColumn;
+  });
+  assert.equal(lastColumns["b.js"], 9);
+  assert.equal(lastColumns["c.js"], Infinity);
+
+  map.destroy();
+};
