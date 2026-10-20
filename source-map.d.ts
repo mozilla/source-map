@@ -357,7 +357,7 @@ export class SourceMapGenerator {
    * Applies the mappings of a sub-source-map for a specific source file to the
    * source map being generated. Each mapping to the supplied source file is
    * rewritten using the supplied source map. Note: The resolution for the
-   * resulting mappings is the minimium of this map and the supplied map.
+   * resulting mappings is the minimum of this map and the supplied map.
    *
    * @param sourceMapConsumer The source map to be applied.
    * @param sourceFile Optional. The filename of the source file.

@@ -76,7 +76,7 @@ jitterBoxPlot <- function(data, operation, titleText) {
 largeData <- subset(data, Mappings.Size==14964446)
 
 jitterBoxPlot(largeData, "set.first.breakpoint", "Set First Breakpoint")
-jitterBoxPlot(largeData, "subsequent.setting.breakpoints", "Subsquent Setting Breakpoints")
+jitterBoxPlot(largeData, "subsequent.setting.breakpoints", "Subsequent Setting Breakpoints")
 
 jitterBoxPlot(largeData, "first.pause.at.exception", "First Pause at Exception")
 jitterBoxPlot(largeData, "subsequent.pausing.at.exceptions", "Subsequent Pausing at Exceptions")
