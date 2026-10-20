@@ -2192,3 +2192,31 @@ exports["test a mapping at the boundary of indexed source map offset"] =
     util.assertMapping(1, 0, "/the/root/one.js", 1, 0, null, null, map, assert);
     map.destroy();
   };
+
+exports["test SourceMapConsumer.fromSourceMap with a source map URL"] =
+  async function (assert) {
+    const smg = new SourceMapGenerator({ file: "out.js" });
+    smg.addMapping({
+      original: { line: 1, column: 0 },
+      generated: { line: 1, column: 0 },
+      source: "src/a.js",
+    });
+    smg.setSourceContent("src/a.js", "a content");
+
+    const smc = await SourceMapConsumer.fromSourceMap(
+      smg,
+      "http://example.com/maps/out.js.map"
+    );
+    assert.equal(smc.sources.length, 1);
+    assert.equal(smc.sources[0], "http://example.com/maps/src/a.js");
+    assert.equal(
+      smc.originalPositionFor({ line: 1, column: 0 }).source,
+      "http://example.com/maps/src/a.js"
+    );
+    assert.equal(
+      smc.sourceContentFor("http://example.com/maps/src/a.js"),
+      "a content"
+    );
+
+    smc.destroy();
+  };
