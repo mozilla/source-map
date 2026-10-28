@@ -5,7 +5,7 @@
 This is a library to generate and consume the source map format
 [described here][format].
 
-[format]: https://docs.google.com/document/d/1U1RGAehQwRypUTovF1KRlpiOFze0b-_2gc6fAH0KY0k/edit
+[format]: https://sourcemaps.info/spec.html
 
 ## Use with Node
 
