@@ -58,7 +58,7 @@ export interface NullableMappedPosition {
 }
 
 export interface MappingItem {
-  source: string;
+  source: string | null;
   generatedLine: number;
   generatedColumn: number;
   lastGeneratedColumn: number | null;
