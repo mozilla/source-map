@@ -240,7 +240,7 @@ following attributes:
 
 - `file`: Optional. The generated filename this source map is associated with.
 
-- `x_google_ignoreList`: Optional. An additional extension field which is an array
+- `ignoreList` (or `x_google_ignoreList`): Optional. An additional extension field which is an array
   of indices refering to urls in the sources array. This is used to identify third-party
   sources, that the developer might want to avoid when debugging. [Read more](https://developer.chrome.com/articles/x-google-ignore-list/)
 
