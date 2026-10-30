@@ -381,7 +381,7 @@ export class SourceMapGenerator {
 }
 
 export class SourceNode {
-  children: SourceNode[];
+  children: (SourceNode | string)[];
   sourceContents: any;
   line: number;
   column: number;
