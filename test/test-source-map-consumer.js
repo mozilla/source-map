@@ -945,6 +945,8 @@ exports["test that we can get the original sources for the sources"] =
     assert.throws(function () {
       map.sourceContentFor("three.js");
     }, Error);
+    assert.equal(map.sourceContentFor(null), null);
+    assert.equal(map.sourceContentFor(undefined), null);
 
     map.destroy();
   };
@@ -1557,6 +1559,78 @@ exports["test computeColumnSpans"] = async function (assert) {
   assert.equal(mappings[1].lastColumn, Infinity);
 
   map.destroy();
+};
+
+exports["test computeColumnSpans with nonzero line offset sections (#542)"] = async function (assert) {
+  const section = source => ({ version: 3, sources: [source], names: [], mappings: "AAAA" });
+
+  const map = await new SourceMapConsumer({
+    version: 3,
+    sections: [
+      { offset: { line: 0, column: 0 }, map: section("a.js") },
+      { offset: { line: 2, column: 0 }, map: section("b.js") },
+      { offset: { line: 2, column: 10 }, map: section("c.js") },
+    ],
+  });
+  map.computeColumnSpans();
+
+  const pos = map.generatedPositionFor({ source: "b.js", line: 1, column: 0 });
+  assert.equal(pos.line, 3);
+  assert.equal(pos.column, 0);
+  assert.equal(pos.lastColumn, 9);
+
+  const all = map.allGeneratedPositionsFor({ source: "b.js", line: 1, column: 0 });
+  assert.equal(all.length, 1);
+  assert.equal(all[0].line, 3);
+  assert.equal(all[0].column, 0);
+  assert.equal(all[0].lastColumn, 9);
+
+  const eachMappings = [];
+  map.eachMapping(m => eachMappings.push(m));
+  const bMapping = eachMappings.find(m => m.source === "b.js");
+  assert.equal(bMapping.lastGeneratedColumn, 9);
+
+  map.destroy();
+};
+
+exports["test computeColumnSpans with first section nonzero line offset (#539)"] = async function (assert) {
+  const consumer = await new SourceMapConsumer({
+    version: 3,
+    sections: [
+      {
+        offset: { line: 4, column: 3 },
+        map: { version: 3, sources: ["first.js"], names: [], mappings: "AAAA" },
+      },
+      {
+        offset: { line: 4, column: 10 },
+        map: { version: 3, sources: ["second.js"], names: [], mappings: "AAAA" },
+      },
+    ],
+  });
+  try {
+    consumer.computeColumnSpans();
+    const pos = consumer.generatedPositionFor({
+      source: "first.js", line: 1, column: 0,
+    });
+    assert.equal(pos.line, 5);
+    assert.equal(pos.column, 3);
+    assert.equal(pos.lastColumn, 9);
+
+    const all = consumer.allGeneratedPositionsFor({
+      source: "first.js", line: 1, column: 0,
+    });
+    assert.equal(all.length, 1);
+    assert.equal(all[0].line, 5);
+    assert.equal(all[0].column, 3);
+    assert.equal(all[0].lastColumn, 9);
+
+    const eachMappings = [];
+    consumer.eachMapping(m => eachMappings.push(m));
+    const firstMapping = eachMappings.find(m => m.source === "first.js");
+    assert.equal(firstMapping.lastGeneratedColumn, 9);
+  } finally {
+    consumer.destroy();
+  }
 };
 
 exports["test sourceRoot + originalPositionFor"] = async function (assert) {
