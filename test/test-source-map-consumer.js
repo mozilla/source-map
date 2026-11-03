@@ -1490,6 +1490,56 @@ exports["test allGeneratedPositionsFor for index map"] = async function (
   map.destroy();
 };
 
+exports[
+  "test allGeneratedPositionsFor for index map with a source in several sections"
+] = async function (assert) {
+  const map = await new SourceMapConsumer({
+    version: 3,
+    file: "min.js",
+    sections: [
+      {
+        offset: { line: 0, column: 0 },
+        map: {
+          version: 3,
+          sources: ["shared.js"],
+          names: [],
+          mappings: "AAAA",
+        },
+      },
+      {
+        offset: { line: 2, column: 4 },
+        map: {
+          version: 3,
+          sources: ["shared.js"],
+          names: [],
+          mappings: "AAAA",
+        },
+      },
+    ],
+  });
+
+  const mappings = map.allGeneratedPositionsFor({
+    line: 1,
+    column: 0,
+    source: "shared.js",
+  });
+
+  assert.deepEqual(mappings, [
+    {
+      line: 1,
+      column: 0,
+      lastColumn: null,
+    },
+    {
+      line: 3,
+      column: 4,
+      lastColumn: null,
+    },
+  ]);
+
+  map.destroy();
+};
+
 exports["test computeColumnSpans"] = async function (assert) {
   let map = new SourceMapGenerator({
     file: "generated.js",
